@@ -1,0 +1,6 @@
+{
+	"watch": ["src"],
+	"ext": "ts,json",
+	"ignore": ["./**/*.test.ts"],
+	"exec": "ts-node --transpile-only --files ./src/server.ts"
+}

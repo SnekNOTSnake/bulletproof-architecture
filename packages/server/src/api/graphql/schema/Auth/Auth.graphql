@@ -1,0 +1,12 @@
+type AuthData {
+	user: User!
+	token: String!
+	tokenExpiration: String!
+}
+
+type User {
+	id: ID!
+	name: String!
+	email: String!
+	joined: DateTime!
+}

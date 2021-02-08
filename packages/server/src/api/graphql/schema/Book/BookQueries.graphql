@@ -1,0 +1,4 @@
+extend type Query {
+	book(id: ID!): Book
+	books: [Book]
+}

@@ -1,0 +1,24 @@
+overwrite: true
+schema:
+  - ./packages/server/src/api/graphql/schema/**/*.graphql
+generates:
+  ./packages/server/src/api/graphql/generated/schema.graphql:
+    plugins:
+      - schema-ast
+  ./packages/server/src/api/graphql/generated/typeDefs.ts:
+    plugins:
+      - add:
+          content: 'export default `'
+      - schema-ast
+      - add:
+          placement: 'append'
+          content: '`'
+  ./packages/server/src/api/graphql/generated/types.ts:
+    plugins:
+      - typescript
+      - typescript-resolvers
+    config:
+      mappers:
+        User: ../../../models/Users#DocumentUser
+        Book: ../../../models/Books#DocumentBook
+      contextType: ../../../utils/context#MyContext
