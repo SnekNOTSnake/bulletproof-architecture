@@ -1,0 +1,7 @@
+{
+	"spec": "./test/**/*.test.ts",
+	"recursive": true,
+	"require": ["ts-node/register", "./test/mocha-hook.test.ts"],
+	"timeout": 30000,
+	"slow": 300000
+}
