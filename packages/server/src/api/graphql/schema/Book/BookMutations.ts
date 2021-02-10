@@ -1,4 +1,10 @@
 import { Container } from 'typedi'
+import validate from '../validate'
+import {
+	createBookSchema,
+	updateBookSchema,
+	deleteBookSchema,
+} from '../../../validateSchemas'
 import { MutationResolvers } from '../../generated/types'
 import BookService from '../../../../services/Book'
 
@@ -7,6 +13,8 @@ export const createBook: MutationResolvers['createBook'] = async (
 	{ title },
 	{ user },
 ) => {
+	await validate(createBookSchema, { title })
+
 	const bookServiceInstance = Container.get(BookService)
 	const book = await bookServiceInstance.createBook({ title, author: user.id })
 
@@ -18,6 +26,8 @@ export const updateBook: MutationResolvers['updateBook'] = async (
 	{ id, title },
 	{ user },
 ) => {
+	await validate(updateBookSchema, { id, title })
+
 	const bookServiceInstance = Container.get(BookService)
 	const book = await bookServiceInstance.updateBook({
 		id,
@@ -33,6 +43,8 @@ export const deleteBook: MutationResolvers['deleteBook'] = async (
 	{ id },
 	{ user },
 ) => {
+	await validate(deleteBookSchema, { id })
+
 	const bookServiceInstance = Container.get(BookService)
 	const deletedBookID = await bookServiceInstance.deleteBook({
 		id,

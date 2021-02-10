@@ -5,7 +5,6 @@ import BookService from '../../../services/Book'
 export const createBook = catchAsync(async (req, res, next) => {
 	const { title } = req.body
 
-	if (!title) return next(new Error('Title is required'))
 	if (!req.user)
 		return next(new Error('You have to be logged in to create a book'))
 
@@ -33,8 +32,6 @@ export const createBook = catchAsync(async (req, res, next) => {
 export const updateBook = catchAsync(async (req, res, next) => {
 	const { title, id } = req.body
 
-	if (!title || !id)
-		return next(new Error('Title and ID are required to update book'))
 	if (!req.user)
 		return next(new Error('You have to be logged in to update books'))
 
@@ -63,7 +60,6 @@ export const updateBook = catchAsync(async (req, res, next) => {
 export const deleteBook = catchAsync(async (req, res, next) => {
 	const { id } = req.body
 
-	if (!id) return next(new Error('ID is required to delete book'))
 	if (!req.user)
 		return next(new Error('You have to be logged in to update books'))
 

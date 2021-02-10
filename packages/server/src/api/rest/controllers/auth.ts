@@ -23,9 +23,6 @@ export const protect = catchAsync(async (req, res, next) => {
 export const signup = catchAsync(async (req, res, next) => {
 	const { name, email, password } = req.body
 
-	if (!name || !email || !password)
-		return next(new Error('name, email, and password are required'))
-
 	const authServiceInstance = Container.get(AuthService)
 	const user = await authServiceInstance.signup({ name, email, password })
 
@@ -41,9 +38,6 @@ export const signup = catchAsync(async (req, res, next) => {
 
 export const signin = catchAsync(async (req, res, next) => {
 	const { email, password } = req.body
-
-	if (!email || !password)
-		return next(new Error('Email or password is missing'))
 
 	const authServiceInstance = Container.get(AuthService)
 	const result = await authServiceInstance.signin({ email, password })
