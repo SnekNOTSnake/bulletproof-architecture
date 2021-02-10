@@ -1,4 +1,5 @@
 import { Container } from 'typedi'
+import myEmitter, { userSignup } from '../../../events/events'
 import AuthService from '../../../services/Auth'
 import catchAsync from '../../../utils/catchAsync'
 
@@ -25,6 +26,8 @@ export const signup = catchAsync(async (req, res, next) => {
 
 	const authServiceInstance = Container.get(AuthService)
 	const user = await authServiceInstance.signup({ name, email, password })
+
+	myEmitter.emit(userSignup, { user })
 
 	res.status(200).json({
 		message: 'success',
