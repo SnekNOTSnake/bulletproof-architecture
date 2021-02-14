@@ -1,4 +1,5 @@
 import { Container } from 'typedi'
+import { decodeCursor, encodeCursor } from '../../../utils/helpers'
 import catchAsync from '../../../utils/catchAsync'
 import BookService from '../../../services/Book'
 
@@ -76,12 +77,21 @@ export const deleteBook = catchAsync(async (req, res, next) => {
 })
 
 export const getBooks = catchAsync(async (req, res, next) => {
+	const { first, where, after } = req.query as any
+
 	const bookServiceInstance = Container.get(BookService)
-	const books = await bookServiceInstance.getBooks()
+	const books = await bookServiceInstance.getBooks({
+		first: Number(first),
+		where,
+		after: after && decodeCursor(after),
+	})
 
 	res.status(200).json({
 		message: 'success',
-		books,
+		edges: books.map((book) => ({
+			node: book,
+			cursor: encodeCursor(book.created.toISOString()),
+		})),
 	})
 })
 

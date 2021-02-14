@@ -4,6 +4,7 @@ import {
 	createBookSchema,
 	updateBookSchema,
 	deleteBookSchema,
+	getBooksSchema,
 } from '../../validateSchemas'
 import { protect } from '../controllers/auth'
 import {
@@ -16,7 +17,7 @@ import {
 
 const router = express.Router()
 
-router.get('/', getBooks)
+router.get('/', validate(getBooksSchema, 'query'), getBooks)
 router.get('/:id', getBook)
 
 // Below are routes accessible to logged in users

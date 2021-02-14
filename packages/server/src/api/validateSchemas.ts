@@ -33,3 +33,11 @@ export const updateBookSchema = Joi.object({
 export const deleteBookSchema = Joi.object({
 	id: bookId,
 })
+
+export const getBooksSchema = Joi.object({
+	first: Joi.number().min(1).required(),
+	where: Joi.object({
+		_id: Joi.string(),
+	}),
+	after: Joi.string(),
+})
