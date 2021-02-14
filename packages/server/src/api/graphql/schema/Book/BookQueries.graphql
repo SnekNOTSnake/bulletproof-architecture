@@ -1,4 +1,8 @@
 extend type Query {
 	book(id: ID!): Book
-	books: [Book]
+	books(after: String, first: Int!, where: BooksWhereInput): BookConnection!
+}
+
+input BooksWhereInput {
+	id: String
 }

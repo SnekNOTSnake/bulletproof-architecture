@@ -5,3 +5,14 @@ type Book {
 	created: DateTime!
 	lastChanged: DateTime!
 }
+
+type BookConnection {
+	edges: [BookEdge!]!
+	nodes: [Book!]!
+	pageInfo: PageInfo!
+}
+
+type BookEdge {
+	node: Book!
+	cursor: String!
+}

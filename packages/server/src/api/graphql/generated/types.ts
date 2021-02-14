@@ -77,13 +77,20 @@ export type MutationUpdateBookArgs = {
 export type Query = {
   __typename?: 'Query';
   book?: Maybe<Book>;
-  books?: Maybe<Array<Maybe<Book>>>;
+  books: BookConnection;
   me?: Maybe<User>;
 };
 
 
 export type QueryBookArgs = {
   id: Scalars['ID'];
+};
+
+
+export type QueryBooksArgs = {
+  after?: Maybe<Scalars['String']>;
+  first: Scalars['Int'];
+  where?: Maybe<BooksWhereInput>;
 };
 
 export type Book = {
@@ -95,8 +102,33 @@ export type Book = {
   lastChanged: Scalars['DateTime'];
 };
 
+export type BookConnection = {
+  __typename?: 'BookConnection';
+  edges: Array<BookEdge>;
+  nodes: Array<Book>;
+  pageInfo: PageInfo;
+};
+
+export type BookEdge = {
+  __typename?: 'BookEdge';
+  node: Book;
+  cursor: Scalars['String'];
+};
+
+export type BooksWhereInput = {
+  id?: Maybe<Scalars['String']>;
+};
 
 
+
+
+export type PageInfo = {
+  __typename?: 'PageInfo';
+  startCursor?: Maybe<Scalars['String']>;
+  endCursor?: Maybe<Scalars['String']>;
+  hasNextPage: Scalars['Boolean'];
+  hasPreviousPage: Scalars['Boolean'];
+};
 
 
 
@@ -182,10 +214,15 @@ export type ResolversTypes = {
   ID: ResolverTypeWrapper<Scalars['ID']>;
   Mutation: ResolverTypeWrapper<{}>;
   Query: ResolverTypeWrapper<{}>;
+  Int: ResolverTypeWrapper<Scalars['Int']>;
   Book: ResolverTypeWrapper<DocumentBook>;
+  BookConnection: ResolverTypeWrapper<Omit<BookConnection, 'edges' | 'nodes'> & { edges: Array<ResolversTypes['BookEdge']>, nodes: Array<ResolversTypes['Book']> }>;
+  BookEdge: ResolverTypeWrapper<Omit<BookEdge, 'node'> & { node: ResolversTypes['Book'] }>;
+  BooksWhereInput: BooksWhereInput;
   DateTime: ResolverTypeWrapper<Scalars['DateTime']>;
   Date: ResolverTypeWrapper<Scalars['Date']>;
   Time: ResolverTypeWrapper<Scalars['Time']>;
+  PageInfo: ResolverTypeWrapper<PageInfo>;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
 };
 
@@ -197,10 +234,15 @@ export type ResolversParentTypes = {
   ID: Scalars['ID'];
   Mutation: {};
   Query: {};
+  Int: Scalars['Int'];
   Book: DocumentBook;
+  BookConnection: Omit<BookConnection, 'edges' | 'nodes'> & { edges: Array<ResolversParentTypes['BookEdge']>, nodes: Array<ResolversParentTypes['Book']> };
+  BookEdge: Omit<BookEdge, 'node'> & { node: ResolversParentTypes['Book'] };
+  BooksWhereInput: BooksWhereInput;
   DateTime: Scalars['DateTime'];
   Date: Scalars['Date'];
   Time: Scalars['Time'];
+  PageInfo: PageInfo;
   Boolean: Scalars['Boolean'];
 };
 
@@ -233,7 +275,7 @@ export type MutationResolvers<ContextType = MyContext, ParentType extends Resolv
 
 export type QueryResolvers<ContextType = MyContext, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
   book?: Resolver<Maybe<ResolversTypes['Book']>, ParentType, ContextType, RequireFields<QueryBookArgs, 'id'>>;
-  books?: Resolver<Maybe<Array<Maybe<ResolversTypes['Book']>>>, ParentType, ContextType>;
+  books?: Resolver<ResolversTypes['BookConnection'], ParentType, ContextType, RequireFields<QueryBooksArgs, 'first'>>;
   me?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
 };
 
@@ -243,6 +285,19 @@ export type BookResolvers<ContextType = MyContext, ParentType extends ResolversP
   author?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
   created?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   lastChanged?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type BookConnectionResolvers<ContextType = MyContext, ParentType extends ResolversParentTypes['BookConnection'] = ResolversParentTypes['BookConnection']> = {
+  edges?: Resolver<Array<ResolversTypes['BookEdge']>, ParentType, ContextType>;
+  nodes?: Resolver<Array<ResolversTypes['Book']>, ParentType, ContextType>;
+  pageInfo?: Resolver<ResolversTypes['PageInfo'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type BookEdgeResolvers<ContextType = MyContext, ParentType extends ResolversParentTypes['BookEdge'] = ResolversParentTypes['BookEdge']> = {
+  node?: Resolver<ResolversTypes['Book'], ParentType, ContextType>;
+  cursor?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -258,15 +313,26 @@ export interface TimeScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes
   name: 'Time';
 }
 
+export type PageInfoResolvers<ContextType = MyContext, ParentType extends ResolversParentTypes['PageInfo'] = ResolversParentTypes['PageInfo']> = {
+  startCursor?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  endCursor?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  hasNextPage?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  hasPreviousPage?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type Resolvers<ContextType = MyContext> = {
   AuthData?: AuthDataResolvers<ContextType>;
   User?: UserResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
   Book?: BookResolvers<ContextType>;
+  BookConnection?: BookConnectionResolvers<ContextType>;
+  BookEdge?: BookEdgeResolvers<ContextType>;
   DateTime?: GraphQLScalarType;
   Date?: GraphQLScalarType;
   Time?: GraphQLScalarType;
+  PageInfo?: PageInfoResolvers<ContextType>;
 };
 
 

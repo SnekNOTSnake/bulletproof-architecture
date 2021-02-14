@@ -24,7 +24,7 @@ type Mutation {
 
 type Query {
   book(id: ID!): Book
-  books: [Book]
+  books(after: String, first: Int!, where: BooksWhereInput): BookConnection!
   me: User
 }
 
@@ -36,10 +36,32 @@ type Book {
   lastChanged: DateTime!
 }
 
+type BookConnection {
+  edges: [BookEdge!]!
+  nodes: [Book!]!
+  pageInfo: PageInfo!
+}
+
+type BookEdge {
+  node: Book!
+  cursor: String!
+}
+
+input BooksWhereInput {
+  id: String
+}
+
 scalar DateTime
 
 scalar Date
 
 scalar Time
+
+type PageInfo {
+  startCursor: String
+  endCursor: String
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+}
 
 `

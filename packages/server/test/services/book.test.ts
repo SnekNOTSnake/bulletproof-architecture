@@ -15,8 +15,8 @@ export const testUser = {
 	password: 'somethingcool',
 }
 
-export const createTestBook = (authorId: string) => ({
-	title: 'test book',
+export const createTestBook = (authorId: string, title = 'test book') => ({
+	title,
 	author: authorId,
 })
 
@@ -46,6 +46,14 @@ describe('Book Service', async () => {
 			expect(book.id).toBeTruthy()
 			expect(book.title).toBe(testBook.title)
 			expect(String(book.author)).toBe(loginResult.user.id)
+
+			// Create more books for other testings
+			await bookServiceInstance.createBook(
+				createTestBook(loginResult.user.id, 'test book 2'),
+			)
+			await bookServiceInstance.createBook(
+				createTestBook(loginResult.user.id, 'test book 3'),
+			)
 		})
 	})
 
@@ -100,12 +108,16 @@ describe('Book Service', async () => {
 	})
 
 	describe('getBooks', () => {
-		it('Should be able to get multiple books', async () => {
-			const books = await bookServiceInstance.getBooks()
+		it('Should be able to get the right numbers requested', async () => {
+			const reqBooks1 = await bookServiceInstance.getBooks({ first: 2 })
 
-			expect(books).toBeTruthy()
-			expect(books.length).toBe(1)
-			expect(books[0].id).toBe(createdBookID)
+			expect(reqBooks1).toBeTruthy()
+			expect(reqBooks1).toHaveLength(2)
+
+			const reqBooks2 = await bookServiceInstance.getBooks({ first: 5 })
+
+			expect(reqBooks2).toBeTruthy()
+			expect(reqBooks2).toHaveLength(3)
 		})
 	})
 

@@ -1,6 +1,7 @@
 import { Model } from 'mongoose'
 import { Service, Inject } from 'typedi'
 import { IBook, DocumentBook } from '../models/Books'
+import { compactMap } from '../utils/helpers'
 
 @Service()
 class BookService {
@@ -53,8 +54,23 @@ class BookService {
 		return book
 	}
 
-	async getBooks() {
-		const books = await this.BooksModel.find()
+	async getBooks({
+		first,
+		after,
+		where,
+	}: {
+		first: number
+		after?: string | null
+		where?: { id?: string | null } | null
+	}) {
+		const books = await this.BooksModel.find({
+			...compactMap(where || {}),
+			...(after ? { created: { $lt: new Date(after) } } : null),
+		})
+			.sort({ created: -1 })
+			.limit(first)
+			.exec()
+
 		return books
 	}
 }
