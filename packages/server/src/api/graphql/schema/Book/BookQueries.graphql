@@ -4,5 +4,5 @@ extend type Query {
 }
 
 input BooksWhereInput {
-	id: String
+	_id: String
 }

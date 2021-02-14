@@ -61,7 +61,7 @@ class BookService {
 	}: {
 		first: number
 		after?: string | null
-		where?: { id?: string | null } | null
+		where?: { _id?: string | null } | null
 	}) {
 		const books = await this.BooksModel.find({
 			...compactMap(where || {}),

@@ -116,7 +116,7 @@ export type BookEdge = {
 };
 
 export type BooksWhereInput = {
-  id?: Maybe<Scalars['String']>;
+  _id?: Maybe<Scalars['String']>;
 };
 
 

@@ -48,7 +48,7 @@ type BookEdge {
 }
 
 input BooksWhereInput {
-  id: String
+  _id: String
 }
 
 scalar DateTime
