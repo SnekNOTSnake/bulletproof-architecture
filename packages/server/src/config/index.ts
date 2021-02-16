@@ -25,3 +25,9 @@ export const AUTH_KEY = process.env.AUTH_KEY || 'jwt'
 export const JWT_SECRET = process.env.JWT_SECRET || '$0m3thingH4RdtOgu3s5'
 export const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '90d'
 export const JWT_COOKIE_EXPIRES_IN = process.env.JWT_COOKIE_EXPIRES_IN || '90'
+
+export const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID || ''
+export const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET || ''
+
+export const GITHUB_CLIENT_ID = process.env.GITHUB_CLIENT_ID || ''
+export const GITHUB_CLIENT_SECRET = process.env.GITHUB_CLIENT_SECRET || ''

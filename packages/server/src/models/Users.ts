@@ -17,7 +17,9 @@ const usersSchema = new Schema({
 	},
 	email: {
 		type: String,
-		required: [true, 'Email is required'],
+		required: function (this: any) {
+			return this.provider === 'email' ? true : false
+		},
 		validate: {
 			validator: function (val: string) {
 				return /^\w+@\w+\.\w+$/.test(val)
@@ -28,12 +30,26 @@ const usersSchema = new Schema({
 	},
 	password: {
 		type: String,
-		required: [true, 'Password is required'],
 	},
 	joined: {
 		type: Date,
 		required: true,
 		default: Date.now(),
+	},
+	provider: {
+		type: String,
+		requried: true,
+		default: 'email',
+	},
+	googleId: {
+		type: String,
+		unique: true,
+		sparse: true,
+	},
+	gitHubId: {
+		type: String,
+		unique: true,
+		sparse: true,
 	},
 })
 

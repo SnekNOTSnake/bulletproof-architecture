@@ -1,0 +1,24 @@
+diff --git a/node_modules/@types/passport-github2/index.d.ts b/node_modules/@types/passport-github2/index.d.ts
+index a938e8c..a7cde7a 100644
+--- a/node_modules/@types/passport-github2/index.d.ts
++++ b/node_modules/@types/passport-github2/index.d.ts
+@@ -61,8 +61,18 @@ export interface StrategyOptionsWithRequest extends _StrategyOptionsBase {
+     passReqToCallback: true;
+ }
+ 
++type VerifyCallback = (err?: Error | null, user?: Express.User, info?: object) => void;
++
+ export class Strategy extends oauth2.Strategy {
+-    constructor(options: StrategyOptions, verify: oauth2.VerifyFunction);
++	constructor(
++		options: StrategyOptions,
++		verify: (
++				accessToken: string,
++				refreshToken: string,
++				profile: Profile,
++				done: VerifyCallback
++		) => void
++	);
+     constructor(options: StrategyOptionsWithRequest, verify: oauth2.VerifyFunctionWithRequest);
+     userProfile(accessToken: string, done: (err?: Error | null, profile?: any) => void): void;
+ 

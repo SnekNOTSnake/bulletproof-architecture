@@ -1,6 +1,7 @@
 import express from 'express'
 import cors from 'cors'
 import cookieParser from 'cookie-parser'
+import initializePassport from './passport'
 
 import restRoutes from '../api/rest'
 import { apolloServer } from '../api/graphql'
@@ -11,6 +12,9 @@ const loadExpress = async ({ app }: Props) => {
 	app.use(cors())
 	app.use(cookieParser())
 	app.use(express.json())
+
+	// Passport
+	initializePassport(app)
 
 	// REST API
 	app.use('/api', restRoutes)

@@ -3,6 +3,7 @@ import { JWT_COOKIE_EXPIRES_IN, AUTH_KEY } from '../../../config'
 import myEmitter, { userSignup } from '../../../events/events'
 import AuthService from '../../../services/Auth'
 import catchAsync from '../../../utils/catchAsync'
+import { createToken } from '../../../utils/token'
 
 export const protect = catchAsync(async (req, res, next) => {
 	const token = req.cookies[AUTH_KEY] || req.headers[AUTH_KEY]
@@ -52,6 +53,32 @@ export const signin = catchAsync(async (req, res, next) => {
 		),
 	})
 
+	res.redirect('/')
+})
+
+export const googleCallback = catchAsync(async (req, res, next) => {
+	if (!req.user)
+		return res.status(400).json({
+			message:
+				"Something is wrong here, are you trying to access this page without asking for Google's permission?",
+		})
+
+	const token = await createToken(req.user.id)
+
+	res.cookie('jwt', token)
+	res.redirect('/')
+})
+
+export const gitHubCallback = catchAsync(async (req, res, next) => {
+	if (!req.user)
+		return res.status(400).json({
+			message:
+				"Something is wrong here, are you trying to access this page without asking for GitHub's permission?",
+		})
+
+	const token = await createToken(req.user.id)
+
+	res.cookie('jwt', token)
 	res.redirect('/')
 })
 

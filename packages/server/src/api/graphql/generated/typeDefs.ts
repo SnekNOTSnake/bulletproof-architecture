@@ -10,7 +10,7 @@ type AuthData {
 type User {
   id: ID!
   name: String!
-  email: String!
+  email: String
   joined: DateTime!
 }
 

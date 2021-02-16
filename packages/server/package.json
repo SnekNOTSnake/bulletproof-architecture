@@ -19,6 +19,9 @@
 		"lodash": "^4.17.20",
 		"mongoose": "^5.11.15",
 		"nodemailer": "^6.4.17",
+		"passport": "^0.4.1",
+		"passport-github2": "^0.1.12",
+		"passport-google-oauth20": "^2.0.0",
 		"reflect-metadata": "^0.1.13",
 		"typedi": "^0.10.0",
 		"winston": "^3.3.3"
