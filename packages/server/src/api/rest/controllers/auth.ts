@@ -1,10 +1,11 @@
 import { Container } from 'typedi'
+import { JWT_COOKIE_EXPIRES_IN, AUTH_KEY } from '../../../config'
 import myEmitter, { userSignup } from '../../../events/events'
 import AuthService from '../../../services/Auth'
 import catchAsync from '../../../utils/catchAsync'
 
 export const protect = catchAsync(async (req, res, next) => {
-	const token = req.headers.jwt as string
+	const token = req.cookies[AUTH_KEY] || req.headers[AUTH_KEY]
 	if (!token) return next(new Error('You have to be logged in first'))
 
 	const authServiceInstance = Container.get(AuthService)
@@ -45,16 +46,13 @@ export const signin = catchAsync(async (req, res, next) => {
 	const authServiceInstance = Container.get(AuthService)
 	const result = await authServiceInstance.signin({ email, password })
 
-	res.status(200).json({
-		message: 'success',
-		token: result.token,
-		user: {
-			id: result.user.id,
-			name: result.user.name,
-			email: result.user.email,
-		},
-		tokenExpiration: result.tokenExpiration,
+	res.cookie('jwt', result.token, {
+		expires: new Date(
+			Date.now() + Number(JWT_COOKIE_EXPIRES_IN) * 24 * 60 * 60 * 1000,
+		),
 	})
+
+	res.redirect('/')
 })
 
 export const me = catchAsync(async (req, res, next) => {

@@ -21,6 +21,7 @@ export const DB_NAME = process.env.DB_NAME || 'bulletproof-graphql'
 export const MAILGUN_SMTP_USERNAME = process.env.MAILGUN_SMTP_USERNAME || ''
 export const MAILGUN_SMTP_PASSWORD = process.env.MAILGUN_SMTP_PASSWORD || ''
 
+export const AUTH_KEY = process.env.AUTH_KEY || 'jwt'
 export const JWT_SECRET = process.env.JWT_SECRET || '$0m3thingH4RdtOgu3s5'
 export const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '90d'
 export const JWT_COOKIE_EXPIRES_IN = process.env.JWT_COOKIE_EXPIRES_IN || '90'

@@ -1,13 +1,12 @@
 import { Request } from 'express'
+import { AUTH_KEY } from '../config'
 import { decodeToken } from './token'
 import { DocumentUser } from '../models/Users'
 import loaders, { ILoaders } from './dataloaders'
 
 // Users
-const TOKEN_HEADER_NAME = 'jwt'
-
 const getUser = async (req: Request) => {
-	const token = req.get(TOKEN_HEADER_NAME)
+	const token = req.cookies[AUTH_KEY] || req.headers[AUTH_KEY]
 	if (!token) return null
 
 	try {
