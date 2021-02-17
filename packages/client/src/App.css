@@ -1,0 +1,23 @@
+.App h2 {
+	font-weight: normal;
+	font-style: italic;
+	margin-bottom: 8px;
+}
+.App h3 {
+	color: rgba(0, 0, 0, 0.67);
+	margin-top: 0;
+	font-weight: lighter;
+	font-style: italic;
+}
+.App p {
+	line-height: 1.5;
+	letter-spacing: 0.00938em;
+	color: rgba(0, 0, 0, 0.87);
+	font-size: 1rem;
+	word-break: break-word;
+}
+.App .container {
+	margin: auto;
+	max-width: 1200px;
+	padding: 75px;
+}
