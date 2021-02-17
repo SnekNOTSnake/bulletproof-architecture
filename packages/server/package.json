@@ -13,6 +13,7 @@
 		"deepmerge": "^4.2.2",
 		"dotenv": "^8.2.0",
 		"express": "^4.17.1",
+		"graphql": "^15.5.0",
 		"graphql-iso-date": "^3.6.1",
 		"joi": "^17.4.0",
 		"jsonwebtoken": "^8.5.1",
@@ -25,9 +26,6 @@
 		"reflect-metadata": "^0.1.13",
 		"typedi": "^0.10.0",
 		"winston": "^3.3.3"
-	},
-	"peerDependencies": {
-		"graphql": "^15.5.0"
 	},
 	"scripts": {
 		"dev": "nodemon",
