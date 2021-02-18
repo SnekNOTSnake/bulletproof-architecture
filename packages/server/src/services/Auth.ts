@@ -16,7 +16,7 @@ class AuthService {
 
 	async protect(token: string) {
 		const decoded = await decodeToken(token)
-		const user = await this.UsersModel.findById(decoded.userId)
+		const user = await this.UsersModel.findById(decoded.id)
 
 		if (!user) throw new Error('No user with that ID, it may have been deleted')
 
@@ -47,7 +47,7 @@ class AuthService {
 			throw new Error('Incorrect password')
 		}
 
-		const token = await createToken(user.id)
+		const token = await createToken(user)
 
 		return {
 			token,

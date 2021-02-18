@@ -1,9 +1,9 @@
 import { Container } from 'typedi'
-import { JWT_COOKIE_EXPIRES_IN, AUTH_KEY } from '../../../config'
+import { AUTH_KEY } from '../../../config'
 import myEmitter, { userSignup } from '../../../events/events'
 import AuthService from '../../../services/Auth'
 import catchAsync from '../../../utils/catchAsync'
-import { createToken } from '../../../utils/token'
+import { createToken, sendToken } from '../../../utils/token'
 
 export const protect = catchAsync(async (req, res, next) => {
 	const token = req.cookies[AUTH_KEY] || req.headers[AUTH_KEY]
@@ -47,11 +47,7 @@ export const signin = catchAsync(async (req, res, next) => {
 	const authServiceInstance = Container.get(AuthService)
 	const result = await authServiceInstance.signin({ email, password })
 
-	res.cookie('jwt', result.token, {
-		expires: new Date(
-			Date.now() + Number(JWT_COOKIE_EXPIRES_IN) * 24 * 60 * 60 * 1000,
-		),
-	})
+	sendToken(res, result.token)
 
 	res.redirect('/')
 })
@@ -63,9 +59,9 @@ export const googleCallback = catchAsync(async (req, res, next) => {
 				"Something is wrong here, are you trying to access this page without asking for Google's permission?",
 		})
 
-	const token = await createToken(req.user.id)
+	const token = await createToken(req.user)
+	sendToken(res, token)
 
-	res.cookie('jwt', token)
 	res.redirect('/')
 })
 
@@ -76,9 +72,9 @@ export const gitHubCallback = catchAsync(async (req, res, next) => {
 				"Something is wrong here, are you trying to access this page without asking for GitHub's permission?",
 		})
 
-	const token = await createToken(req.user.id)
+	const token = await createToken(req.user)
+	sendToken(res, token)
 
-	res.cookie('jwt', token)
 	res.redirect('/')
 })
 

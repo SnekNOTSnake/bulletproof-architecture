@@ -7,7 +7,9 @@ export interface IUser {
 	password: string
 }
 
-export interface DocumentUser extends IUser, Document {}
+export interface DocumentUser extends IUser, Document {
+	id: string
+}
 
 const usersSchema = new Schema({
 	name: {

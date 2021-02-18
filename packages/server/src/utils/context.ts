@@ -11,7 +11,7 @@ const getUser = async (req: Request) => {
 
 	try {
 		const decoded = await decodeToken(token)
-		const user = await loaders.userByIds.load(decoded.userId)
+		const user = await loaders.userByIds.load(decoded.id)
 		return user
 	} catch (err) {
 		return null
