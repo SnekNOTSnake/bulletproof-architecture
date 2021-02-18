@@ -10,9 +10,8 @@ export const apolloServer = (app: Application) => {
 		schema: getSchema(),
 	})
 
-	const whitelist = ['http://localhost:8080']
 	server.applyMiddleware({
 		app,
-		cors: { credentials: true, origin: whitelist },
+		cors: false,
 	})
 }

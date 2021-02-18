@@ -8,8 +8,9 @@ import { apolloServer } from '../api/graphql'
 
 type Props = { app: express.Application }
 
+const whitelist = ['http://localhost:8080']
 const loadExpress = async ({ app }: Props) => {
-	app.use(cors())
+	app.use(cors({ origin: whitelist, credentials: true }))
 	app.use(cookieParser())
 	app.use(express.json())
 
