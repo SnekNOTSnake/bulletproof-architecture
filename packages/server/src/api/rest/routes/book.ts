@@ -20,13 +20,10 @@ const router = express.Router()
 router.get('/', validate(getBooksSchema, 'query'), getBooks)
 router.get('/:id', getBook)
 
-// Below are routes accessible to logged in users
-router.use(protect)
-
 router
 	.route('/')
-	.post(validate(createBookSchema), createBook)
-	.patch(validate(updateBookSchema), updateBook)
-	.delete(validate(deleteBookSchema), deleteBook)
+	.post(protect, validate(createBookSchema), createBook)
+	.patch(protect, validate(updateBookSchema), updateBook)
+	.delete(protect, validate(deleteBookSchema), deleteBook)
 
 export default router

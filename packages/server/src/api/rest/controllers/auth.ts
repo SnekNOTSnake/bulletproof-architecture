@@ -49,7 +49,13 @@ export const signin = catchAsync(async (req, res, next) => {
 
 	sendToken(res, result.token)
 
-	res.redirect('/')
+	res.json({
+		message: 'success',
+		authData: {
+			token: result.token,
+			tokenExpiration: result.tokenExpiration,
+		},
+	})
 })
 
 export const googleCallback = catchAsync(async (req, res, next) => {

@@ -50,9 +50,6 @@ router.get(
 	gitHubCallback,
 )
 
-// Below are routes accessible to logged in users
-router.use(protect)
-
-router.get('/me', me)
+router.get('/me', protect, me)
 
 export default router
