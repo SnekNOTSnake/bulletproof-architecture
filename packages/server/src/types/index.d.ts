@@ -1,4 +1,5 @@
 type ThenArg<T> = T extends PromiseLike<infer U> ? U : T
+type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>
 
 type ReplaceReturnType<T extends (...a: any) => any, TNewReturn> = (
 	...a: Parameters<T>
@@ -10,7 +11,7 @@ declare namespace Express {
 		user?: {
 			id: string
 			name: string
-			email: string
+			email?: string
 			joined: Date
 		}
 	}

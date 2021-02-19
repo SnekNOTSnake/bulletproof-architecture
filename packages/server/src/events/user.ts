@@ -5,5 +5,5 @@ import { sendGreetingMail } from '../utils/mail'
 type Params = { user: DocumentUser }
 
 myEmitter.on(userSignup, async ({ user }: Params) => {
-	await sendGreetingMail({ to: user.email })
+	if (user.email) await sendGreetingMail({ to: user.email })
 })

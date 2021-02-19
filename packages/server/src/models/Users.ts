@@ -2,9 +2,9 @@ import { Document, Schema, model } from 'mongoose'
 
 export interface IUser {
 	name: string
-	email: string
+	email?: string
 	joined: Date
-	password: string
+	password?: string
 }
 
 export interface DocumentUser extends IUser, Document {

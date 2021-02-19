@@ -43,6 +43,10 @@ class AuthService {
 		const user = await this.UsersModel.findOne({ email })
 
 		if (!user) throw new Error('No user with that email')
+		if (!user.password)
+			throw new Error(
+				'User is not using password authentication, they are using either Google or Github',
+			)
 		if (!bcrypt.compareSync(password, user.password)) {
 			throw new Error('Incorrect password')
 		}

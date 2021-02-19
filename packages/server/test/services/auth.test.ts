@@ -24,7 +24,7 @@ describe('Auth Service', function () {
 			expect(user.id).toBeTruthy()
 			expect(user.name).toBe(testUser.name)
 			expect(user.email).toBe(testUser.email)
-			expect(bcrypt.compareSync(testUser.password, user.password)).toBeTruthy()
+			expect(bcrypt.compareSync(testUser.password, user.password!)).toBeTruthy()
 		})
 
 		it('Should throw when there is existing user with the same email', async () => {
