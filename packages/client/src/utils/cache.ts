@@ -8,7 +8,7 @@ const cache = new InMemoryCache({
 					keyArgs: false,
 					merge: (existing, incoming) => {
 						const nodes: Reference[] = []
-						if (existing && incoming.nodes) nodes.push(...existing.nodes)
+						if (existing && existing.nodes) nodes.push(...existing.nodes)
 						if (incoming && incoming.nodes) nodes.push(...incoming.nodes)
 
 						return {

@@ -13,13 +13,17 @@ type Props = { user?: ITokenPayload }
 const Navbar: React.FC<Props> = ({ user }) => {
 	const RenderLogin = user ? (
 		<React.Fragment>
-			<span>{user.name}</span>
+			<Link to="/me">{user.name}</Link>
+			<Link to="/create-book">Create Book</Link>
 			<button type="button" onClick={logout}>
 				Logout
 			</button>
 		</React.Fragment>
 	) : (
-		<Link to="/login">Login</Link>
+		<React.Fragment>
+			<Link to="/login">Login</Link>
+			<Link to="/signup">Signup</Link>
+		</React.Fragment>
 	)
 
 	return (

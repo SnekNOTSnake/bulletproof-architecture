@@ -1,6 +1,7 @@
 import React from 'react'
 import axios from 'axios'
 import Cookie from 'universal-cookie'
+import { Link } from 'react-router-dom'
 
 const cookie = new Cookie()
 const login = (token: string) => {
@@ -55,15 +56,20 @@ const Login: React.FC = () => {
 						name="email"
 						value={email}
 						onChange={onEmailChange}
+						placeholder="Email"
 					/>
 					<input
 						type="password"
 						name="password"
 						value={pass}
 						onChange={onPassChange}
+						placeholder="Password"
 					/>
 					<button type="submit">Submit</button>
 				</form>
+				<p>
+					Don't have an account? <Link to="/signup">Signup</Link>!
+				</p>
 			</div>
 		</div>
 	)

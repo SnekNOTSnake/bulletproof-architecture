@@ -7,6 +7,9 @@ import Navbar from '../Navbar'
 const Home = React.lazy(() => import('../Home'))
 const Book = React.lazy(() => import('../Book'))
 const Login = React.lazy(() => import('../Login'))
+const Profile = React.lazy(() => import('../Profile'))
+const CreateBook = React.lazy(() => import('../CreateBook'))
+const Signup = React.lazy(() => import('../Signup'))
 
 const cookies = new Cookie()
 
@@ -36,6 +39,13 @@ const App: React.FC = () => {
 							return <Login />
 						}}
 					/>
+					<Route exact path="/me" render={() => <Profile user={decoded} />} />
+					<Route
+						exact
+						path="/create-book"
+						render={() => <CreateBook user={decoded} />}
+					/>
+					<Route exact path="/signup" render={() => <Signup />} />
 				</Switch>
 			</React.Suspense>
 		</React.Fragment>

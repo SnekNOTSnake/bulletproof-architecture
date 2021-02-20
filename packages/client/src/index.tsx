@@ -10,6 +10,7 @@ import './index.css'
 const client = new ApolloClient({
 	cache: cache,
 	uri: 'http://localhost:4200/graphql',
+	credentials: 'include',
 })
 
 ReactDOM.render(
