@@ -36,7 +36,7 @@ const usersSchema = new Schema({
 	joined: {
 		type: Date,
 		required: true,
-		default: Date.now(),
+		default: Date.now,
 	},
 	provider: {
 		type: String,
