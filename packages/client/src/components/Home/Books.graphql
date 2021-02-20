@@ -1,0 +1,18 @@
+# useInfiniteQuery
+query Books($first: Int!, $after: String, $where: BooksWhereInput) {
+	books(first: $first, after: $after, where: $where) {
+		nodes {
+			id
+			title
+			created
+			lastChanged
+			author {
+				name
+			}
+		}
+		pageInfo {
+			endCursor
+			hasNextPage
+		}
+	}
+}

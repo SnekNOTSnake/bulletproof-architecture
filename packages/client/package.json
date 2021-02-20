@@ -5,11 +5,18 @@
 	"license": "MIT",
 	"private": true,
 	"dependencies": {
+		"@apollo/client": "^3.3.11",
+		"axios": "^0.21.1",
+		"graphql": "^15.5.0",
+		"jwt-decode": "^3.1.2",
 		"react": "^17.0.1",
-		"react-dom": "^17.0.1"
+		"react-dom": "^17.0.1",
+		"react-router-dom": "^5.2.0",
+		"universal-cookie": "^4.0.4"
 	},
 	"scripts": {
 		"dev": "webpack serve --config webpack.dev.js",
-		"build": "NODE_ENV=production webpack --config webpack.prod.js"
+		"build": "NODE_ENV=production webpack --config webpack.prod.js",
+		"generate-stats": "webpack --profile --config webpack.prod.js > stats.json"
 	}
 }

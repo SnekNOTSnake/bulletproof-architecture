@@ -1,6 +1,8 @@
 overwrite: true
 schema:
   - ./packages/server/src/api/graphql/schema/**/*.graphql
+documents:
+  - ./packages/client/src/**/*.graphql
 generates:
   ./packages/server/src/api/graphql/generated/schema.graphql:
     plugins:
@@ -22,3 +24,10 @@ generates:
         User: ../../../models/Users#DocumentUser
         Book: ../../../models/Books#DocumentBook
       contextType: ../../../utils/context#MyContext
+  ./packages/client/src/generated/types.ts:
+    plugins:
+      - typescript
+      - typescript-operations
+      - typescript-react-apollo
+    config:
+      withHooks: true

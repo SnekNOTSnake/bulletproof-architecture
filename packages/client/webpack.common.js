@@ -16,20 +16,21 @@ const fileExtensions = [
 
 /** @type import('webpack').Configuration */
 module.exports = {
+	performance: {
+		maxAssetSize: 384000,
+		maxEntrypointSize: 384000,
+	},
 	entry: './src/index.tsx',
 	output: {
 		filename: '[name].bundle.js',
 		path: path.resolve(__dirname, 'dist'),
+		publicPath: '/',
 	},
 	resolve: {
 		extensions: ['.js', '.jsx', '.ts', '.tsx', '.json'],
 	},
 	module: {
 		rules: [
-			{
-				test: /\.css$/,
-				use: ['style-loader', 'css-loader'],
-			},
 			{
 				test: /\.(js|ts)x?$/,
 				loader: 'babel-loader',
