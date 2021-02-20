@@ -6,15 +6,23 @@ documents:
 generates:
   ./packages/server/src/api/graphql/generated/schema.graphql:
     plugins:
+      - add:
+          content: '# Do not edit directly!'
       - schema-ast
+    config:
+      includeDirectives: true
   ./packages/server/src/api/graphql/generated/typeDefs.ts:
     plugins:
+      - add:
+          content: '// Do not edit directly!'
       - add:
           content: 'export default `'
       - schema-ast
       - add:
           placement: 'append'
           content: '`'
+    config:
+      includeDirectives: true
   ./packages/server/src/api/graphql/generated/types.ts:
     plugins:
       - typescript

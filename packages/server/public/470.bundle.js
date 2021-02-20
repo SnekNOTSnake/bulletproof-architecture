@@ -1,0 +1,2 @@
+(self.webpackChunk_bulletproof_client=self.webpackChunk_bulletproof_client||[]).push([[470],{9470:(e,l,t)=>{"use strict";t.r(l),t.d(l,{default:()=>r});var n=t(6694);const r=e=>{let{user:l}=e;if(!l)return n.createElement("div",null,"You have to be logged in first");const t=l.email?n.createElement("li",null,"Email: ",l.email):"";return n.createElement("div",{className:"Profile"},n.createElement("h2",null,l.name),n.createElement("ul",null,n.createElement("li",null,"ID: ",l.id),n.createElement("li",null,"Joined: ",l.joined),t))}}}]);
+//# sourceMappingURL=470.bundle.js.map
