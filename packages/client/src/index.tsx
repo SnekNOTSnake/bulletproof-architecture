@@ -5,6 +5,7 @@ import { BrowserRouter as Router } from 'react-router-dom'
 
 import App from './components/App'
 import cache from './utils/cache'
+import './fonts/roboto/stylesheet.css'
 import './index.css'
 
 const client = new ApolloClient({

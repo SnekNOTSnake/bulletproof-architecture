@@ -2,6 +2,20 @@ import React from 'react'
 import axios from 'axios'
 import { Link } from 'react-router-dom'
 
+import Alert from '@material-ui/lab/Alert'
+import Box from '@material-ui/core/Box'
+import Grid from '@material-ui/core/Grid'
+import Card from '@material-ui/core/Card'
+import CardHeader from '@material-ui/core/CardHeader'
+import CardContent from '@material-ui/core/CardContent'
+import CardActions from '@material-ui/core/CardActions'
+import Button from '@material-ui/core/Button'
+import LinkComponent from '@material-ui/core/Link'
+import TextField from '@material-ui/core/TextField'
+import Typography from '@material-ui/core/Typography'
+
+import useStyles from './Signup.style'
+
 type InputChange = React.ChangeEvent<HTMLInputElement>
 type FormSubmit = React.FormEvent<HTMLFormElement>
 
@@ -39,39 +53,63 @@ const Signup: React.FC = () => {
 		}
 	}
 
+	const classes = useStyles()
+
 	return (
-		<div className="Signup">
-			<h2>Signup</h2>
-			{error ? <div style={{ color: 'red' }}>{error}</div> : ''}
-			{success ? <div>{success}</div> : ''}
-			<form onSubmit={onSubmit}>
-				<input
-					type="text"
-					name="name"
-					value={name}
-					onChange={onNameChange}
-					placeholder="Name"
-				/>
-				<input
-					type="text"
-					name="email"
-					value={email}
-					onChange={onEmailChange}
-					placeholder="Email"
-				/>
-				<input
-					type="password"
-					name="password"
-					value={password}
-					onChange={onPasswordChange}
-					placeholder="Password"
-				/>
-				<button type="submit">Submit</button>
-			</form>
-			<p>
-				Already have an account? <Link to="/login">Login</Link>!
-			</p>
-		</div>
+		<Box>
+			<Grid container>
+				<Grid item md={6} xs={12}>
+					<Card>
+						<form onSubmit={onSubmit}>
+							<CardHeader title="Sign up" />
+							<CardContent>
+								<Box className={classes.alert}>
+									{error ? <Alert severity="error">{error}</Alert> : ''}
+									{success ? <Alert>{success}</Alert> : ''}
+								</Box>
+								<TextField
+									className={classes.input}
+									fullWidth
+									variant="outlined"
+									label="Name"
+									value={name}
+									onChange={onNameChange}
+								/>
+								<TextField
+									className={classes.input}
+									fullWidth
+									variant="outlined"
+									label="Email"
+									value={email}
+									onChange={onEmailChange}
+								/>
+								<TextField
+									className={classes.input}
+									fullWidth
+									variant="outlined"
+									label="Password"
+									type="password"
+									value={password}
+									onChange={onPasswordChange}
+								/>
+							</CardContent>
+							<CardActions>
+								<Button variant="contained" color="primary" type="submit">
+									Submit
+								</Button>
+								<Typography>
+									Already have an account?{' '}
+									<LinkComponent component={Link} to="/login">
+										Sign in
+									</LinkComponent>
+									!
+								</Typography>
+							</CardActions>
+						</form>
+					</Card>
+				</Grid>
+			</Grid>
+		</Box>
 	)
 }
 

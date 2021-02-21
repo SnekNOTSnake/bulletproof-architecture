@@ -1,46 +1,85 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
+import { formatDistance } from 'date-fns'
+
+import Box from '@material-ui/core/Box'
+import Grid from '@material-ui/core/Grid'
+import Card from '@material-ui/core/Card'
+import CardHeader from '@material-ui/core/CardHeader'
+import CardContent from '@material-ui/core/CardContent'
+import CardActions from '@material-ui/core/CardActions'
+import Button from '@material-ui/core/Button'
+import LinkComponent from '@material-ui/core/Link'
+import Typography from '@material-ui/core/Typography'
+
+import useStyles from './Home.style'
 import { useBooksQuery } from '../../generated/types'
-import './Home.css'
 
 const options = { variables: { first: 2 } }
 const Home: React.FC = () => {
 	const { data, loading, error, fetchMore } = useBooksQuery(options)
 
-	if (error) return <div>{error.message}</div>
-	if (loading) return <div>Loading...</div>
+	const classes = useStyles()
+
+	if (error) return <Typography variant="h5">{error.message}</Typography>
+	if (loading) return <Typography variant="h6">Loading data...</Typography>
 
 	return (
-		<div className="Home">
-			<div className="container">
+		<Box>
+			<Grid container spacing={3}>
 				{data?.books.nodes.map((book) => (
-					<div key={book.id}>
-						<Link to={`/book/${book.id}`}>
-							<h2>{book.title}</h2>
-						</Link>
-						<ul>
-							<li>By {book.author.name}</li>
-							<li>Created at {book.created}</li>
-							<li>Updated at {book.lastChanged}</li>
-						</ul>
-					</div>
-				))}
-				{data?.books.pageInfo.hasNextPage ? (
-					<button
-						type="button"
-						onClick={() =>
-							fetchMore({
-								variables: { first: 2, after: data.books.pageInfo.endCursor },
-							})
-						}
+					<Grid
+						className={classes.cardGrid}
+						item
+						md={4}
+						sm={6}
+						xs={12}
+						key={book.id}
 					>
-						More
-					</button>
-				) : (
-					''
-				)}
-			</div>
-		</div>
+						<Card>
+							<CardHeader
+								title={book.title}
+								subheader={`By ${book.author.name}, ${formatDistance(
+									new Date(book.created),
+									new Date(),
+								)} ago`}
+							/>
+							<CardContent>
+								<Typography>
+									Updated {formatDistance(new Date(book.created), new Date())}{' '}
+									ago
+								</Typography>
+							</CardContent>
+							<CardActions>
+								<LinkComponent
+									underline="none"
+									component={Link}
+									to={`/book/${book.id}`}
+								>
+									<Button color="inherit">Details</Button>
+								</LinkComponent>
+							</CardActions>
+						</Card>
+					</Grid>
+				))}
+			</Grid>
+			{data?.books.pageInfo.hasNextPage ? (
+				<Button
+					color="primary"
+					variant="contained"
+					type="button"
+					onClick={() =>
+						fetchMore({
+							variables: { first: 2, after: data.books.pageInfo.endCursor },
+						})
+					}
+				>
+					More
+				</Button>
+			) : (
+				''
+			)}
+		</Box>
 	)
 }
 

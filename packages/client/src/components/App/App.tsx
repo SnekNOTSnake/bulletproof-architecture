@@ -2,6 +2,11 @@ import React from 'react'
 import { Switch, Route, Redirect } from 'react-router-dom'
 import Cookie from 'universal-cookie'
 import decode from 'jwt-decode'
+
+import Container from '@material-ui/core/Container'
+import Typography from '@material-ui/core/Typography'
+
+import useStyles from './App.style'
 import Navbar from '../Navbar'
 
 const Home = React.lazy(() => import('../Home'))
@@ -24,10 +29,14 @@ const App: React.FC = () => {
 		}
 	}, [])
 
+	const classes = useStyles()
+
 	return (
-		<React.Fragment>
+		<Container fixed className={classes.container}>
 			<Navbar user={decoded} />
-			<React.Suspense fallback={<div>Loading...</div>}>
+			<React.Suspense
+				fallback={<Typography variant="h6">Loading...</Typography>}
+			>
 				<Switch>
 					<Route exact path="/" render={() => <Home />} />
 					<Route exact path="/book/:id" render={(args) => <Book {...args} />} />
@@ -48,7 +57,7 @@ const App: React.FC = () => {
 					<Route exact path="/signup" render={() => <Signup />} />
 				</Switch>
 			</React.Suspense>
-		</React.Fragment>
+		</Container>
 	)
 }
 

@@ -2,35 +2,50 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 import Cookie from 'universal-cookie'
 
+import Box from '@material-ui/core/Box'
+import LinkComponent from '@material-ui/core/Link'
+import Button from '@material-ui/core/Button'
+
+import useStyles from './Navbar.style'
+
 const cookies = new Cookie()
 const logout = () => {
 	cookies.remove('jwt')
 	window.location.href = '/'
 }
 
-type Props = { user?: ITokenPayload }
+type NavbarProps = { user?: ITokenPayload }
+type LinkButtonProps = { to: string; text: string }
 
-const Navbar: React.FC<Props> = ({ user }) => {
+const LinkButton: React.FC<LinkButtonProps> = ({ to, text }) => (
+	<LinkComponent underline="none" component={Link} to={to}>
+		<Button color="inherit">{text}</Button>
+	</LinkComponent>
+)
+
+const Navbar: React.FC<NavbarProps> = ({ user }) => {
+	const classes = useStyles()
+
 	const RenderLogin = user ? (
 		<React.Fragment>
-			<Link to="/me">{user.name}</Link>
-			<Link to="/create-book">Create Book</Link>
-			<button type="button" onClick={logout}>
+			<LinkButton to="/me" text={user.name} />
+			<LinkButton to="/create-book" text="Create Book" />
+			<Button type="button" onClick={logout}>
 				Logout
-			</button>
+			</Button>
 		</React.Fragment>
 	) : (
 		<React.Fragment>
-			<Link to="/login">Login</Link>
-			<Link to="/signup">Signup</Link>
+			<LinkButton to="/login" text="Login" />
+			<LinkButton to="/signup" text="Sign up" />
 		</React.Fragment>
 	)
 
 	return (
-		<div className="Navbar">
-			<Link to="/">Home</Link>
+		<Box className={classes.root}>
+			<LinkButton to="/" text="Home" />
 			{RenderLogin}
-		</div>
+		</Box>
 	)
 }
 
