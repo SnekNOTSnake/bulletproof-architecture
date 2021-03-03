@@ -1,27 +1,8 @@
 import { Container } from 'typedi'
-import { AUTH_KEY } from '../../../config'
 import myEmitter, { userSignup } from '../../../events/events'
 import AuthService from '../../../services/Auth'
 import catchAsync from '../../../utils/catchAsync'
 import { createToken, sendToken } from '../../../utils/token'
-
-export const protect = catchAsync(async (req, res, next) => {
-	const token = req.cookies[AUTH_KEY] || req.headers[AUTH_KEY]
-	if (!token) return next(new Error('You have to be logged in first'))
-
-	const authServiceInstance = Container.get(AuthService)
-	const user = await authServiceInstance.protect(token)
-
-	// Assign logged in User's ID to `req.user`
-	req.user = {
-		id: user.id,
-		name: user.name,
-		email: user.email,
-		joined: user.joined,
-	}
-
-	next()
-})
 
 export const signup = catchAsync(async (req, res, next) => {
 	const { name, email, password } = req.body

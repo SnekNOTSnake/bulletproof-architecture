@@ -3,11 +3,13 @@
 
 import jwt from 'jsonwebtoken'
 import { Response } from 'express'
-import { IUser } from '../models/Users'
 import { JWT_SECRET, JWT_EXPIRES_IN, JWT_COOKIE_EXPIRES_IN } from '../config'
 
-interface ITokenPayload extends Omit<IUser, 'password'> {
+type ITokenPayload = {
 	id: string
+	name: string
+	email?: string
+	joined: Date
 }
 
 export const createToken = (user: ITokenPayload) =>

@@ -1,6 +1,6 @@
 import { GraphQLResolveInfo, GraphQLScalarType, GraphQLScalarTypeConfig } from 'graphql';
-import { DocumentUser } from '../../../models/Users';
-import { DocumentBook } from '../../../models/Books';
+import { IUser } from '../../../models/Users';
+import { IBook } from '../../../models/Books';
 import { MyContext } from '../../../utils/context';
 export type Maybe<T> = T | null;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -210,12 +210,12 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 export type ResolversTypes = {
   AuthData: ResolverTypeWrapper<Omit<AuthData, 'user'> & { user: ResolversTypes['User'] }>;
   String: ResolverTypeWrapper<Scalars['String']>;
-  User: ResolverTypeWrapper<DocumentUser>;
+  User: ResolverTypeWrapper<IUser>;
   ID: ResolverTypeWrapper<Scalars['ID']>;
   Mutation: ResolverTypeWrapper<{}>;
   Query: ResolverTypeWrapper<{}>;
   Int: ResolverTypeWrapper<Scalars['Int']>;
-  Book: ResolverTypeWrapper<DocumentBook>;
+  Book: ResolverTypeWrapper<IBook>;
   BookConnection: ResolverTypeWrapper<Omit<BookConnection, 'edges' | 'nodes'> & { edges: Array<ResolversTypes['BookEdge']>, nodes: Array<ResolversTypes['Book']> }>;
   BookEdge: ResolverTypeWrapper<Omit<BookEdge, 'node'> & { node: ResolversTypes['Book'] }>;
   BooksWhereInput: BooksWhereInput;
@@ -230,12 +230,12 @@ export type ResolversTypes = {
 export type ResolversParentTypes = {
   AuthData: Omit<AuthData, 'user'> & { user: ResolversParentTypes['User'] };
   String: Scalars['String'];
-  User: DocumentUser;
+  User: IUser;
   ID: Scalars['ID'];
   Mutation: {};
   Query: {};
   Int: Scalars['Int'];
-  Book: DocumentBook;
+  Book: IBook;
   BookConnection: Omit<BookConnection, 'edges' | 'nodes'> & { edges: Array<ResolversParentTypes['BookEdge']>, nodes: Array<ResolversParentTypes['Book']> };
   BookEdge: Omit<BookEdge, 'node'> & { node: ResolversParentTypes['Book'] };
   BooksWhereInput: BooksWhereInput;

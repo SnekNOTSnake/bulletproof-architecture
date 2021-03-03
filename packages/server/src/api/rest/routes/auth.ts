@@ -1,11 +1,11 @@
 import express from 'express'
 import passport from 'passport'
 import validate from '../middlewares/validate'
+import protect from '../middlewares/protect'
 import { signupSchema, signinSchema } from '../../validateSchemas'
 import {
 	signup,
 	signin,
-	protect,
 	googleCallback,
 	gitHubCallback,
 	me,

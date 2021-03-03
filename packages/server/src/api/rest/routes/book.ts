@@ -6,7 +6,7 @@ import {
 	deleteBookSchema,
 	getBooksSchema,
 } from '../../validateSchemas'
-import { protect } from '../controllers/auth'
+import protect from '../middlewares/protect'
 import {
 	createBook,
 	deleteBook,

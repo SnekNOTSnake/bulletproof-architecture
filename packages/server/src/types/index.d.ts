@@ -1,3 +1,5 @@
+type IUser = import('../models/Users').IUser
+
 type ThenArg<T> = T extends PromiseLike<infer U> ? U : T
 type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>
 
@@ -8,12 +10,7 @@ type ReplaceReturnType<T extends (...a: any) => any, TNewReturn> = (
 // Extend Express' `req` object to contain `user` with an `id`
 declare namespace Express {
 	export interface Request {
-		user?: {
-			id: string
-			name: string
-			email?: string
-			joined: Date
-		}
+		user?: IUser
 	}
 }
 

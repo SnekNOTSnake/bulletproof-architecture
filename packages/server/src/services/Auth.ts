@@ -3,11 +3,11 @@ import { Service, Inject } from 'typedi'
 import bcrypt from 'bcrypt'
 import { createToken, decodeToken } from '../utils/token'
 import { SALT_ROUND, JWT_COOKIE_EXPIRES_IN } from '../config'
-import { IUser, DocumentUser } from '../models/Users'
+import { IUser } from '../models/Users'
 
 @Service()
 class AuthService {
-	constructor(@Inject('usersModel') private UsersModel: Model<DocumentUser>) {}
+	constructor(@Inject('usersModel') private UsersModel: Model<IUser>) {}
 
 	async getUser(id: string) {
 		const user = await this.UsersModel.findById(id)
@@ -27,7 +27,11 @@ class AuthService {
 		name,
 		email,
 		password,
-	}: Pick<IUser, 'name' | 'email' | 'password'>) {
+	}: {
+		name: string
+		email: string
+		password: string
+	}) {
 		const encrypted = await bcrypt.hash(password, SALT_ROUND)
 
 		const existingUser = await this.UsersModel.findOne({ email })
@@ -39,7 +43,7 @@ class AuthService {
 		return user
 	}
 
-	async signin({ email, password }: Pick<IUser, 'email' | 'password'>) {
+	async signin({ email, password }: { email: string; password: string }) {
 		const user = await this.UsersModel.findOne({ email })
 
 		if (!user) throw new Error('No user with that email')

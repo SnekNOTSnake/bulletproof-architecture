@@ -29,8 +29,8 @@ generates:
       - typescript-resolvers
     config:
       mappers:
-        User: ../../../models/Users#DocumentUser
-        Book: ../../../models/Books#DocumentBook
+        User: ../../../models/Users#IUser
+        Book: ../../../models/Books#IBook
       contextType: ../../../utils/context#MyContext
   ./packages/client/src/generated/types.ts:
     plugins:

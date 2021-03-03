@@ -1,7 +1,7 @@
 import { Request } from 'express'
 import { AUTH_KEY } from '../config'
 import { decodeToken } from './token'
-import { DocumentUser } from '../models/Users'
+import { IUser } from '../models/Users'
 import loaders, { ILoaders } from './dataloaders'
 
 // Users
@@ -20,7 +20,7 @@ const getUser = async (req: Request) => {
 
 // Context
 export interface MyContext {
-	user: DocumentUser
+	user: IUser
 	loaders: ILoaders
 }
 

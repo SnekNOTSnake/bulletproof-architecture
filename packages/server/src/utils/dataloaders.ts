@@ -1,6 +1,6 @@
 import DataLoader from 'dataloader'
-import UserModel, { DocumentUser } from '../models/Users'
-import BookModel, { DocumentBook } from '../models/Books'
+import UserModel, { IUser } from '../models/Users'
+import BookModel, { IBook } from '../models/Books'
 
 /* async function idsBatchLoad(model: any, keys: readonly string[]) {
 	const documents = await model.findById({ $in: keys })
@@ -13,24 +13,24 @@ async function batchLoad(model: any, keys: readonly string[]) {
 }
 
 export const loaders: ILoaders = {
-	userByIds: new DataLoader<string, DocumentUser>((keys) => {
+	userByIds: new DataLoader<string, IUser>((keys) => {
 		return idsBatchLoad(UserModel, keys)
 	}),
-	allUsers: new DataLoader<string, DocumentUser>((keys) => {
+	allUsers: new DataLoader<string, IUser>((keys) => {
 		return batchLoad(UserModel, keys)
 	}),
 
-	bookByIds: new DataLoader<string, DocumentBook>((keys) => {
+	bookByIds: new DataLoader<string, IBook>((keys) => {
 		return idsBatchLoad(BookModel, keys)
 	}),
-	allBooks: new DataLoader<string, DocumentBook>((keys) => {
+	allBooks: new DataLoader<string, IBook>((keys) => {
 		return batchLoad(BookModel, keys)
 	}),
 } */
 
 export interface ILoaders {
-	userByIds: DataLoader<string, DocumentUser>
-	bookByIds: DataLoader<string, DocumentBook>
+	userByIds: DataLoader<string, IUser>
+	bookByIds: DataLoader<string, IBook>
 }
 
 async function batchUserIds(keys: readonly string[]) {
@@ -44,8 +44,8 @@ async function batchBookIds(keys: readonly string[]) {
 }
 
 const loaders: ILoaders = {
-	userByIds: new DataLoader<string, DocumentUser>((keys) => batchUserIds(keys)),
-	bookByIds: new DataLoader<string, DocumentBook>((keys) => batchBookIds(keys)),
+	userByIds: new DataLoader<string, IUser>((keys) => batchUserIds(keys)),
+	bookByIds: new DataLoader<string, IBook>((keys) => batchBookIds(keys)),
 }
 
 export default loaders

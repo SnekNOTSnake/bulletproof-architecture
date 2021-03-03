@@ -1,16 +1,13 @@
 import { Model } from 'mongoose'
 import { Service, Inject } from 'typedi'
-import { IBook, DocumentBook } from '../models/Books'
+import { IBook } from '../models/Books'
 import { compactMap } from '../utils/helpers'
 
 @Service()
 class BookService {
-	constructor(@Inject('booksModel') private BooksModel: Model<DocumentBook>) {}
+	constructor(@Inject('booksModel') private BooksModel: Model<IBook>) {}
 
-	async createBook({
-		title,
-		author,
-	}: Pick<IBook, 'title'> & { author: string }) {
+	async createBook({ title, author }: { title: string; author: string }) {
 		const book = await this.BooksModel.create({ title, author })
 
 		return book
@@ -20,7 +17,11 @@ class BookService {
 		title,
 		userId,
 		id,
-	}: Pick<IBook, 'title'> & { id: string; userId: string }) {
+	}: {
+		id: string
+		userId: string
+		title: string
+	}) {
 		const book = await this.BooksModel.findById(id)
 
 		if (!book) throw new Error('No book with that ID')
