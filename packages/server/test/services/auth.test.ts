@@ -13,7 +13,8 @@ export const testUser = {
 }
 
 describe('Auth Service', function () {
-	let loginToken = ''
+	let refreshToken = ''
+	let accessToken = ''
 	let loginUserID = ''
 
 	describe('signup', () => {
@@ -36,14 +37,17 @@ describe('Auth Service', function () {
 	 * MODIFY THE LOGIN TOKEN AND ID
 	 */
 	describe('signin', () => {
-		it('Should return the user as well as the JWT token and cookie expiration time', async () => {
+		it('Should return the user as well as the refreshToken and accessToken', async () => {
 			const result = await authServiceInstance.signin(testUser)
-			loginToken = result.token
+
+			refreshToken = result.refreshToken
+			accessToken = result.accessToken
 			loginUserID = result.user.id
 
 			expect(result).toBeTruthy()
-			expect(result.token).toBeTruthy()
-			expect(result.tokenExpiration).toBeTruthy()
+			expect(result.refreshToken).toBeTruthy()
+			expect(result.accessToken).toBeTruthy()
+			expect(result.user).toBeTruthy()
 
 			expect(result.user).toBeTruthy()
 			expect(result.user.id).toBeTruthy()
@@ -54,7 +58,7 @@ describe('Auth Service', function () {
 
 	describe('protect', () => {
 		it('Should return logged in user if token is valid', async () => {
-			const user = await authServiceInstance.protect(loginToken)
+			const user = await authServiceInstance.protect(accessToken)
 
 			expect(user).toBeTruthy()
 			expect(user.id).toBeTruthy()
@@ -63,10 +67,28 @@ describe('Auth Service', function () {
 		})
 
 		it('Should throw if token is invalid or empty', async () => {
-			const modifiedToken = modifyLastCharacter(loginToken)
+			const modifiedToken = modifyLastCharacter(accessToken)
 
 			await expect(authServiceInstance.protect('')).rejects.toThrow()
 			await expect(authServiceInstance.protect(modifiedToken)).rejects.toThrow()
+		})
+	})
+
+	describe('refreshToken', () => {
+		it('Should return the new `accessToken`, `refreshToken` and the user', async () => {
+			const result = await authServiceInstance.refreshToken(refreshToken)
+			expect(result).toHaveProperty('accessToken')
+			expect(result).toHaveProperty('refreshToken')
+			expect(result).toHaveProperty('user')
+			expect(result.user).toHaveProperty('id')
+		})
+
+		it('Should throws if the token is invalid or empty', async () => {
+			const modifiedToken = modifyLastCharacter(refreshToken)
+			await expect(authServiceInstance.protect('')).rejects.toThrow()
+			await expect(
+				authServiceInstance.refreshToken(modifiedToken),
+			).rejects.toThrow()
 		})
 	})
 

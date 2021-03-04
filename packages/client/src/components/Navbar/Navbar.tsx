@@ -1,20 +1,14 @@
 import React from 'react'
-import { Link } from 'react-router-dom'
-import Cookie from 'universal-cookie'
+import { Link, useHistory } from 'react-router-dom'
 
 import Box from '@material-ui/core/Box'
 import LinkComponent from '@material-ui/core/Link'
 import Button from '@material-ui/core/Button'
 
+import AuthService from '../../services/Auth'
 import useStyles from './Navbar.style'
 
-const cookies = new Cookie()
-const logout = () => {
-	cookies.remove('jwt')
-	window.location.href = '/'
-}
-
-type NavbarProps = { user?: ITokenPayload }
+type NavbarProps = { currentUser: IUser | null; setCurrentUser: Function }
 type LinkButtonProps = { to: string; text: string }
 
 const LinkButton: React.FC<LinkButtonProps> = ({ to, text }) => (
@@ -23,12 +17,20 @@ const LinkButton: React.FC<LinkButtonProps> = ({ to, text }) => (
 	</LinkComponent>
 )
 
-const Navbar: React.FC<NavbarProps> = ({ user }) => {
+const Navbar: React.FC<NavbarProps> = ({ currentUser, setCurrentUser }) => {
+	const history = useHistory()
+
+	const logout = async () => {
+		await AuthService.logout()
+		setCurrentUser(null)
+		history.push('/')
+	}
+
 	const classes = useStyles()
 
-	const RenderLogin = user ? (
+	const RenderLogin = currentUser ? (
 		<React.Fragment>
-			<LinkButton to="/me" text={user.name} />
+			<LinkButton to="/me" text={currentUser.name} />
 			<LinkButton to="/create-book" text="Create Book" />
 			<Button type="button" onClick={logout}>
 				Logout

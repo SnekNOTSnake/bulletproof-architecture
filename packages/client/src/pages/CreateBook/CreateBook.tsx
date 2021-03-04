@@ -14,7 +14,7 @@ import TextField from '@material-ui/core/TextField'
 import { useCreateBookMutation } from '../../generated/types'
 import useStyles from './CreateBook.style'
 
-type Props = { user?: ITokenPayload }
+type Props = { user: IUser | null }
 type InputChange = React.ChangeEvent<HTMLInputElement>
 type SubmitEvent = React.FormEvent<HTMLFormElement>
 

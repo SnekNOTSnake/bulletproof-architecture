@@ -2,29 +2,16 @@
 // not providing a good type definitions
 
 import jwt from 'jsonwebtoken'
-import { Response } from 'express'
-import { JWT_SECRET, JWT_EXPIRES_IN, JWT_COOKIE_EXPIRES_IN } from '../config'
+import { Request, CookieOptions, Response } from 'express'
+import {
+	AUTH_KEY,
+	JWT_SECRET,
+	JWT_ACCESS_TOKEN_EXPIRES,
+	JWT_REFRESH_TOKEN_EXPIRES,
+	JWT_COOKIE_EXPIRES,
+} from '../config'
 
-type ITokenPayload = {
-	id: string
-	name: string
-	email?: string
-	joined: Date
-}
-
-export const createToken = (user: ITokenPayload) =>
-	new Promise<string>((resolve, reject) => {
-		const { id, name, email, joined } = user
-		jwt.sign(
-			{ id, name, email, joined },
-			JWT_SECRET,
-			{ expiresIn: JWT_EXPIRES_IN },
-			(err, token: any) => {
-				if (err) reject(err)
-				resolve(token)
-			},
-		)
-	})
+type ITokenPayload = { userId: string }
 
 export const decodeToken = (token: string) =>
 	new Promise<ITokenPayload>((resolve, reject) => {
@@ -37,11 +24,39 @@ export const decodeToken = (token: string) =>
 		})
 	})
 
-export const sendToken = (res: Response, token: string) => {
-	const cookieOptions = {
+export const createAccessToken = (user: IUser) => {
+	const options = { expiresIn: JWT_ACCESS_TOKEN_EXPIRES }
+	const payload: ITokenPayload = { userId: user.id }
+	return jwt.sign(payload, JWT_SECRET, options)
+}
+
+export const createRefreshToken = (user: IUser) => {
+	const options = { expiresIn: JWT_REFRESH_TOKEN_EXPIRES }
+	const payload: ITokenPayload = { userId: user.id }
+	return jwt.sign(payload, JWT_SECRET, options)
+}
+
+export const sendRefreshToken = (
+	req: Request,
+	res: Response,
+	token: string,
+) => {
+	const options: CookieOptions = {
+		httpOnly: true,
+		path: '/api/auth/refresh-token',
 		expires: new Date(
-			Date.now() + Number(JWT_COOKIE_EXPIRES_IN) * 24 * 60 * 60 * 1000,
+			Date.now() + Number(JWT_COOKIE_EXPIRES) * 24 * 60 * 60 * 1000,
 		),
+		secure: req.secure || req.headers['x-forward-proto'] === 'https',
 	}
-	res.cookie('jwt', token, cookieOptions)
+	res.cookie(AUTH_KEY, token, options)
+}
+
+export const removeRefreshToken = (req: Request, res: Response) => {
+	const options: CookieOptions = {
+		httpOnly: true,
+		path: '/api/auth/refresh-token',
+		secure: req.secure || req.headers['x-forward-proto'] === 'https',
+	}
+	res.clearCookie(AUTH_KEY, options)
 }

@@ -1,8 +1,12 @@
 import { Model } from 'mongoose'
 import { Service, Inject } from 'typedi'
 import bcrypt from 'bcrypt'
-import { createToken, decodeToken } from '../utils/token'
-import { SALT_ROUND, JWT_COOKIE_EXPIRES_IN } from '../config'
+import {
+	createAccessToken,
+	createRefreshToken,
+	decodeToken,
+} from '../utils/token'
+import { SALT_ROUND } from '../config'
 import { IUser } from '../models/Users'
 
 @Service()
@@ -14,9 +18,25 @@ class AuthService {
 		return user
 	}
 
-	async protect(token: string) {
-		const decoded = await decodeToken(token)
-		const user = await this.UsersModel.findById(decoded.id)
+	async refreshToken(refreshToken: string) {
+		const decoded = await decodeToken(refreshToken)
+		const user = await this.UsersModel.findById(decoded.userId)
+
+		if (!user) throw new Error('No user with that ID')
+
+		const newRefreshToken = createRefreshToken(user)
+		const accessToken = createAccessToken(user)
+
+		return {
+			refreshToken: newRefreshToken,
+			accessToken,
+			user,
+		}
+	}
+
+	async protect(accessToken: string) {
+		const decoded = await decodeToken(accessToken)
+		const user = await this.UsersModel.findById(decoded.userId)
 
 		if (!user) throw new Error('No user with that ID, it may have been deleted')
 
@@ -55,11 +75,12 @@ class AuthService {
 			throw new Error('Incorrect password')
 		}
 
-		const token = await createToken(user)
+		const refreshToken = createRefreshToken(user)
+		const accessToken = createAccessToken(user)
 
 		return {
-			token,
-			tokenExpiration: JWT_COOKIE_EXPIRES_IN,
+			refreshToken,
+			accessToken,
 			user,
 		}
 	}

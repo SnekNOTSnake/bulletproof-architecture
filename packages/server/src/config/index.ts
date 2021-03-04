@@ -23,8 +23,11 @@ export const MAILGUN_SMTP_PASSWORD = process.env.MAILGUN_SMTP_PASSWORD || ''
 
 export const AUTH_KEY = process.env.AUTH_KEY || 'jwt'
 export const JWT_SECRET = process.env.JWT_SECRET || '$0m3thingH4RdtOgu3s5'
-export const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '90d'
-export const JWT_COOKIE_EXPIRES_IN = process.env.JWT_COOKIE_EXPIRES_IN || '90'
+export const JWT_COOKIE_EXPIRES = process.env.JWT_COOKIE_EXPIRES || 30
+export const JWT_ACCESS_TOKEN_EXPIRES =
+	process.env.JWT_ACCESS_TOKEN_EXPIRES || '15s'
+export const JWT_REFRESH_TOKEN_EXPIRES =
+	process.env.JWT_REFRESH_TOKEN_EXPIRES || '30d'
 
 export const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID || ''
 export const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET || ''

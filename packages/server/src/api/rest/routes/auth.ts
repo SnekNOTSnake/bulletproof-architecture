@@ -4,8 +4,10 @@ import validate from '../middlewares/validate'
 import protect from '../middlewares/protect'
 import { signupSchema, signinSchema } from '../../validateSchemas'
 import {
+	refreshToken,
 	signup,
 	signin,
+	logout,
 	googleCallback,
 	gitHubCallback,
 	me,
@@ -13,8 +15,10 @@ import {
 
 const router = express.Router()
 
+router.post('/refresh-token', refreshToken)
 router.post('/signup', validate(signupSchema), signup)
 router.post('/signin', validate(signinSchema), signin)
+router.post('/logout', logout)
 
 // Google
 router.get(

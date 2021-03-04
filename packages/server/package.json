@@ -30,6 +30,6 @@
 	"scripts": {
 		"dev": "nodemon",
 		"start": "node ./dist/server.js",
-		"test": "mocha"
+		"test": "TS_NODE_FILES=true mocha"
 	}
 }

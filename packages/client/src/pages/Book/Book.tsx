@@ -14,7 +14,7 @@ import Button from '@material-ui/core/Button'
 import Typography from '@material-ui/core/Typography'
 
 import { useBookQuery, useDeleteBookMutation } from '../../generated/types'
-import EditBook from '../EditBook'
+import EditBook from '../../components/EditBook'
 import useStyles from './Book.style'
 
 type Props = RouteComponentProps<{ id: string }>

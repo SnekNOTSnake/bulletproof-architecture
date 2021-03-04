@@ -1,7 +1,6 @@
 import React from 'react'
 import axios from 'axios'
-import Cookie from 'universal-cookie'
-import { Link } from 'react-router-dom'
+import { Link, RouteComponentProps } from 'react-router-dom'
 
 import Alert from '@material-ui/lab/Alert'
 import Box from '@material-ui/core/Box'
@@ -15,18 +14,15 @@ import LinkComponent from '@material-ui/core/Link'
 import TextField from '@material-ui/core/TextField'
 import Typography from '@material-ui/core/Typography'
 
+import AuthService from '../../services/Auth'
 import useStyles from './Login.style'
-
-const cookie = new Cookie()
-const login = (token: string) => {
-	cookie.set('jwt', token)
-	window.location.href = '/'
-}
 
 type InputChange = React.ChangeEvent<HTMLInputElement>
 type FormSubmit = React.FormEvent<HTMLFormElement>
 
-const Login: React.FC = () => {
+type Props = RouteComponentProps & { setCurrentUser: Function }
+
+const Login: React.FC<Props> = ({ history, setCurrentUser }) => {
 	const [email, setEmail] = React.useState<string>('')
 	const [pass, setPass] = React.useState<string>('')
 	const [error, setError] = React.useState<string | undefined>()
@@ -37,13 +33,9 @@ const Login: React.FC = () => {
 	const onSubmit = async (e: FormSubmit) => {
 		try {
 			e.preventDefault()
-
-			const res = await axios.post('http://localhost:4200/api/auth/signin', {
-				email,
-				password: pass,
-			})
-
-			return login(res.data.authData.token)
+			const result = await AuthService.login({ email, password: pass })
+			setCurrentUser(result.authData.user)
+			history.push('/')
 		} catch (err) {
 			setError(err.response.data.message)
 			setPass('')
@@ -72,22 +64,20 @@ const Login: React.FC = () => {
 									''
 								)}
 								<Box className={classes.oAuthBox}>
-									<LinkComponent
+									<Button
 										className={classes.oAuthButton}
-										href="http://localhost:4200/api/auth/google"
+										color="primary"
+										variant="contained"
 									>
-										<Button color="primary" variant="contained">
-											Google
-										</Button>
-									</LinkComponent>
-									<LinkComponent
+										Google
+									</Button>
+									<Button
 										className={classes.oAuthButton}
-										href="http://localhost:4200/api/auth/github"
+										color="primary"
+										variant="contained"
 									>
-										<Button color="primary" variant="contained">
-											GitHub
-										</Button>
-									</LinkComponent>
+										GitHub
+									</Button>
 								</Box>
 								<TextField
 									className={classes.input}

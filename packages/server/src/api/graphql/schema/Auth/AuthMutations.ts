@@ -28,8 +28,8 @@ export const signin: MutationResolvers['signin'] = async (
 	const authServiceInstance = Container.get(AuthService)
 	const result = await authServiceInstance.signin({ email, password })
 	return {
-		token: result.token,
-		tokenExpiration: result.tokenExpiration,
+		accessToken: result.accessToken,
+		refreshToken: result.accessToken,
 		user: result.user,
 	}
 }

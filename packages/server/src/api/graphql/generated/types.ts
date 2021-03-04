@@ -24,8 +24,8 @@ export type Scalars = {
 export type AuthData = {
   __typename?: 'AuthData';
   user: User;
-  token: Scalars['String'];
-  tokenExpiration: Scalars['String'];
+  accessToken: Scalars['String'];
+  refreshToken: Scalars['String'];
 };
 
 export type User = {
@@ -252,8 +252,8 @@ export type IsAuthenticatedDirectiveResolver<Result, Parent, ContextType = MyCon
 
 export type AuthDataResolvers<ContextType = MyContext, ParentType extends ResolversParentTypes['AuthData'] = ResolversParentTypes['AuthData']> = {
   user?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
-  token?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  tokenExpiration?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  accessToken?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  refreshToken?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 

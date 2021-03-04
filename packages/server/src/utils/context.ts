@@ -1,17 +1,16 @@
 import { Request } from 'express'
-import { AUTH_KEY } from '../config'
 import { decodeToken } from './token'
 import { IUser } from '../models/Users'
 import loaders, { ILoaders } from './dataloaders'
 
 // Users
 const getUser = async (req: Request) => {
-	const token = req.cookies[AUTH_KEY] || req.headers[AUTH_KEY]
+	const token = req.headers['authorization']?.split(' ')[1]
 	if (!token) return null
 
 	try {
 		const decoded = await decodeToken(token)
-		const user = await loaders.userByIds.load(decoded.id)
+		const user = await loaders.userByIds.load(decoded.userId)
 		return user
 	} catch (err) {
 		return null

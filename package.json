@@ -68,7 +68,8 @@
 		"build:server": "tsc --build",
 		"generate": "graphql-codegen",
 		"inspect-client": "yarn workspace @bulletproof/client generate-stats",
-		"postinstall": "patch-package && yarn generate",
+		"patch": "patch-package",
+		"postinstall": "yarn patch && yarn generate",
 		"test": "yarn workspace @bulletproof/server test"
 	}
 }

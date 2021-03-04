@@ -6,8 +6,8 @@ schema {
 }
 type AuthData {
   user: User!
-  token: String!
-  tokenExpiration: String!
+  accessToken: String!
+  refreshToken: String!
 }
 type User {
   id: ID!

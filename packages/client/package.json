@@ -15,8 +15,7 @@
 		"jwt-decode": "^3.1.2",
 		"react": "^17.0.1",
 		"react-dom": "^17.0.1",
-		"react-router-dom": "^5.2.0",
-		"universal-cookie": "^4.0.4"
+		"react-router-dom": "^5.2.0"
 	},
 	"scripts": {
 		"dev": "webpack serve --config webpack.dev.js",

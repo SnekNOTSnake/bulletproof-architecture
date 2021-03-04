@@ -26,7 +26,7 @@ const MyList: React.FC<MyListProps> = ({ icon: Icon, text }) => (
 	</ListItem>
 )
 
-type Props = { user?: ITokenPayload }
+type Props = { user: IUser | null }
 
 const Profile: React.FC<Props> = ({ user }) => {
 	if (!user)

@@ -2,7 +2,36 @@ import { Container } from 'typedi'
 import myEmitter, { userSignup } from '../../../events/events'
 import AuthService from '../../../services/Auth'
 import catchAsync from '../../../utils/catchAsync'
-import { createToken, sendToken } from '../../../utils/token'
+import {
+	// createAccessToken,
+	createRefreshToken,
+	sendRefreshToken,
+	removeRefreshToken,
+} from '../../../utils/token'
+import { AUTH_KEY } from '../../../config'
+
+export const refreshToken = catchAsync(async (req, res, next) => {
+	const refreshToken = req.cookies[AUTH_KEY]
+	if (!refreshToken) return next(new Error('Empty refresh token cookie'))
+
+	const authServiceInstance = Container.get(AuthService)
+	const result = await authServiceInstance.refreshToken(refreshToken)
+
+	sendRefreshToken(req, res, result.refreshToken)
+
+	res.json({
+		message: 'success',
+		authData: {
+			accessToken: result.accessToken,
+			user: {
+				id: result.user.id,
+				name: result.user.name,
+				email: result.user.email,
+				joined: result.user.joined,
+			},
+		},
+	})
+})
 
 export const signup = catchAsync(async (req, res, next) => {
 	const { name, email, password } = req.body
@@ -28,14 +57,26 @@ export const signin = catchAsync(async (req, res, next) => {
 	const authServiceInstance = Container.get(AuthService)
 	const result = await authServiceInstance.signin({ email, password })
 
-	sendToken(res, result.token)
+	sendRefreshToken(req, res, result.refreshToken)
 
 	res.json({
 		message: 'success',
 		authData: {
-			token: result.token,
-			tokenExpiration: result.tokenExpiration,
+			accessToken: result.accessToken,
+			user: {
+				id: result.user.id,
+				name: result.user.name,
+				email: result.user.email,
+				joined: result.user.joined,
+			},
 		},
+	})
+})
+
+export const logout = catchAsync(async (req, res, next) => {
+	removeRefreshToken(req, res)
+	res.status(200).json({
+		message: 'success',
 	})
 })
 
@@ -46,8 +87,9 @@ export const googleCallback = catchAsync(async (req, res, next) => {
 				"Something is wrong here, are you trying to access this page without asking for Google's permission?",
 		})
 
-	const token = await createToken(req.user)
-	sendToken(res, token)
+	const refreshToken = createRefreshToken(req.user)
+	// const accessToken = createAccessToken(req.user)
+	sendRefreshToken(req, res, refreshToken)
 
 	res.redirect('/')
 })
@@ -59,8 +101,9 @@ export const gitHubCallback = catchAsync(async (req, res, next) => {
 				"Something is wrong here, are you trying to access this page without asking for GitHub's permission?",
 		})
 
-	const token = await createToken(req.user)
-	sendToken(res, token)
+	const refreshToken = createRefreshToken(req.user)
+	// const accessToken = createAccessToken(req.user)
+	sendRefreshToken(req, res, refreshToken)
 
 	res.redirect('/')
 })
