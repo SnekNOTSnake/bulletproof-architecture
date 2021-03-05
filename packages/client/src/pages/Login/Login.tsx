@@ -1,5 +1,4 @@
 import React from 'react'
-import axios from 'axios'
 import { Link, RouteComponentProps } from 'react-router-dom'
 
 import Alert from '@material-ui/lab/Alert'
@@ -14,6 +13,9 @@ import LinkComponent from '@material-ui/core/Link'
 import TextField from '@material-ui/core/TextField'
 import Typography from '@material-ui/core/Typography'
 
+import GoogleIcon from '../../assets/images/google.svg'
+import GitHubIcon from '../../assets/images/github.svg'
+import openOAuthWindow from '../../utils/openOAuthWindow'
 import AuthService from '../../services/Auth'
 import useStyles from './Login.style'
 
@@ -29,6 +31,27 @@ const Login: React.FC<Props> = ({ history, setCurrentUser }) => {
 
 	const onEmailChange = (e: InputChange) => setEmail(e.currentTarget.value)
 	const onPassChange = (e: InputChange) => setPass(e.currentTarget.value)
+
+	const onOAuthLogin = (strategy: 'google' | 'github') => {
+		openOAuthWindow(
+			`http://localhost:4200/api/auth/${strategy}`,
+			'OAuth Login',
+			(message) => {
+				const {
+					data: { payload, source },
+				} = message
+
+				if (
+					message.origin === 'http://localhost:4200' &&
+					source === 'oauth-login'
+				) {
+					AuthService.setCurrentUser(payload)
+					setCurrentUser(payload.user)
+					history.push('/')
+				}
+			},
+		)
+	}
 
 	const onSubmit = async (e: FormSubmit) => {
 		try {
@@ -65,16 +88,24 @@ const Login: React.FC<Props> = ({ history, setCurrentUser }) => {
 								)}
 								<Box className={classes.oAuthBox}>
 									<Button
+										onClick={() => onOAuthLogin('google')}
 										className={classes.oAuthButton}
 										color="primary"
 										variant="contained"
+										startIcon={
+											<img className={classes.icon} src={GoogleIcon} alt="G" />
+										}
 									>
 										Google
 									</Button>
 									<Button
+										onClick={() => onOAuthLogin('github')}
 										className={classes.oAuthButton}
 										color="primary"
 										variant="contained"
+										startIcon={
+											<img className={classes.icon} src={GitHubIcon} alt="G" />
+										}
 									>
 										GitHub
 									</Button>

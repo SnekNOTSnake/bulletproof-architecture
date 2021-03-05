@@ -13,4 +13,7 @@ export default makeStyles((theme) => ({
 	input: {
 		marginBottom: theme.spacing(2),
 	},
+	icon: {
+		width: 20,
+	},
 }))

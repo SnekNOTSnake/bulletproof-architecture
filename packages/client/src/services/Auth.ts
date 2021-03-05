@@ -44,6 +44,10 @@ class AuthService {
 		if (!data) return null
 		return JSON.parse(data)
 	}
+
+	static setCurrentUser(authData: IAuthData) {
+		localStorage.setItem('user', JSON.stringify(authData))
+	}
 }
 
 export default AuthService

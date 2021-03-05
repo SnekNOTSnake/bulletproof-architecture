@@ -9,6 +9,7 @@ import {
 	JWT_ACCESS_TOKEN_EXPIRES,
 	JWT_REFRESH_TOKEN_EXPIRES,
 	JWT_COOKIE_EXPIRES,
+	NODE_ENV,
 } from '../config'
 
 type ITokenPayload = { userId: string }
@@ -48,6 +49,7 @@ export const sendRefreshToken = (
 			Date.now() + Number(JWT_COOKIE_EXPIRES) * 24 * 60 * 60 * 1000,
 		),
 		secure: req.secure || req.headers['x-forward-proto'] === 'https',
+		sameSite: NODE_ENV === 'production',
 	}
 	res.cookie(AUTH_KEY, token, options)
 }
@@ -57,6 +59,7 @@ export const removeRefreshToken = (req: Request, res: Response) => {
 		httpOnly: true,
 		path: '/api/auth/refresh-token',
 		secure: req.secure || req.headers['x-forward-proto'] === 'https',
+		sameSite: NODE_ENV === 'production',
 	}
 	res.clearCookie(AUTH_KEY, options)
 }

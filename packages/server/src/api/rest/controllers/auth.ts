@@ -3,12 +3,12 @@ import myEmitter, { userSignup } from '../../../events/events'
 import AuthService from '../../../services/Auth'
 import catchAsync from '../../../utils/catchAsync'
 import {
-	// createAccessToken,
+	createAccessToken,
 	createRefreshToken,
 	sendRefreshToken,
 	removeRefreshToken,
 } from '../../../utils/token'
-import { AUTH_KEY } from '../../../config'
+import { AUTH_KEY, NODE_ENV } from '../../../config'
 
 export const refreshToken = catchAsync(async (req, res, next) => {
 	const refreshToken = req.cookies[AUTH_KEY]
@@ -88,10 +88,41 @@ export const googleCallback = catchAsync(async (req, res, next) => {
 		})
 
 	const refreshToken = createRefreshToken(req.user)
-	// const accessToken = createAccessToken(req.user)
+	const accessToken = createAccessToken(req.user)
 	sendRefreshToken(req, res, refreshToken)
 
-	res.redirect('/')
+	const authData = JSON.stringify({
+		source: 'oauth-login',
+		payload: {
+			accessToken,
+			user: {
+				id: req.user.id,
+				name: req.user.name,
+				email: req.user.email,
+				joined: req.user.joined,
+			},
+		},
+	})
+
+	const targetOrigin =
+		NODE_ENV === 'production'
+			? 'http://localhost:4200'
+			: 'http://localhost:8080'
+
+	res.status(200).send(`
+		<html>
+			<p>Loading...</p>
+			<script>
+			window.addEventListener('load', () => {
+				if (window.opener) {
+					const authData = ${authData}
+					window.opener.postMessage(authData, '${targetOrigin}')
+				}
+				window.close()
+			})
+			</script>
+		</html>
+	`)
 })
 
 export const gitHubCallback = catchAsync(async (req, res, next) => {
@@ -102,10 +133,41 @@ export const gitHubCallback = catchAsync(async (req, res, next) => {
 		})
 
 	const refreshToken = createRefreshToken(req.user)
-	// const accessToken = createAccessToken(req.user)
+	const accessToken = createAccessToken(req.user)
 	sendRefreshToken(req, res, refreshToken)
 
-	res.redirect('/')
+	const authData = JSON.stringify({
+		source: 'oauth-login',
+		payload: {
+			accessToken,
+			user: {
+				id: req.user.id,
+				name: req.user.name,
+				email: req.user.email,
+				joined: req.user.joined,
+			},
+		},
+	})
+
+	const targetOrigin =
+		NODE_ENV === 'production'
+			? 'http://localhost:4200'
+			: 'http://localhost:8080'
+
+	res.status(200).send(`
+		<html>
+			<p>Loading...</p>
+			<script>
+			window.addEventListener('load', () => {
+				if (window.opener) {
+					const authData = ${authData}
+					window.opener.postMessage(authData, '${targetOrigin}')
+				}
+				window.close()
+			})
+			</script>
+		</html>
+	`)
 })
 
 export const me = catchAsync(async (req, res, next) => {
