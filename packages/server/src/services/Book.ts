@@ -1,5 +1,7 @@
 import { Model } from 'mongoose'
 import { Service, Inject } from 'typedi'
+import xss from 'xss'
+
 import { IBook } from '../models/Books'
 import { compactMap } from '../utils/helpers'
 
@@ -8,7 +10,7 @@ class BookService {
 	constructor(@Inject('booksModel') private BooksModel: Model<IBook>) {}
 
 	async createBook({ title, author }: { title: string; author: string }) {
-		const book = await this.BooksModel.create({ title, author })
+		const book = await this.BooksModel.create({ title: xss(title), author })
 
 		return book
 	}
@@ -30,7 +32,7 @@ class BookService {
 				'Unauthorized to update book, the book does not belong to you',
 			)
 
-		book.title = title
+		book.title = xss(title)
 		await book.save()
 
 		return book

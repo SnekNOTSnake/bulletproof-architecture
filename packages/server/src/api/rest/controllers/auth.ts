@@ -1,4 +1,5 @@
 import { Container } from 'typedi'
+
 import myEmitter, { userSignup } from '../../../events/events'
 import AuthService from '../../../services/Auth'
 import catchAsync from '../../../utils/catchAsync'

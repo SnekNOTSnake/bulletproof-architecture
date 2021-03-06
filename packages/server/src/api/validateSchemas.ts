@@ -1,13 +1,16 @@
 import Joi from 'joi'
+import safeRegex from '../utils/safeRegex'
 
-const email = Joi.string().email().required()
-const password = Joi.string()
-	.pattern(new RegExp('^[a-zA-Z0-9]{3,30}$'))
+const name = Joi.string()
+	.regex(safeRegex(/^[-_\d\w\s]*$/))
+	.max(50)
 	.required()
+const email = Joi.string().max(50).email().required()
+const password = Joi.string().min(8).max(100).required()
 
 // Auth
 export const signupSchema = Joi.object({
-	name: Joi.string().min(3).max(50).required(),
+	name,
 	email,
 	password,
 })
@@ -19,7 +22,7 @@ export const signinSchema = Joi.object({
 
 // Book
 const title = Joi.string().max(50).required()
-const bookId = Joi.string().required()
+const bookId = Joi.string().max(50).required()
 
 export const createBookSchema = Joi.object({
 	title,
@@ -35,9 +38,9 @@ export const deleteBookSchema = Joi.object({
 })
 
 export const getBooksSchema = Joi.object({
-	first: Joi.number().min(1).required(),
+	first: Joi.number().min(1).max(100).required(),
 	where: Joi.object({
-		_id: Joi.string(),
+		_id: Joi.string().max(50),
 	}),
-	after: Joi.string(),
+	after: Joi.string().max(50),
 })

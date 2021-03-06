@@ -1,4 +1,5 @@
 import { Document, Schema, model } from 'mongoose'
+import safeRegex from '../utils/safeRegex'
 
 export interface IUser extends Document {
 	id: string
@@ -12,7 +13,7 @@ const usersSchema = new Schema({
 	name: {
 		type: String,
 		required: [true, 'Name is required'],
-		maxlength: 25,
+		maxlength: 50,
 	},
 	email: {
 		type: String,
@@ -21,11 +22,11 @@ const usersSchema = new Schema({
 		},
 		validate: {
 			validator: function (val: string) {
-				return /^\w+@\w+\.\w+$/.test(val)
+				return safeRegex(/^\w+@\w+\.\w+$/).test(val)
 			},
 			message: 'Invalid email',
 		},
-		maxlength: 25,
+		maxlength: 50,
 	},
 	password: {
 		type: String,

@@ -12,6 +12,7 @@ const booksSchema = new Schema({
 	title: {
 		type: String,
 		required: true,
+		maxlength: 50,
 	},
 	author: {
 		type: Types.ObjectId,

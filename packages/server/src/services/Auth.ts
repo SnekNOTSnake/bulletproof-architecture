@@ -1,6 +1,8 @@
 import { Model } from 'mongoose'
 import { Service, Inject } from 'typedi'
 import bcrypt from 'bcrypt'
+import xss from 'xss'
+
 import {
 	createAccessToken,
 	createRefreshToken,
@@ -57,7 +59,11 @@ class AuthService {
 		const existingUser = await this.UsersModel.findOne({ email })
 		if (existingUser) throw new Error('User with that email already exists')
 
-		const user = new this.UsersModel({ name, email, password: encrypted })
+		const user = new this.UsersModel({
+			name: xss(name),
+			email: xss(email),
+			password: encrypted,
+		})
 		await user.save()
 
 		return user
