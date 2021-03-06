@@ -21,16 +21,19 @@ const whitelist = ['http://localhost:8080']
 const loadExpress = async ({ app }: Props) => {
 	app.use(cors({ origin: whitelist, credentials: true }))
 	app.use(limiter)
-	// Is there any way to enable the popup communication without using this?
-	app.use(helmet())
-	app.use(
-		helmet.contentSecurityPolicy({
-			directives: {
-				...helmet.contentSecurityPolicy.getDefaultDirectives(),
-				'script-src': ["'self'", "'unsafe-inline'"],
-			},
-		}),
-	)
+	if (NODE_ENV === 'production') {
+		app.use(helmet())
+		app.use(
+			helmet.contentSecurityPolicy({
+				directives: {
+					...helmet.contentSecurityPolicy.getDefaultDirectives(),
+					'script-src': ["'self'", "'unsafe-inline'"],
+				},
+			}),
+		)
+	} else {
+		app.use(helmet({ contentSecurityPolicy: false }))
+	}
 	app.use(cookieParser())
 	app.use(express.json())
 
