@@ -12,6 +12,11 @@ import { apolloServer } from '../api/graphql'
 
 type Props = { app: express.Application }
 
+const appRootDirectory = path.dirname(
+	require.resolve('@bulletproof/client/package.json'),
+)
+const appBundleDirectory = path.join(appRootDirectory, 'dist')
+
 const limiter = rateLimit({
 	windowMs: 10 * 60 * 1000, // 10 Minutes
 	max: 300, // limit each IP to 300 requests per `windowMs`
@@ -21,19 +26,11 @@ const whitelist = ['http://localhost:8080']
 const loadExpress = async ({ app }: Props) => {
 	app.use(cors({ origin: whitelist, credentials: true }))
 	app.use(limiter)
-	if (NODE_ENV === 'production') {
-		app.use(helmet())
-		app.use(
-			helmet.contentSecurityPolicy({
-				directives: {
-					...helmet.contentSecurityPolicy.getDefaultDirectives(),
-					'script-src': ["'self'", "'unsafe-inline'"],
-				},
-			}),
-		)
-	} else {
-		app.use(helmet({ contentSecurityPolicy: false }))
-	}
+	app.use(
+		helmet({
+			contentSecurityPolicy: NODE_ENV === 'production' ? undefined : false,
+		}),
+	)
 	app.use(cookieParser())
 	app.use(express.json())
 
@@ -46,13 +43,13 @@ const loadExpress = async ({ app }: Props) => {
 	// GraphQL API
 	apolloServer(app)
 
-	// Serve the static files when in production mode
-	if (NODE_ENV === 'production') {
-		app.use(express.static(path.resolve(__dirname, '../../public')))
+	// Statics
+	app.use(express.static(path.resolve(__dirname, '../../public')))
 
-		// Redirect all GET requests to `/`
+	if (NODE_ENV === 'production') {
+		app.use(express.static(appBundleDirectory))
 		app.get('/*', (req, res, next) =>
-			res.sendFile(path.join(__dirname, '../../public/index.html')),
+			res.sendFile(path.join(appBundleDirectory, 'index.html')),
 		)
 	}
 

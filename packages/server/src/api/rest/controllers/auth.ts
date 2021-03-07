@@ -105,23 +105,20 @@ export const googleCallback = catchAsync(async (req, res, next) => {
 		},
 	})
 
-	const targetOrigin =
-		NODE_ENV === 'production'
-			? 'http://localhost:4200'
-			: 'http://localhost:8080'
+	const targetOrigin = NODE_ENV === 'production' ? 'http://localhost:4200' : '*'
 
 	res.status(200).send(`
 		<html>
 			<p>Loading...</p>
-			<script>
-			window.addEventListener('load', () => {
-				if (window.opener) {
-					const authData = ${authData}
-					window.opener.postMessage(authData, '${targetOrigin}')
-				}
-				window.close()
-			})
-			</script>
+			<div
+				id="authData"
+				style="display: none"
+			>${authData}</div>
+			<div
+				id="targetOrigin"
+				style="display: none"
+			>${targetOrigin}</div>
+			<script src="/js/handlePopup.js"></script>
 		</html>
 	`)
 })
@@ -150,23 +147,20 @@ export const gitHubCallback = catchAsync(async (req, res, next) => {
 		},
 	})
 
-	const targetOrigin =
-		NODE_ENV === 'production'
-			? 'http://localhost:4200'
-			: 'http://localhost:8080'
+	const targetOrigin = NODE_ENV === 'production' ? 'http://localhost:4200' : '*'
 
 	res.status(200).send(`
 		<html>
 			<p>Loading...</p>
-			<script>
-			window.addEventListener('load', () => {
-				if (window.opener) {
-					const authData = ${authData}
-					window.opener.postMessage(authData, '${targetOrigin}')
-				}
-				window.close()
-			})
-			</script>
+			<div
+				id="authData"
+				style="display: none"
+			>${authData}</div>
+			<div
+				id="targetOrigin"
+				style="display: none"
+			>${targetOrigin}</div>
+			<script src="/js/handlePopup.js"></script>
 		</html>
 	`)
 })
