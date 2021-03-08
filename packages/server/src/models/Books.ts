@@ -8,7 +8,7 @@ export interface IBook extends Document {
 	lastChanged: Date
 }
 
-const booksSchema = new Schema({
+const bookSchema: Schema<IBook> = new Schema<IBook>({
 	title: {
 		type: String,
 		required: true,
@@ -31,4 +31,11 @@ const booksSchema = new Schema({
 	},
 })
 
-export default model<IBook>('Books', booksSchema)
+bookSchema.methods.toJSON = function (): any {
+	const userObject = this.toObject()
+	userObject.id = userObject._id
+	delete userObject['__v']
+	return userObject
+}
+
+export default model<IBook>('Books', bookSchema)

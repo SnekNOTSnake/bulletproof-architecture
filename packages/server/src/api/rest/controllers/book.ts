@@ -1,5 +1,7 @@
 import { Container } from 'typedi'
+
 import { decodeCursor, encodeCursor } from '../../../utils/helpers'
+import envelope from '../../../utils/envelope'
 import catchAsync from '../../../utils/catchAsync'
 import BookService from '../../../services/Book'
 
@@ -15,18 +17,8 @@ export const createBook = catchAsync(async (req, res, next) => {
 		author: req.user.id,
 	})
 
-	res.status(200).json({
-		message: 'success',
-		book: {
-			id: book.id,
-			title: book.title,
-			created: book.created,
-			author: {
-				id: req.user.id,
-				name: req.user.name,
-				email: req.user.email,
-			},
-		},
+	envelope(res, {
+		book,
 	})
 })
 
@@ -43,19 +35,7 @@ export const updateBook = catchAsync(async (req, res, next) => {
 		userId: req.user.id,
 	})
 
-	res.status(200).json({
-		message: 'success',
-		book: {
-			id: updatedBook.id,
-			title: updatedBook.title,
-			created: updatedBook.created,
-			author: {
-				id: req.user.id,
-				name: req.user.name,
-				email: req.user.email,
-			},
-		},
-	})
+	envelope(res, { book: updatedBook })
 })
 
 export const deleteBook = catchAsync(async (req, res, next) => {
@@ -70,10 +50,7 @@ export const deleteBook = catchAsync(async (req, res, next) => {
 		userId: req.user.id,
 	})
 
-	res.status(200).json({
-		message: 'success',
-		deletedBookId,
-	})
+	envelope(res, { book: { id: deletedBookId } })
 })
 
 export const getBooks = catchAsync(async (req, res, next) => {
@@ -86,8 +63,7 @@ export const getBooks = catchAsync(async (req, res, next) => {
 		after: after && decodeCursor(after),
 	})
 
-	res.status(200).json({
-		message: 'success',
+	envelope(res, {
 		edges: books.map((book) => ({
 			node: book,
 			cursor: encodeCursor(book.created.toISOString()),
@@ -101,8 +77,5 @@ export const getBook = catchAsync(async (req, res, next) => {
 	const bookServiceInstance = Container.get(BookService)
 	const book = await bookServiceInstance.getBook(id)
 
-	res.status(200).json({
-		message: 'success',
-		book,
-	})
+	envelope(res, { book })
 })

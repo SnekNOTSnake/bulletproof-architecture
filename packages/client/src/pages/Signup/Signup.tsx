@@ -1,5 +1,4 @@
 import React from 'react'
-import axios from 'axios'
 import { Link } from 'react-router-dom'
 
 import Alert from '@material-ui/lab/Alert'
@@ -15,6 +14,7 @@ import TextField from '@material-ui/core/TextField'
 import Typography from '@material-ui/core/Typography'
 
 import useStyles from './Signup.style'
+import AuthService from '../../services/Auth'
 
 type InputChange = React.ChangeEvent<HTMLInputElement>
 type FormSubmit = React.FormEvent<HTMLFormElement>
@@ -35,15 +35,15 @@ const Signup: React.FC = () => {
 		try {
 			e.preventDefault()
 
-			const res = await axios.post('http://localhost:4200/api/auth/signup', {
+			const user = await AuthService.signup({
 				name,
 				email,
 				password,
 			})
 
-			if (res.data.user.id) {
+			if (user.id) {
 				setSuccess(
-					`Success registered with ID: ${res.data.user.id}. You can now log in with your new account`,
+					`Success registered with ID: ${user.id}. You can now log in with your new account`,
 				)
 				setError('')
 			}

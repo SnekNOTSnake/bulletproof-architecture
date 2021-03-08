@@ -10,7 +10,7 @@ export interface IUser extends Document {
 	avatar: string
 }
 
-const usersSchema = new Schema({
+const userSchema = new Schema<IUser>({
 	name: {
 		type: String,
 		required: [true, 'Name is required'],
@@ -59,4 +59,12 @@ const usersSchema = new Schema({
 	},
 })
 
-export default model<IUser>('Users', usersSchema)
+userSchema.methods.toJSON = function (): any {
+	const userObject = this.toObject()
+	userObject.id = userObject._id
+	delete userObject['__v']
+	delete userObject['password']
+	return userObject
+}
+
+export default model<IUser>('Users', userSchema)

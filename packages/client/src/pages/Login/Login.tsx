@@ -15,7 +15,6 @@ import Typography from '@material-ui/core/Typography'
 
 import GoogleIcon from '../../assets/images/google.svg'
 import GitHubIcon from '../../assets/images/github.svg'
-import openOAuthWindow from '../../utils/openOAuthWindow'
 import AuthService from '../../services/Auth'
 import useStyles from './Login.style'
 
@@ -32,32 +31,17 @@ const Login: React.FC<Props> = ({ history, setCurrentUser }) => {
 	const onEmailChange = (e: InputChange) => setEmail(e.currentTarget.value)
 	const onPassChange = (e: InputChange) => setPass(e.currentTarget.value)
 
-	const onOAuthLogin = (strategy: 'google' | 'github') => {
-		openOAuthWindow(
-			`http://localhost:4200/api/auth/${strategy}`,
-			'OAuth Login',
-			(message) => {
-				const {
-					data: { payload, source },
-				} = message
-
-				if (
-					message.origin === 'http://localhost:4200' &&
-					source === 'oauth-login'
-				) {
-					AuthService.setCurrentUser(payload)
-					setCurrentUser(payload.user)
-					history.push('/')
-				}
-			},
-		)
+	const onOAuthLogin = async (strategy: 'google' | 'github') => {
+		const user = await AuthService.oAuthLogin(strategy)
+		setCurrentUser(user)
+		history.push('/')
 	}
 
 	const onSubmit = async (e: FormSubmit) => {
 		try {
 			e.preventDefault()
 			const result = await AuthService.login({ email, password: pass })
-			setCurrentUser(result.authData.user)
+			setCurrentUser(result)
 			history.push('/')
 		} catch (err) {
 			setError(err.response.data.message)

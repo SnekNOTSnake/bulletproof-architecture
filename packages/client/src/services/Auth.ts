@@ -1,5 +1,7 @@
 import axios from 'axios'
 
+import openOAuthWindow from '../utils/openOAuthWindow'
+
 const AUTH_URI = 'http://localhost:4200/api/auth'
 
 class AuthService {
@@ -9,16 +11,56 @@ class AuthService {
 	}: {
 		email: string
 		password: string
-	}): Promise<{ authData: IAuthData; message: string }> {
+	}): Promise<IUser> {
 		const res = await axios.post(
 			AUTH_URI + '/signin',
 			{ email, password },
 			{ withCredentials: true },
 		)
 
-		localStorage.setItem('user', JSON.stringify(res.data.authData))
+		localStorage.setItem('user', JSON.stringify(res.data.data))
 
-		return res.data
+		return res.data.data.user
+	}
+
+	static async signup({
+		name,
+		email,
+		password,
+	}: {
+		name: string
+		email: string
+		password: string
+	}): Promise<IUser> {
+		const res = await axios.post('http://localhost:4200/api/auth/signup', {
+			name,
+			email,
+			password,
+		})
+
+		return res.data.data.user
+	}
+
+	static oAuthLogin(strategy: 'google' | 'github'): Promise<IUser> {
+		return new Promise((resolve, reject) => {
+			openOAuthWindow(
+				`http://localhost:4200/api/auth/${strategy}`,
+				'OAuth Login',
+				(message) => {
+					const {
+						data: { payload, source },
+					} = message
+
+					if (
+						message.origin === 'http://localhost:4200' &&
+						source === 'oauth-login'
+					) {
+						localStorage.setItem('user', JSON.stringify(payload))
+						return resolve(payload.user)
+					}
+				},
+			)
+		})
 	}
 
 	static async logout(): Promise<void> {
@@ -35,18 +77,14 @@ class AuthService {
 			{},
 			{ withCredentials: true },
 		)
-		localStorage.setItem('user', JSON.stringify(res.data.authData))
-		return res.data.authData.accessToken
+		localStorage.setItem('user', JSON.stringify(res.data.data))
+		return res.data.data.accessToken
 	}
 
 	static getCurrentUser(): IAuthData | null {
 		const data = localStorage.getItem('user')
 		if (!data) return null
 		return JSON.parse(data)
-	}
-
-	static setCurrentUser(authData: IAuthData) {
-		localStorage.setItem('user', JSON.stringify(authData))
 	}
 }
 
