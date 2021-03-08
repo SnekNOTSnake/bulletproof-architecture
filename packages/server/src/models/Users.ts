@@ -7,6 +7,7 @@ export interface IUser extends Document {
 	email?: string
 	joined: Date
 	password?: string
+	avatar: string
 }
 
 const usersSchema = new Schema({
@@ -50,6 +51,11 @@ const usersSchema = new Schema({
 		type: String,
 		unique: true,
 		sparse: true,
+	},
+	avatar: {
+		type: String,
+		required: true,
+		default: 'default.jpg',
 	},
 })
 

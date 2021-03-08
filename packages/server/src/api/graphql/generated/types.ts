@@ -18,6 +18,7 @@ export type Scalars = {
   DateTime: any;
   Date: any;
   Time: any;
+  Upload: Promise<GraphQLFileUpload>;
 };
 
 
@@ -34,6 +35,7 @@ export type User = {
   name: Scalars['String'];
   email?: Maybe<Scalars['String']>;
   joined: Scalars['DateTime'];
+  avatar: Scalars['String'];
 };
 
 export type Mutation = {
@@ -43,6 +45,7 @@ export type Mutation = {
   signin?: Maybe<AuthData>;
   signup?: Maybe<User>;
   updateBook?: Maybe<Book>;
+  uploadAvatar: File;
 };
 
 
@@ -72,6 +75,11 @@ export type MutationSignupArgs = {
 export type MutationUpdateBookArgs = {
   id: Scalars['ID'];
   title: Scalars['String'];
+};
+
+
+export type MutationUploadAvatarArgs = {
+  file: Scalars['Upload'];
 };
 
 export type Query = {
@@ -122,12 +130,21 @@ export type BooksWhereInput = {
 
 
 
+
 export type PageInfo = {
   __typename?: 'PageInfo';
   startCursor?: Maybe<Scalars['String']>;
   endCursor?: Maybe<Scalars['String']>;
   hasNextPage: Scalars['Boolean'];
   hasPreviousPage: Scalars['Boolean'];
+};
+
+export type File = {
+  __typename?: 'File';
+  id: Scalars['String'];
+  path: Scalars['String'];
+  filename: Scalars['String'];
+  mimetype: Scalars['String'];
 };
 
 
@@ -222,8 +239,10 @@ export type ResolversTypes = {
   DateTime: ResolverTypeWrapper<Scalars['DateTime']>;
   Date: ResolverTypeWrapper<Scalars['Date']>;
   Time: ResolverTypeWrapper<Scalars['Time']>;
+  Upload: ResolverTypeWrapper<Scalars['Upload']>;
   PageInfo: ResolverTypeWrapper<PageInfo>;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
+  File: ResolverTypeWrapper<File>;
 };
 
 /** Mapping between all available schema types and the resolvers parents */
@@ -242,8 +261,10 @@ export type ResolversParentTypes = {
   DateTime: Scalars['DateTime'];
   Date: Scalars['Date'];
   Time: Scalars['Time'];
+  Upload: Scalars['Upload'];
   PageInfo: PageInfo;
   Boolean: Scalars['Boolean'];
+  File: File;
 };
 
 export type IsAuthenticatedDirectiveArgs = {  };
@@ -262,6 +283,7 @@ export type UserResolvers<ContextType = MyContext, ParentType extends ResolversP
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   email?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   joined?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  avatar?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -271,6 +293,7 @@ export type MutationResolvers<ContextType = MyContext, ParentType extends Resolv
   signin?: Resolver<Maybe<ResolversTypes['AuthData']>, ParentType, ContextType, RequireFields<MutationSigninArgs, 'email' | 'password'>>;
   signup?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<MutationSignupArgs, 'name' | 'email' | 'password'>>;
   updateBook?: Resolver<Maybe<ResolversTypes['Book']>, ParentType, ContextType, RequireFields<MutationUpdateBookArgs, 'id' | 'title'>>;
+  uploadAvatar?: Resolver<ResolversTypes['File'], ParentType, ContextType, RequireFields<MutationUploadAvatarArgs, 'file'>>;
 };
 
 export type QueryResolvers<ContextType = MyContext, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
@@ -313,11 +336,23 @@ export interface TimeScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes
   name: 'Time';
 }
 
+export interface UploadScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['Upload'], any> {
+  name: 'Upload';
+}
+
 export type PageInfoResolvers<ContextType = MyContext, ParentType extends ResolversParentTypes['PageInfo'] = ResolversParentTypes['PageInfo']> = {
   startCursor?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   endCursor?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   hasNextPage?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   hasPreviousPage?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type FileResolvers<ContextType = MyContext, ParentType extends ResolversParentTypes['File'] = ResolversParentTypes['File']> = {
+  id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  path?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  filename?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  mimetype?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -332,7 +367,9 @@ export type Resolvers<ContextType = MyContext> = {
   DateTime?: GraphQLScalarType;
   Date?: GraphQLScalarType;
   Time?: GraphQLScalarType;
+  Upload?: GraphQLScalarType;
   PageInfo?: PageInfoResolvers<ContextType>;
+  File?: FileResolvers<ContextType>;
 };
 
 

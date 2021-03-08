@@ -14,6 +14,7 @@ type User {
   name: String!
   email: String
   joined: DateTime!
+  avatar: String!
 }
 type Mutation {
   createBook(title: String!): Book @isAuthenticated
@@ -21,6 +22,7 @@ type Mutation {
   signin(email: String!, password: String!): AuthData
   signup(name: String!, email: String!, password: String!): User
   updateBook(id: ID!, title: String!): Book @isAuthenticated
+  uploadAvatar(file: Upload!): File! @isAuthenticated
 }
 type Query {
   book(id: ID!): Book
@@ -49,11 +51,18 @@ input BooksWhereInput {
 scalar DateTime
 scalar Date
 scalar Time
+scalar Upload
 type PageInfo {
   startCursor: String
   endCursor: String
   hasNextPage: Boolean!
   hasPreviousPage: Boolean!
+}
+type File {
+  id: String!
+  path: String!
+  filename: String!
+  mimetype: String!
 }
 directive @isAuthenticated on FIELD_DEFINITION
 `

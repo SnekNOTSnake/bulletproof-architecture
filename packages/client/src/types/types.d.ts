@@ -3,6 +3,7 @@ interface IUser {
 	name: string
 	email?: string
 	joined: Date
+	avatar: string
 }
 
 interface IAuthData {

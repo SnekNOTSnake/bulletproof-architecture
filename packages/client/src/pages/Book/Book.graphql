@@ -3,6 +3,7 @@ query Book($id: ID!) {
 		id
 		title
 		author {
+			id
 			name
 		}
 		created

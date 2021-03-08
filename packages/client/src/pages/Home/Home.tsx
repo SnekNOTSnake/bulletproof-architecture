@@ -2,6 +2,7 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 import { formatDistance } from 'date-fns'
 
+import Avatar from '@material-ui/core/Avatar'
 import Box from '@material-ui/core/Box'
 import Grid from '@material-ui/core/Grid'
 import Card from '@material-ui/core/Card'
@@ -39,6 +40,12 @@ const Home: React.FC = () => {
 						<Card>
 							<CardHeader
 								title={book.title}
+								avatar={
+									<Avatar
+										alt={book.author.avatar}
+										src={`http://localhost:4200/img/${book.author.avatar}`}
+									/>
+								}
 								subheader={`By ${book.author.name}, ${formatDistance(
 									new Date(book.created),
 									new Date(),

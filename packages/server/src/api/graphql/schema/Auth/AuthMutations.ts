@@ -1,4 +1,5 @@
 import { Container } from 'typedi'
+
 import validate from '../validate'
 import myEmitter, { userSignup } from '../../../../events/events'
 import { signupSchema, signinSchema } from '../../../validateSchemas'
@@ -27,9 +28,21 @@ export const signin: MutationResolvers['signin'] = async (
 
 	const authServiceInstance = Container.get(AuthService)
 	const result = await authServiceInstance.signin({ email, password })
+
 	return {
 		accessToken: result.accessToken,
-		refreshToken: result.accessToken,
+		refreshToken: result.refreshToken,
 		user: result.user,
 	}
+}
+
+export const uploadAvatar: MutationResolvers['uploadAvatar'] = async (
+	parent,
+	{ file },
+	{ user },
+) => {
+	const authServiceInstance = Container.get(AuthService)
+	const result = await authServiceInstance.uploadAvatar({ file, user })
+
+	return result
 }

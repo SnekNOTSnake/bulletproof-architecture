@@ -118,3 +118,5 @@ dist
 # Utils
 notes.md
 stats.json
+packages/server/public/img/*
+!packages/server/public/img/default.jpg

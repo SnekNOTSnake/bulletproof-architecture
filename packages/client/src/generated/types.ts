@@ -14,6 +14,7 @@ export type Scalars = {
   DateTime: any;
   Date: any;
   Time: any;
+  Upload: any;
 };
 
 
@@ -30,6 +31,7 @@ export type User = {
   name: Scalars['String'];
   email?: Maybe<Scalars['String']>;
   joined: Scalars['DateTime'];
+  avatar: Scalars['String'];
 };
 
 export type Mutation = {
@@ -39,6 +41,7 @@ export type Mutation = {
   signin?: Maybe<AuthData>;
   signup?: Maybe<User>;
   updateBook?: Maybe<Book>;
+  uploadAvatar: File;
 };
 
 
@@ -68,6 +71,11 @@ export type MutationSignupArgs = {
 export type MutationUpdateBookArgs = {
   id: Scalars['ID'];
   title: Scalars['String'];
+};
+
+
+export type MutationUploadAvatarArgs = {
+  file: Scalars['Upload'];
 };
 
 export type Query = {
@@ -118,12 +126,21 @@ export type BooksWhereInput = {
 
 
 
+
 export type PageInfo = {
   __typename?: 'PageInfo';
   startCursor?: Maybe<Scalars['String']>;
   endCursor?: Maybe<Scalars['String']>;
   hasNextPage: Scalars['Boolean'];
   hasPreviousPage: Scalars['Boolean'];
+};
+
+export type File = {
+  __typename?: 'File';
+  id: Scalars['String'];
+  path: Scalars['String'];
+  filename: Scalars['String'];
+  mimetype: Scalars['String'];
 };
 
 export type UpdateBookMutationVariables = Exact<{
@@ -156,7 +173,7 @@ export type BookQuery = (
     & Pick<Book, 'id' | 'title' | 'created' | 'lastChanged'>
     & { author: (
       { __typename?: 'User' }
-      & Pick<User, 'name'>
+      & Pick<User, 'id' | 'name'>
     ) }
   )> }
 );
@@ -183,7 +200,7 @@ export type CreateBookMutation = (
     & Pick<Book, 'id' | 'title' | 'created' | 'lastChanged'>
     & { author: (
       { __typename?: 'User' }
-      & Pick<User, 'name'>
+      & Pick<User, 'id' | 'name' | 'avatar'>
     ) }
   )> }
 );
@@ -204,12 +221,25 @@ export type BooksQuery = (
       & Pick<Book, 'id' | 'title' | 'created' | 'lastChanged'>
       & { author: (
         { __typename?: 'User' }
-        & Pick<User, 'name'>
+        & Pick<User, 'id' | 'name' | 'avatar'>
       ) }
     )>, pageInfo: (
       { __typename?: 'PageInfo' }
       & Pick<PageInfo, 'endCursor' | 'hasNextPage'>
     ) }
+  ) }
+);
+
+export type UploadAvatarMutationVariables = Exact<{
+  file: Scalars['Upload'];
+}>;
+
+
+export type UploadAvatarMutation = (
+  { __typename?: 'Mutation' }
+  & { uploadAvatar: (
+    { __typename?: 'File' }
+    & Pick<File, 'id' | 'filename'>
   ) }
 );
 
@@ -261,6 +291,7 @@ export const BookDocument = gql`
     id
     title
     author {
+      id
       name
     }
     created
@@ -332,7 +363,9 @@ export const CreateBookDocument = gql`
     created
     lastChanged
     author {
+      id
       name
+      avatar
     }
   }
 }
@@ -371,7 +404,9 @@ export const BooksDocument = gql`
       created
       lastChanged
       author {
+        id
         name
+        avatar
       }
     }
     pageInfo {
@@ -409,3 +444,36 @@ export function useBooksLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Book
 export type BooksQueryHookResult = ReturnType<typeof useBooksQuery>;
 export type BooksLazyQueryHookResult = ReturnType<typeof useBooksLazyQuery>;
 export type BooksQueryResult = Apollo.QueryResult<BooksQuery, BooksQueryVariables>;
+export const UploadAvatarDocument = gql`
+    mutation UploadAvatar($file: Upload!) {
+  uploadAvatar(file: $file) {
+    id
+    filename
+  }
+}
+    `;
+export type UploadAvatarMutationFn = Apollo.MutationFunction<UploadAvatarMutation, UploadAvatarMutationVariables>;
+
+/**
+ * __useUploadAvatarMutation__
+ *
+ * To run a mutation, you first call `useUploadAvatarMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUploadAvatarMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [uploadAvatarMutation, { data, loading, error }] = useUploadAvatarMutation({
+ *   variables: {
+ *      file: // value for 'file'
+ *   },
+ * });
+ */
+export function useUploadAvatarMutation(baseOptions?: Apollo.MutationHookOptions<UploadAvatarMutation, UploadAvatarMutationVariables>) {
+        return Apollo.useMutation<UploadAvatarMutation, UploadAvatarMutationVariables>(UploadAvatarDocument, baseOptions);
+      }
+export type UploadAvatarMutationHookResult = ReturnType<typeof useUploadAvatarMutation>;
+export type UploadAvatarMutationResult = Apollo.MutationResult<UploadAvatarMutation>;
+export type UploadAvatarMutationOptions = Apollo.BaseMutationOptions<UploadAvatarMutation, UploadAvatarMutationVariables>;

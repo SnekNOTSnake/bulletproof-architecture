@@ -9,4 +9,5 @@ type User {
 	name: String!
 	email: String
 	joined: DateTime!
+	avatar: String!
 }

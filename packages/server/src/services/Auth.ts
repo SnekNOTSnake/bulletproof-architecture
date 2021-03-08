@@ -2,6 +2,8 @@ import { Model } from 'mongoose'
 import { Service, Inject } from 'typedi'
 import bcrypt from 'bcrypt'
 import xss from 'xss'
+import { v4 as uuid } from 'uuid'
+import { createWriteStream, unlink } from 'fs'
 
 import {
 	createAccessToken,
@@ -10,6 +12,8 @@ import {
 } from '../utils/token'
 import { SALT_ROUND } from '../config'
 import { IUser } from '../models/Users'
+
+const UPLOAD_DIR = 'public/img/'
 
 @Service()
 class AuthService {
@@ -89,6 +93,42 @@ class AuthService {
 			accessToken,
 			user,
 		}
+	}
+
+	async uploadAvatar({
+		file,
+		user,
+	}: {
+		file: Promise<GraphQLFileUpload>
+		user: IUser
+	}) {
+		const { createReadStream, filename, mimetype } = await file
+		const stream = createReadStream()
+		const id = uuid()
+		const newFilename = id + '-' + filename
+		const path = `${UPLOAD_DIR}/${newFilename}`
+		const storedFile = { id, filename: newFilename, mimetype, path }
+
+		await new Promise((resolve, reject) => {
+			const writeStream = createWriteStream(path)
+
+			writeStream.on('finish', resolve)
+
+			writeStream.on('error', (error) => {
+				unlink(path, () => {
+					reject(error)
+				})
+			})
+
+			stream.on('error', (error) => writeStream.destroy(error))
+
+			stream.pipe(writeStream)
+		})
+
+		user.avatar = newFilename
+		await user.save()
+
+		return storedFile
 	}
 }
 

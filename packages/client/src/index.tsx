@@ -9,14 +9,14 @@ import {
 import { BrowserRouter as Router } from 'react-router-dom'
 
 import App from './pages/App'
-import { errorLink, authLink, httpLink } from './utils/links'
+import { errorLink, authLink, uploadLink } from './utils/links'
 import cache from './utils/cache'
 import './assets/fonts/roboto/stylesheet.css'
 import './index.css'
 
 const client: ApolloClient<NormalizedCacheObject> = new ApolloClient({
 	cache: cache,
-	link: from([errorLink, authLink, httpLink]),
+	link: from([errorLink, authLink, uploadLink]),
 })
 
 ReactDOM.render(

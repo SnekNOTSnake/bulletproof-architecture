@@ -7,7 +7,9 @@ query Books($first: Int!, $after: String, $where: BooksWhereInput) {
 			created
 			lastChanged
 			author {
+				id
 				name
+				avatar
 			}
 		}
 		pageInfo {

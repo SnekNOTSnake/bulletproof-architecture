@@ -4,3 +4,10 @@ type PageInfo {
 	hasNextPage: Boolean!
 	hasPreviousPage: Boolean!
 }
+
+type File {
+	id: String!
+	path: String!
+	filename: String!
+	mimetype: String!
+}

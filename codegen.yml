@@ -28,6 +28,8 @@ generates:
       - typescript
       - typescript-resolvers
     config:
+      scalars:
+        Upload: 'Promise<GraphQLFileUpload>'
       mappers:
         User: ../../../models/Users#IUser
         Book: ../../../models/Books#IBook

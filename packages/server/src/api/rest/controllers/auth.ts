@@ -29,6 +29,7 @@ export const refreshToken = catchAsync(async (req, res, next) => {
 				name: result.user.name,
 				email: result.user.email,
 				joined: result.user.joined,
+				avatar: result.user.avatar,
 			},
 		},
 	})
@@ -48,6 +49,7 @@ export const signup = catchAsync(async (req, res, next) => {
 			id: user.id,
 			name: user.name,
 			email: user.email,
+			avatar: user.avatar,
 		},
 	})
 })
@@ -69,6 +71,7 @@ export const signin = catchAsync(async (req, res, next) => {
 				name: result.user.name,
 				email: result.user.email,
 				joined: result.user.joined,
+				avatar: result.user.avatar,
 			},
 		},
 	})
@@ -101,6 +104,7 @@ export const googleCallback = catchAsync(async (req, res, next) => {
 				name: req.user.name,
 				email: req.user.email,
 				joined: req.user.joined,
+				avatar: req.user.avatar,
 			},
 		},
 	})
@@ -143,6 +147,7 @@ export const gitHubCallback = catchAsync(async (req, res, next) => {
 				name: req.user.name,
 				email: req.user.email,
 				joined: req.user.joined,
+				avatar: req.user.avatar,
 			},
 		},
 	})
@@ -173,6 +178,7 @@ export const me = catchAsync(async (req, res, next) => {
 			name: req.user?.name,
 			email: req.user?.email,
 			joined: req.user?.joined,
+			avatar: req.user?.avatar,
 		},
 	})
 })

@@ -5,7 +5,9 @@ mutation CreateBook($title: String!) {
 		created
 		lastChanged
 		author {
+			id
 			name
+			avatar
 		}
 	}
 }
