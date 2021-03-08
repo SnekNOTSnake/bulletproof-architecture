@@ -6,6 +6,7 @@ import path from 'path'
 import helmet from 'helmet'
 import rateLimit from 'express-rate-limit'
 
+import globalErrorHandler from '../api/rest/controllers/error'
 import { NODE_ENV } from '../config'
 import restRoutes from '../api/rest'
 import { apolloServer } from '../api/graphql'
@@ -61,16 +62,7 @@ const loadExpress = async ({ app }: Props) => {
 	})
 
 	// REST API global error handler
-	const errHandler: express.ErrorRequestHandler = (err, req, res, next) => {
-		if (NODE_ENV === 'production')
-			return res.status(400).json({ message: err.message })
-
-		res.status(400).json({
-			message: err.message,
-			stack: err.stack,
-		})
-	}
-	app.use(errHandler)
+	app.use(globalErrorHandler)
 }
 
 export default loadExpress

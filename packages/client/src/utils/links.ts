@@ -6,6 +6,12 @@ import { customFetch } from './fetcher'
 import AuthService from '../services/Auth'
 import promiseToObservable from './promiseToObservable'
 
+const decodeToken = <T = any>(token: string): T => {
+	const base64url = token.split('.')[1]
+	const base64 = base64url.replace(/_/g, '/').replace(/-/g, '+')
+	return JSON.parse(atob(base64))
+}
+
 export const errorLink = onError(({ graphQLErrors, operation, forward }) => {
 	if (!graphQLErrors) return
 
@@ -15,6 +21,9 @@ export const errorLink = onError(({ graphQLErrors, operation, forward }) => {
 			case 'UNAUTHENTICATED':
 				const accessToken = AuthService.getCurrentUser()?.accessToken
 				if (!accessToken) return
+
+				const decoded = decodeToken(accessToken)
+				if (decoded.exp >= Math.ceil(Date.now() / 1000)) return
 
 				const oldHeaders = operation.getContext().headers
 				return promiseToObservable(AuthService.refreshToken()).flatMap(

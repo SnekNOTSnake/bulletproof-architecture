@@ -71,14 +71,19 @@ class AuthService {
 	/**
 	 * Despite the name `refreshToken`, it returns `accessToken`
 	 */
-	static async refreshToken(): Promise<string> {
-		const res = await axios.post(
-			AUTH_URI + '/refresh-token',
-			{},
-			{ withCredentials: true },
-		)
-		localStorage.setItem('user', JSON.stringify(res.data.data))
-		return res.data.data.accessToken
+	static async refreshToken(): Promise<string | undefined> {
+		try {
+			const res = await axios.post(
+				AUTH_URI + '/refresh-token',
+				{},
+				{ withCredentials: true },
+			)
+			localStorage.setItem('user', JSON.stringify(res.data.data))
+			return res.data.data.accessToken
+		} catch (err) {
+			localStorage.removeItem('user')
+			window.location.href = '/'
+		}
 	}
 
 	static getCurrentUser(): IAuthData | null {

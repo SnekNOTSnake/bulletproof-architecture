@@ -3,6 +3,7 @@ import { Response } from 'express'
 
 import myEmitter, { userSignup } from '../../../events/events'
 import AuthService from '../../../services/Auth'
+import AppError from '../../../utils/AppError'
 import catchAsync from '../../../utils/catchAsync'
 import envelope from '../../../utils/envelope'
 import {
@@ -34,7 +35,8 @@ const sendOAuthResponse = (res: Response, authData: string) => {
 
 export const refreshToken = catchAsync(async (req, res, next) => {
 	const refreshToken = req.cookies[AUTH_KEY]
-	if (!refreshToken) return next(new Error('Empty refresh token cookie'))
+	if (!refreshToken)
+		return next(new AppError('Empty refresh token cookie', 401))
 
 	const authServiceInstance = Container.get(AuthService)
 	const result = await authServiceInstance.refreshToken(refreshToken)

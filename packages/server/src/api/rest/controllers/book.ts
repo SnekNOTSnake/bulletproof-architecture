@@ -1,6 +1,7 @@
 import { Container } from 'typedi'
 
 import { decodeCursor, encodeCursor } from '../../../utils/helpers'
+import AppError from '../../../utils/AppError'
 import envelope from '../../../utils/envelope'
 import catchAsync from '../../../utils/catchAsync'
 import BookService from '../../../services/Book'
@@ -9,7 +10,7 @@ export const createBook = catchAsync(async (req, res, next) => {
 	const { title } = req.body
 
 	if (!req.user)
-		return next(new Error('You have to be logged in to create a book'))
+		return next(new AppError('You have to be logged in to create a book', 401))
 
 	const bookServiceInstance = Container.get(BookService)
 	const book = await bookServiceInstance.createBook({
@@ -26,7 +27,7 @@ export const updateBook = catchAsync(async (req, res, next) => {
 	const { title, id } = req.body
 
 	if (!req.user)
-		return next(new Error('You have to be logged in to update books'))
+		return next(new AppError('You have to be logged in to update books', 401))
 
 	const bookServiceInstance = Container.get(BookService)
 	const updatedBook = await bookServiceInstance.updateBook({
@@ -42,7 +43,7 @@ export const deleteBook = catchAsync(async (req, res, next) => {
 	const { id } = req.body
 
 	if (!req.user)
-		return next(new Error('You have to be logged in to update books'))
+		return next(new AppError('You have to be logged in to update books', 401))
 
 	const bookServiceInstance = Container.get(BookService)
 	const deletedBookId = await bookServiceInstance.deleteBook({
