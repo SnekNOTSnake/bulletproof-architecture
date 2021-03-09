@@ -34,15 +34,26 @@ const MyList: React.FC<MyListProps> = ({ icon: Icon, text }) => (
 	</ListItem>
 )
 
-type Props = { user: IUser | null }
+type Props = {
+	user: IUser | null
+	setCurrentUser: React.Dispatch<React.SetStateAction<IUser | null>>
+}
 
-const Profile: React.FC<Props> = ({ user }) => {
+const Profile: React.FC<Props> = ({ user, setCurrentUser }) => {
 	const fileInput = React.useRef<HTMLInputElement>(null)
 
 	const [progress, setProgress] = React.useState<number>(0)
 	const [file, setFile] = React.useState<File | null>(null)
 	const [upload, { loading, data, error }] = useUploadAvatarMutation({
-		onCompleted: () => {
+		onCompleted: (file) => {
+			setCurrentUser((initVal) => {
+				if (!initVal) return null
+				return {
+					...initVal,
+					avatar: file.uploadAvatar.filename,
+				}
+			})
+
 			if (!fileInput.current) return
 			fileInput.current.value = ''
 		},

@@ -1,5 +1,6 @@
 import axios from 'axios'
 
+import { setAccessToken } from '../accessToken'
 import openOAuthWindow from '../utils/openOAuthWindow'
 
 const AUTH_URI = 'http://localhost:4200/api/auth'
@@ -18,7 +19,7 @@ class AuthService {
 			{ withCredentials: true },
 		)
 
-		localStorage.setItem('user', JSON.stringify(res.data.data))
+		setAccessToken(res.data.data.accessToken)
 
 		return res.data.data.user
 	}
@@ -55,7 +56,7 @@ class AuthService {
 						message.origin === 'http://localhost:4200' &&
 						source === 'oauth-login'
 					) {
-						localStorage.setItem('user', JSON.stringify(payload))
+						setAccessToken(payload.accessToken)
 						return resolve(payload.user)
 					}
 				},
@@ -65,31 +66,22 @@ class AuthService {
 
 	static async logout(): Promise<void> {
 		await axios.post(AUTH_URI + '/logout', {}, { withCredentials: true })
-		localStorage.removeItem('user')
+		setAccessToken('')
 	}
 
 	/**
 	 * Despite the name `refreshToken`, it returns `accessToken`
 	 */
-	static async refreshToken(): Promise<string | undefined> {
-		try {
-			const res = await axios.post(
-				AUTH_URI + '/refresh-token',
-				{},
-				{ withCredentials: true },
-			)
-			localStorage.setItem('user', JSON.stringify(res.data.data))
-			return res.data.data.accessToken
-		} catch (err) {
-			localStorage.removeItem('user')
-			window.location.href = '/'
-		}
-	}
+	static async refreshToken(): Promise<IAuthData> {
+		const res = await axios.post(
+			AUTH_URI + '/refresh-token',
+			{},
+			{ withCredentials: true },
+		)
+		const data = res.data.data
 
-	static getCurrentUser(): IAuthData | null {
-		const data = localStorage.getItem('user')
-		if (!data) return null
-		return JSON.parse(data)
+		setAccessToken(data.accessToken)
+		return data
 	}
 }
 

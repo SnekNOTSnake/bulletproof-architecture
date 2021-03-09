@@ -16,18 +16,34 @@ const CreateBook = React.lazy(() => import('../CreateBook'))
 const Signup = React.lazy(() => import('../Signup'))
 
 const App: React.FC = () => {
-	const [currentUser, setCurrentUser] = React.useState<IUser | null>(() => {
-		const data = AuthService.getCurrentUser()
-		return data ? data.user : null
-	})
+	const [loading, setLoading] = React.useState<boolean>(true)
+	const [currentUser, setCurrentUser] = React.useState<IUser | null>(null)
+
+	React.useEffect(() => {
+		const refreshToken = async () => {
+			try {
+				const data = await AuthService.refreshToken()
+				setCurrentUser(data.user)
+			} catch {}
+			setLoading(false)
+		}
+		refreshToken()
+	}, [])
 
 	const classes = useStyles()
+
+	if (loading)
+		return (
+			<Container fixed className={classes.container}>
+				<Typography variant="h6">Loading user</Typography>
+			</Container>
+		)
 
 	return (
 		<Container fixed className={classes.container}>
 			<Navbar setCurrentUser={setCurrentUser} currentUser={currentUser} />
 			<React.Suspense
-				fallback={<Typography variant="h6">Loading...</Typography>}
+				fallback={<Typography variant="h6">Loading page</Typography>}
 			>
 				<Switch>
 					<Route exact path="/" render={() => <Home />} />
@@ -43,7 +59,9 @@ const App: React.FC = () => {
 					<Route
 						exact
 						path="/me"
-						render={() => <Profile user={currentUser} />}
+						render={() => (
+							<Profile setCurrentUser={setCurrentUser} user={currentUser} />
+						)}
 					/>
 					<Route
 						exact
