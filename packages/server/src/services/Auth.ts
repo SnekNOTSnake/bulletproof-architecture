@@ -6,6 +6,7 @@ import { v4 as uuid } from 'uuid'
 import { createWriteStream, unlinkSync } from 'fs'
 import sharp from 'sharp'
 
+import AppError from '../utils/AppError'
 import {
 	createAccessToken,
 	createRefreshToken,
@@ -29,7 +30,7 @@ class AuthService {
 		const decoded = await decodeToken(refreshToken)
 		const user = await this.UsersModel.findById(decoded.userId)
 
-		if (!user) throw new Error('No user with that ID')
+		if (!user) throw new AppError('No user with that ID', 404)
 
 		const newRefreshToken = createRefreshToken(user)
 		const accessToken = createAccessToken(user)
@@ -45,7 +46,8 @@ class AuthService {
 		const decoded = await decodeToken(accessToken)
 		const user = await this.UsersModel.findById(decoded.userId)
 
-		if (!user) throw new Error('No user with that ID, it may have been deleted')
+		if (!user)
+			throw new AppError('No user with that ID, it may have been deleted', 404)
 
 		return user
 	}
@@ -62,7 +64,8 @@ class AuthService {
 		const encrypted = await bcrypt.hash(password, SALT_ROUND)
 
 		const existingUser = await this.UsersModel.findOne({ email })
-		if (existingUser) throw new Error('User with that email already exists')
+		if (existingUser)
+			throw new AppError('User with that email already exists', 400)
 
 		const user = new this.UsersModel({
 			name: xss(name),
@@ -77,13 +80,14 @@ class AuthService {
 	async signin({ email, password }: { email: string; password: string }) {
 		const user = await this.UsersModel.findOne({ email })
 
-		if (!user) throw new Error('No user with that email')
+		if (!user) throw new AppError('No user with that email', 404)
 		if (!user.password)
-			throw new Error(
+			throw new AppError(
 				'User is not using password authentication, they are using either Google or Github',
+				400,
 			)
 		if (!bcrypt.compareSync(password, user.password)) {
-			throw new Error('Incorrect password')
+			throw new AppError('Incorrect password', 400)
 		}
 
 		const refreshToken = createRefreshToken(user)
@@ -114,7 +118,7 @@ class AuthService {
 			!mimetype.startsWith('image/') ||
 			!['jpeg', 'png', 'gif'].includes(mimetype.split('/')[1])
 		) {
-			throw new Error('Invalid image type. JPEG PNG and GIF only')
+			throw new AppError('Invalid image type. JPEG PNG and GIF only', 400)
 		}
 
 		await new Promise((resolve, reject) => {
@@ -123,7 +127,7 @@ class AuthService {
 			writeStream.on('finish', resolve)
 			writeStream.on('error', (error) => {
 				unlinkSync(path)
-				reject(new Error('Something went wrong while processing image'))
+				reject(new AppError('Something went wrong while processing image', 400))
 			})
 
 			stream.on('error', (error) => writeStream.destroy(error))
@@ -136,7 +140,12 @@ class AuthService {
 						.on('error', (err) => {
 							stream.destroy(err)
 							unlinkSync(path)
-							reject(new Error('Something went wrong while processing image'))
+							reject(
+								new AppError(
+									'Something went wrong while processing image',
+									400,
+								),
+							)
 						}),
 				)
 				.pipe(writeStream)

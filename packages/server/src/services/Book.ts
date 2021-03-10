@@ -2,6 +2,7 @@ import { Model } from 'mongoose'
 import { Service, Inject } from 'typedi'
 import xss from 'xss'
 
+import AppError from '../utils/AppError'
 import { IBook } from '../models/Books'
 import { compactMap } from '../utils/helpers'
 
@@ -26,10 +27,11 @@ class BookService {
 	}) {
 		const book = await this.BooksModel.findById(id)
 
-		if (!book) throw new Error('No book with that ID')
+		if (!book) throw new AppError('No book with that ID', 404)
 		if (String(book.author) !== userId)
-			throw new Error(
+			throw new AppError(
 				'Unauthorized to update book, the book does not belong to you',
+				403,
 			)
 
 		book.title = xss(title)
@@ -41,10 +43,11 @@ class BookService {
 	async deleteBook({ id, userId }: { id: string; userId: string }) {
 		const book = await this.BooksModel.findById(id)
 
-		if (!book) throw new Error('No book with that ID')
+		if (!book) throw new AppError('No book with that ID', 404)
 		if (String(book.author) !== userId)
-			throw new Error(
+			throw new AppError(
 				'Unauthorized to delete book, the book does not belong to you',
+				403,
 			)
 
 		await this.BooksModel.findByIdAndDelete(id)

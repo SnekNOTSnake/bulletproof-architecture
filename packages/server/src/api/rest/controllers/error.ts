@@ -2,6 +2,7 @@ import { ErrorRequestHandler } from 'express'
 import { Error as MongooseError } from 'mongoose'
 import { MongoError } from 'mongodb'
 import { JsonWebTokenError, TokenExpiredError } from 'jsonwebtoken'
+import { ValidationError as JoiError } from 'joi'
 
 import AppError from '../../../utils/AppError'
 import { NODE_ENV } from '../../../config'
@@ -20,7 +21,12 @@ const handleDuplicateError = (err: MongoError) => {
 	return new AppError(message, 400)
 }
 
-const handleValidationError = (err: MongooseError.ValidationError) => {
+const handleJoiValidation = (err: JoiError) => {
+	const errors = err.details.map((error) => error.message)
+	return new AppError(errors.join(', '), 400)
+}
+
+const handleMongooseValidation = (err: MongooseError.ValidationError) => {
 	const errors = Object.values(err.errors).map((el) => el.message)
 	return new AppError(errors.join(', '), 400)
 }
@@ -73,8 +79,13 @@ const error: ErrorRequestHandler = (err, req, res, next) => {
 			break
 
 		case 'ValidationError':
-			// Mongoose Validation Error
-			error = handleValidationError(err)
+			if (err instanceof JoiError) {
+				// Joi Validation Error
+				error = handleJoiValidation(err)
+			} else if (err instanceof MongooseError.ValidationError) {
+				// Mongoose Validation Error
+				error = handleMongooseValidation(err)
+			}
 			break
 
 		case 'JsonWebTokenError':

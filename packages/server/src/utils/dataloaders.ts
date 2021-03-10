@@ -1,32 +1,33 @@
 import DataLoader from 'dataloader'
+
 import UserModel, { IUser } from '../models/Users'
 import BookModel, { IBook } from '../models/Books'
 
-/* async function idsBatchLoad(model: any, keys: readonly string[]) {
-	const documents = await model.findById({ $in: keys })
-	return documents
+/**
+ * A function to ensure Dataloader returns the same order as requested.
+ * Otherwise it could return the incorrect data, which is a disaster!
+ */
+const ensureOrder = ({
+	docs,
+	keys,
+	prop,
+	error = (id) => `Document does not exist (${id})`,
+}: {
+	docs: any[]
+	keys: readonly string[]
+	prop: string
+	error?: (id: string) => string
+}) => {
+	const docsMap = new Map()
+	docs.forEach((doc) => docsMap.set(String(doc[prop]), doc))
+
+	return keys.map((key) => {
+		return (
+			docsMap.get(key) ||
+			new Error(typeof error === 'function' ? error(key) : error)
+		)
+	})
 }
-
-async function batchLoad(model: any, keys: readonly string[]) {
-	const documents = await model.find()
-	return documents
-}
-
-export const loaders: ILoaders = {
-	userByIds: new DataLoader<string, IUser>((keys) => {
-		return idsBatchLoad(UserModel, keys)
-	}),
-	allUsers: new DataLoader<string, IUser>((keys) => {
-		return batchLoad(UserModel, keys)
-	}),
-
-	bookByIds: new DataLoader<string, IBook>((keys) => {
-		return idsBatchLoad(BookModel, keys)
-	}),
-	allBooks: new DataLoader<string, IBook>((keys) => {
-		return batchLoad(BookModel, keys)
-	}),
-} */
 
 export interface ILoaders {
 	userByIds: DataLoader<string, IUser>
@@ -35,16 +36,19 @@ export interface ILoaders {
 
 async function batchUserIds(keys: readonly string[]) {
 	const users = await UserModel.find({ _id: { $in: keys } })
-	return users
+	return ensureOrder({ docs: users, keys, prop: '_id' })
 }
 
 async function batchBookIds(keys: readonly string[]) {
 	const books = await BookModel.find({ _id: { $in: keys } })
-	return books
+	return ensureOrder({ docs: books, keys, prop: '_id' })
 }
 
 const loaders: ILoaders = {
-	userByIds: new DataLoader<string, IUser>((keys) => batchUserIds(keys)),
+	userByIds: new DataLoader<string, IUser>((keys) => {
+		const users = batchUserIds(keys)
+		return users
+	}),
 	bookByIds: new DataLoader<string, IBook>((keys) => batchBookIds(keys)),
 }
 
