@@ -3,7 +3,7 @@ import { Service, Inject } from 'typedi'
 import bcrypt from 'bcrypt'
 import xss from 'xss'
 import { v4 as uuid } from 'uuid'
-import { createWriteStream, unlink } from 'fs'
+import { createWriteStream, unlinkSync } from 'fs'
 import sharp from 'sharp'
 
 import {
@@ -122,7 +122,7 @@ class AuthService {
 
 			writeStream.on('finish', resolve)
 			writeStream.on('error', (error) => {
-				unlink(path, () => {})
+				unlinkSync(path)
 				reject(new Error('Something went wrong while processing image'))
 			})
 
@@ -135,7 +135,7 @@ class AuthService {
 						.jpeg({ quality: 50, chromaSubsampling: '4:2:0' })
 						.on('error', (err) => {
 							stream.destroy(err)
-							unlink(path, () => {})
+							unlinkSync(path)
 							reject(new Error('Something went wrong while processing image'))
 						}),
 				)

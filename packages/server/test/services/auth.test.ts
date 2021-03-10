@@ -1,5 +1,8 @@
 import expect from 'expect'
 import bcrypt from 'bcrypt'
+import { createReadStream, existsSync, unlinkSync } from 'fs'
+import path from 'path'
+
 import { modifyLastCharacter } from '../utils'
 import UserModel from '../../src/models/Users'
 import AuthService from '../../src/services/Auth'
@@ -108,6 +111,100 @@ describe('Auth Service', function () {
 			const user = await authServiceInstance.getUser(modifiedID)
 
 			expect(user).toBeNull()
+		})
+	})
+
+	describe('uploadAvatar', () => {
+		it("Should be able to upload images, store it in the FS, and change user's avatar document field", async () => {
+			const user = await authServiceInstance.getUser(loginUserID)
+			const filename = 'pixiv.jpg'
+			const filePath = path.resolve(__dirname, '../assets', filename)
+
+			if (!user) throw new Error('User is empty')
+
+			const result = await authServiceInstance.uploadAvatar({
+				file: new Promise((resolve, reject) => {
+					resolve({
+						createReadStream: () => createReadStream(filePath),
+						filename,
+						mimetype: 'image/jpeg',
+						encoding: '7bit',
+					})
+				}),
+				user,
+			})
+
+			expect(existsSync(result.path)).toBe(true)
+			expect(user.avatar).toBe(result.filename)
+			unlinkSync(result.path)
+		})
+
+		it('Should be able to upload png images', async () => {
+			const user = await authServiceInstance.getUser(loginUserID)
+			const filename = 'myanimelist.png'
+			const filePath = path.resolve(__dirname, '../assets', filename)
+
+			if (!user) throw new Error('User is empty')
+
+			const result = await authServiceInstance.uploadAvatar({
+				file: new Promise((resolve, reject) => {
+					resolve({
+						createReadStream: () => createReadStream(filePath),
+						filename,
+						mimetype: 'image/jpeg',
+						encoding: '7bit',
+					})
+				}),
+				user,
+			})
+
+			expect(existsSync(result.path)).toBe(true)
+			expect(user.avatar).toBe(result.filename)
+			unlinkSync(result.path)
+		})
+
+		it('Should throw when dealing with unknown file extensions', async () => {
+			const user = await authServiceInstance.getUser(loginUserID)
+			const filename = 'danganronpa.torrent'
+			const filePath = path.resolve(__dirname, '../assets', filename)
+
+			if (!user) throw new Error('User is empty')
+
+			await expect(
+				authServiceInstance.uploadAvatar({
+					file: new Promise((resolve, reject) => {
+						resolve({
+							createReadStream: () => createReadStream(filePath),
+							filename,
+							mimetype: 'image/jpeg',
+							encoding: '7bit',
+						})
+					}),
+					user,
+				}),
+			).rejects.toThrow()
+		})
+
+		it('Should throw when dealing with suspicious images (images that claim to be images)', async () => {
+			const user = await authServiceInstance.getUser(loginUserID)
+			const filename = 'fake-image.jpg'
+			const filePath = path.resolve(__dirname, '../assets', filename)
+
+			if (!user) throw new Error('User is empty')
+
+			await expect(
+				authServiceInstance.uploadAvatar({
+					file: new Promise((resolve, reject) => {
+						resolve({
+							createReadStream: () => createReadStream(filePath),
+							filename,
+							mimetype: 'image/jpeg',
+							encoding: '7bit',
+						})
+					}),
+					user,
+				}),
+			).rejects.toThrow()
 		})
 	})
 })
