@@ -7,7 +7,7 @@ import catchAsync from '../../../utils/catchAsync'
 import BookService from '../../../services/Book'
 
 export const createBook = catchAsync(async (req, res, next) => {
-	const { title } = req.body
+	const { title, summary, content } = req.body
 
 	if (!req.user)
 		return next(new AppError('You have to be logged in to create a book', 401))
@@ -16,6 +16,8 @@ export const createBook = catchAsync(async (req, res, next) => {
 	const book = await bookServiceInstance.createBook({
 		title,
 		author: req.user.id,
+		summary,
+		content,
 	})
 
 	envelope(res, {
@@ -24,7 +26,7 @@ export const createBook = catchAsync(async (req, res, next) => {
 })
 
 export const updateBook = catchAsync(async (req, res, next) => {
-	const { title, id } = req.body
+	const { title, id, summary, content } = req.body
 
 	if (!req.user)
 		return next(new AppError('You have to be logged in to update books', 401))
@@ -34,6 +36,8 @@ export const updateBook = catchAsync(async (req, res, next) => {
 		id,
 		title,
 		userId: req.user.id,
+		content,
+		summary,
 	})
 
 	envelope(res, { book: updatedBook })

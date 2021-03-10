@@ -7,4 +7,8 @@ export default makeStyles((theme) => ({
 	subtitle: {
 		fontSize: 14,
 	},
+	summary: {
+		whiteSpace: 'break-spaces',
+		marginBottom: theme.spacing(2),
+	},
 }))

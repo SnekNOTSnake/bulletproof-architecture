@@ -1,9 +1,11 @@
-mutation CreateBook($title: String!) {
-	createBook(title: $title) {
+mutation CreateBook($title: String!, $summary: String!, $content: String!) {
+	createBook(title: $title, summary: $summary, content: $content) {
 		id
 		title
 		created
 		lastChanged
+		summary
+		content
 		author {
 			id
 			name

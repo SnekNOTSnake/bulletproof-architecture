@@ -6,6 +6,7 @@ import { v4 as uuid } from 'uuid'
 import { createWriteStream, unlinkSync } from 'fs'
 import sharp from 'sharp'
 
+import { trim } from '../utils/helpers'
 import AppError from '../utils/AppError'
 import {
 	createAccessToken,
@@ -68,8 +69,8 @@ class AuthService {
 			throw new AppError('User with that email already exists', 400)
 
 		const user = new this.UsersModel({
-			name: xss(name),
-			email: xss(email),
+			name: xss(trim(name)),
+			email: xss(trim(email)),
 			password: encrypted,
 		})
 		await user.save()

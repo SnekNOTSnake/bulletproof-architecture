@@ -2,6 +2,7 @@ import { Model } from 'mongoose'
 import { Service, Inject } from 'typedi'
 import xss from 'xss'
 
+import { trim } from '../utils/helpers'
 import AppError from '../utils/AppError'
 import { IBook } from '../models/Books'
 import { compactMap } from '../utils/helpers'
@@ -10,8 +11,23 @@ import { compactMap } from '../utils/helpers'
 class BookService {
 	constructor(@Inject('booksModel') private BooksModel: Model<IBook>) {}
 
-	async createBook({ title, author }: { title: string; author: string }) {
-		const book = await this.BooksModel.create({ title: xss(title), author })
+	async createBook({
+		title,
+		author,
+		summary,
+		content,
+	}: {
+		title: string
+		author: string
+		summary: string
+		content: string
+	}) {
+		const book = await this.BooksModel.create({
+			title: xss(trim(title)),
+			summary: xss(trim(summary)),
+			content: xss(trim(content)),
+			author,
+		})
 
 		return book
 	}
@@ -20,10 +36,14 @@ class BookService {
 		title,
 		userId,
 		id,
+		summary,
+		content,
 	}: {
 		id: string
 		userId: string
 		title: string
+		summary: string
+		content: string
 	}) {
 		const book = await this.BooksModel.findById(id)
 
@@ -34,7 +54,9 @@ class BookService {
 				403,
 			)
 
-		book.title = xss(title)
+		book.title = xss(trim(title))
+		book.summary = xss(trim(summary))
+		book.content = xss(trim(content))
 		await book.save()
 
 		return book

@@ -17,11 +17,11 @@ type User {
   avatar: String!
 }
 type Mutation {
-  createBook(title: String!): Book @isAuthenticated
+  createBook(title: String!, summary: String!, content: String!): Book @isAuthenticated
   deleteBook(id: ID!): ID @isAuthenticated
   signin(email: String!, password: String!): AuthData
   signup(name: String!, email: String!, password: String!): User
-  updateBook(id: ID!, title: String!): Book @isAuthenticated
+  updateBook(id: ID!, title: String!, summary: String!, content: String!): Book @isAuthenticated
   uploadAvatar(file: Upload!): File! @isAuthenticated
 }
 type Query {
@@ -33,6 +33,8 @@ type Book {
   id: ID!
   title: String!
   author: User!
+  summary: String!
+  content: String!
   created: DateTime!
   lastChanged: DateTime!
 }

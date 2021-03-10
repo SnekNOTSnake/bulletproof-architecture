@@ -70,10 +70,6 @@ const Book: React.FC<Props> = ({ match, history }) => {
 							)} ago`}
 						/>
 						<CardContent>
-							<Typography>
-								Updated{' '}
-								{formatDistance(new Date(data.book.created), new Date())} ago
-							</Typography>
 							{mutationError ? (
 								<Alert
 									className={classes.alert}
@@ -85,6 +81,16 @@ const Book: React.FC<Props> = ({ match, history }) => {
 							) : (
 								''
 							)}
+							<Typography variant="body1" className={classes.summary}>
+								{data.book.summary}
+							</Typography>
+							<Typography className={classes.content}>
+								{data.book.content}
+							</Typography>
+							<Typography color="textSecondary">
+								Updated{' '}
+								{formatDistance(new Date(data.book.created), new Date())} ago
+							</Typography>
 						</CardContent>
 						<CardActions>
 							<Button
@@ -106,11 +112,7 @@ const Book: React.FC<Props> = ({ match, history }) => {
 							</Button>
 						</CardActions>
 					</Card>
-					{isEditing ? (
-						<EditBook id={data.book.id} title={data.book.title} />
-					) : (
-						''
-					)}
+					{isEditing ? <EditBook id={data.book.id} book={data.book} /> : ''}
 				</Grid>
 			</Grid>
 		</Box>

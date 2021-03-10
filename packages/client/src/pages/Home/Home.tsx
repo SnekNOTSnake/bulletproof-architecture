@@ -52,7 +52,10 @@ const Home: React.FC = () => {
 								)} ago`}
 							/>
 							<CardContent>
-								<Typography>
+								<Typography className={classes.summary}>
+									{book.summary}
+								</Typography>
+								<Typography color="textSecondary">
 									Updated {formatDistance(new Date(book.created), new Date())}{' '}
 									ago
 								</Typography>

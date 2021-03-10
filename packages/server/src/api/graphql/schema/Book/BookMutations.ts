@@ -10,20 +10,25 @@ import BookService from '../../../../services/Book'
 
 export const createBook: MutationResolvers['createBook'] = async (
 	parent,
-	{ title },
+	{ title, content, summary },
 	{ user },
 ) => {
-	await validate(createBookSchema, { title })
+	await validate(createBookSchema, { title, summary, content })
 
 	const bookServiceInstance = Container.get(BookService)
-	const book = await bookServiceInstance.createBook({ title, author: user.id })
+	const book = await bookServiceInstance.createBook({
+		title,
+		author: user.id,
+		summary,
+		content,
+	})
 
 	return book
 }
 
 export const updateBook: MutationResolvers['updateBook'] = async (
 	parent,
-	{ id, title },
+	{ id, title, summary, content },
 	{ user },
 ) => {
 	await validate(updateBookSchema, { id, title })
@@ -33,6 +38,8 @@ export const updateBook: MutationResolvers['updateBook'] = async (
 		id,
 		title,
 		userId: user.id,
+		summary,
+		content,
 	})
 
 	return book

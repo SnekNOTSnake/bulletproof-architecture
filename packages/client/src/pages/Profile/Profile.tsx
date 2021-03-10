@@ -1,4 +1,5 @@
 import React from 'react'
+import { formatDistance } from 'date-fns'
 
 import Alert from '@material-ui/lab/Alert'
 import Avatar from '@material-ui/core/Avatar'
@@ -16,7 +17,6 @@ import ListItemIcon from '@material-ui/core/ListItemIcon'
 import ListItemText from '@material-ui/core/ListItemText'
 import EmailIcon from '@material-ui/icons/Email'
 import IdentityIcon from '@material-ui/icons/PermIdentity'
-import AccessTimeIcon from '@material-ui/icons/AccessTime'
 import { SvgIconComponent } from '@material-ui/icons'
 
 import { useUploadAvatarMutation } from '../../generated/types'
@@ -109,12 +109,24 @@ const Profile: React.FC<Props> = ({ user, setCurrentUser }) => {
 								/>
 							}
 							title={user.name}
+							subheader={`Joined ${formatDistance(
+								new Date(user.joined),
+								new Date(),
+							)} ago`}
 						/>
 						<CardContent>
-							<Box className={classes.alert}>
-								{error ? <Alert severity="error">{error.message}</Alert> : ''}
+							<Box>
+								{error ? (
+									<Alert className={classes.alert} severity="error">
+										{error.message}
+									</Alert>
+								) : (
+									''
+								)}
 								{data?.uploadAvatar ? (
-									<Alert>Uploaded {data.uploadAvatar.filename}</Alert>
+									<Alert className={classes.alert}>
+										Uploaded {data.uploadAvatar.filename}
+									</Alert>
 								) : (
 									''
 								)}
@@ -126,7 +138,6 @@ const Profile: React.FC<Props> = ({ user, setCurrentUser }) => {
 								) : (
 									''
 								)}
-								<MyList icon={AccessTimeIcon} text={user.joined} />
 							</List>
 						</CardContent>
 						<CardActions>
@@ -136,7 +147,7 @@ const Profile: React.FC<Props> = ({ user, setCurrentUser }) => {
 								variant="contained"
 								component="label"
 							>
-								Upload File
+								Upload PFP
 								<input
 									ref={fileInput}
 									onChange={onFileChange}

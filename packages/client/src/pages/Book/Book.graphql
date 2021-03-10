@@ -2,6 +2,8 @@ query Book($id: ID!) {
 	book(id: $id) {
 		id
 		title
+		summary
+		content
 		author {
 			id
 			name

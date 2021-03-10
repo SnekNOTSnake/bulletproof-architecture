@@ -20,6 +20,8 @@ type SubmitEvent = React.FormEvent<HTMLFormElement>
 
 const CreateBook: React.FC<Props> = ({ user }) => {
 	const [title, setTitle] = React.useState<string>('')
+	const [summary, setSummary] = React.useState<string>('')
+	const [content, setContent] = React.useState<string>('')
 
 	const [createBook, { loading, data, error }] = useCreateBookMutation({
 		update: (cache, { data }) => {
@@ -53,12 +55,15 @@ const CreateBook: React.FC<Props> = ({ user }) => {
 		},
 	})
 
-	const onChange = (e: InputChange) => setTitle(e.currentTarget.value)
+	const onTitleChange = (e: InputChange) => setTitle(e.currentTarget.value)
+	const onSummaryChange = (e: InputChange) => setSummary(e.currentTarget.value)
+	const onContentChange = (e: InputChange) => setContent(e.currentTarget.value)
+
 	const onSubmit = async (e: SubmitEvent) => {
 		try {
 			e.preventDefault()
 			if (loading) return
-			await createBook({ variables: { title } })
+			await createBook({ variables: { title, summary, content } })
 		} catch (err) {
 			console.error(err)
 		}
@@ -75,10 +80,16 @@ const CreateBook: React.FC<Props> = ({ user }) => {
 						<Card>
 							<CardHeader title="Create a book" />
 							<CardContent>
-								<Box className={classes.alert}>
-									{error ? <Alert severity="error">{error.message}</Alert> : ''}
+								<Box>
+									{error ? (
+										<Alert className={classes.alert} severity="error">
+											{error.message}
+										</Alert>
+									) : (
+										''
+									)}
 									{data?.createBook ? (
-										<Alert>
+										<Alert className={classes.alert}>
 											Created {data.createBook.id} at {data.createBook.created}
 										</Alert>
 									) : (
@@ -90,7 +101,25 @@ const CreateBook: React.FC<Props> = ({ user }) => {
 									variant="outlined"
 									label="Title"
 									value={title}
-									onChange={onChange}
+									onChange={onTitleChange}
+									className={classes.input}
+								/>
+								<TextField
+									multiline
+									fullWidth
+									variant="outlined"
+									label="Summary"
+									value={summary}
+									onChange={onSummaryChange}
+									className={classes.input}
+								/>
+								<TextField
+									multiline
+									fullWidth
+									variant="outlined"
+									label="Content"
+									value={content}
+									onChange={onContentChange}
 								/>
 							</CardContent>
 							<CardActions>

@@ -1,5 +1,7 @@
 extend type Mutation {
-	createBook(title: String!): Book @isAuthenticated
-	updateBook(id: ID!, title: String!): Book @isAuthenticated
+	createBook(title: String!, summary: String!, content: String!): Book
+		@isAuthenticated
+	updateBook(id: ID!, title: String!, summary: String!, content: String!): Book
+		@isAuthenticated
 	deleteBook(id: ID!): ID @isAuthenticated
 }

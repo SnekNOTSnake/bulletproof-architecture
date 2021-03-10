@@ -4,6 +4,8 @@ export interface IBook extends Document {
 	id: string
 	title: string
 	author: object
+	summary: string
+	content: string
 	created: Date
 	lastChanged: Date
 }
@@ -18,6 +20,17 @@ const bookSchema: Schema<IBook> = new Schema<IBook>({
 		type: Types.ObjectId,
 		required: true,
 		ref: 'Users',
+	},
+	summary: {
+		type: String,
+		required: true,
+		maxlength: 200,
+	},
+	content: {
+		type: String,
+		required: true,
+		minlength: 100,
+		maxlength: 2000,
 	},
 	created: {
 		type: Date,

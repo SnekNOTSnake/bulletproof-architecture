@@ -4,5 +4,6 @@ export default makeStyles((theme) => ({
 	container: {
 		paddingTop: theme.spacing(8),
 		minHeight: '100vh',
+		paddingBottom: theme.spacing(8),
 	},
 }))

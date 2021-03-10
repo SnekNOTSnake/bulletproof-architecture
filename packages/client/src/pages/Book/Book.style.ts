@@ -2,6 +2,18 @@ import { makeStyles } from '@material-ui/core/styles'
 
 export default makeStyles((theme) => ({
 	alert: {
-		marginTop: theme.spacing(3),
+		marginBottom: theme.spacing(3),
+	},
+	summary: {
+		whiteSpace: 'break-spaces',
+		marginBottom: theme.spacing(4),
+		borderLeft: `4px solid ${theme.palette.primary.light}`,
+		fontStyle: 'italic',
+		paddingLeft: theme.spacing(2),
+	},
+	content: {
+		whiteSpace: 'break-spaces',
+		marginBottom: theme.spacing(4),
+		textAlign: 'justify',
 	},
 }))

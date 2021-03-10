@@ -1,9 +1,16 @@
-mutation UpdateBook($id: ID!, $title: String!) {
-	updateBook(id: $id, title: $title) {
+mutation UpdateBook(
+	$id: ID!
+	$title: String!
+	$summary: String!
+	$content: String!
+) {
+	updateBook(id: $id, title: $title, summary: $summary, content: $content) {
 		id
 		title
 		created
 		lastChanged
+		summary
+		content
 		author {
 			id
 			name

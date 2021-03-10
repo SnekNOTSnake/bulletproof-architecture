@@ -18,12 +18,19 @@ export const testUser = {
 export const createTestBook = (authorId: string, title = 'test book') => ({
 	title,
 	author: authorId,
+	summary: 's'.repeat(50),
+	content: 'c'.repeat(100),
 })
 
 const notDefinedBookId = '602122682ec3752763f2e7fe'
 const notDefinedUserId = '602144683ec3751763f2f9ff'
 
-const newBookTitle = 'Darny darn!'
+const newBookForm = {
+	title: 'Darny darn!',
+	summary: 'a'.repeat(50),
+	content: 'b'.repeat(100),
+}
+
 let createdBookID = ''
 let loginResult: ThenArg<
 	ReturnType<typeof authServiceInstance.signin>
@@ -45,6 +52,8 @@ describe('Book Service', async () => {
 			expect(book).toBeTruthy()
 			expect(book.id).toBeTruthy()
 			expect(book.title).toBe(testBook.title)
+			expect(book.summary).toBe(testBook.summary)
+			expect(book.content).toBe(testBook.content)
 			expect(String(book.author)).toBe(loginResult.user.id)
 
 			// Create more books for other testings
@@ -60,22 +69,22 @@ describe('Book Service', async () => {
 	describe('updateBook', () => {
 		it('Should be able to update book', async () => {
 			const updatedBook = await bookServiceInstance.updateBook({
+				...newBookForm,
 				id: createdBookID,
-				title: newBookTitle,
 				userId: loginResult.user.id,
 			})
 
 			expect(updatedBook).toBeTruthy()
 			expect(updatedBook.id).toBe(createdBookID)
-			expect(updatedBook.title).toBe(newBookTitle)
+			expect(updatedBook.title).toBe(updatedBook.title)
 			expect(String(updatedBook.author)).toBe(loginResult.user.id)
 		})
 
 		it('Should throw when no book is found with given ID', async () => {
 			await expect(
 				bookServiceInstance.updateBook({
+					...newBookForm,
 					id: notDefinedBookId,
-					title: newBookTitle,
 					userId: loginResult.user.id,
 				}),
 			).rejects.toThrow()
@@ -84,20 +93,54 @@ describe('Book Service', async () => {
 		it("Should throw when a user is updating other user's book", async () => {
 			await expect(
 				bookServiceInstance.updateBook({
+					...newBookForm,
 					id: createdBookID,
 					title: 'Trolled!',
 					userId: notDefinedUserId,
 				}),
 			).rejects.toThrow()
 		})
+
+		it('Should throw when exceeding limited length', async () => {
+			await expect(
+				bookServiceInstance.updateBook({
+					...newBookForm,
+					id: createdBookID,
+					userId: loginResult.user.id,
+					content: 'c'.repeat(2001),
+				}),
+			).rejects.toThrow()
+
+			await expect(
+				bookServiceInstance.updateBook({
+					...newBookForm,
+					id: createdBookID,
+					userId: loginResult.user.id,
+					summary: 's'.repeat(201),
+				}),
+			).rejects.toThrow()
+
+			await expect(
+				bookServiceInstance.updateBook({
+					...newBookForm,
+					id: createdBookID,
+					userId: loginResult.user.id,
+					title: 't'.repeat(51),
+				}),
+			).rejects.toThrow()
+		})
 	})
 
 	describe('getBook', () => {
-		it('Should be able to get a single book', async () => {
+		it('Should be able to get a healthy single book', async () => {
 			const book: any = await bookServiceInstance.getBook(createdBookID)
 
 			expect(book).toBeTruthy()
 			expect(book.id).toBe(createdBookID)
+			expect(book).toHaveProperty('title')
+			expect(book).toHaveProperty('author')
+			expect(book).toHaveProperty('summary')
+			expect(book).toHaveProperty('content')
 		})
 
 		it('Should return null when no book is found', async () => {

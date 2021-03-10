@@ -18,3 +18,13 @@ export const encodeCursor = (plainText: string) => {
 export const decodeCursor = (base64: string) => {
 	return Buffer.from(base64, 'base64').toString('utf-8')
 }
+
+export const trim = (text: string) => {
+	const spaceTrimmed = text.replace(
+		/[ \t\v\u00a0\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000\ufeff]{2,}/g,
+		' ',
+	)
+	const lineBreakTrimmed = spaceTrimmed.replace(/[\f\n\r]{3,}/g, '\n\n')
+
+	return lineBreakTrimmed
+}

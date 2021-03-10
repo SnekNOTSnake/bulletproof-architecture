@@ -51,6 +51,8 @@ export type Mutation = {
 
 export type MutationCreateBookArgs = {
   title: Scalars['String'];
+  summary: Scalars['String'];
+  content: Scalars['String'];
 };
 
 
@@ -75,6 +77,8 @@ export type MutationSignupArgs = {
 export type MutationUpdateBookArgs = {
   id: Scalars['ID'];
   title: Scalars['String'];
+  summary: Scalars['String'];
+  content: Scalars['String'];
 };
 
 
@@ -106,6 +110,8 @@ export type Book = {
   id: Scalars['ID'];
   title: Scalars['String'];
   author: User;
+  summary: Scalars['String'];
+  content: Scalars['String'];
   created: Scalars['DateTime'];
   lastChanged: Scalars['DateTime'];
 };
@@ -288,11 +294,11 @@ export type UserResolvers<ContextType = MyContext, ParentType extends ResolversP
 };
 
 export type MutationResolvers<ContextType = MyContext, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
-  createBook?: Resolver<Maybe<ResolversTypes['Book']>, ParentType, ContextType, RequireFields<MutationCreateBookArgs, 'title'>>;
+  createBook?: Resolver<Maybe<ResolversTypes['Book']>, ParentType, ContextType, RequireFields<MutationCreateBookArgs, 'title' | 'summary' | 'content'>>;
   deleteBook?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType, RequireFields<MutationDeleteBookArgs, 'id'>>;
   signin?: Resolver<Maybe<ResolversTypes['AuthData']>, ParentType, ContextType, RequireFields<MutationSigninArgs, 'email' | 'password'>>;
   signup?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<MutationSignupArgs, 'name' | 'email' | 'password'>>;
-  updateBook?: Resolver<Maybe<ResolversTypes['Book']>, ParentType, ContextType, RequireFields<MutationUpdateBookArgs, 'id' | 'title'>>;
+  updateBook?: Resolver<Maybe<ResolversTypes['Book']>, ParentType, ContextType, RequireFields<MutationUpdateBookArgs, 'id' | 'title' | 'summary' | 'content'>>;
   uploadAvatar?: Resolver<ResolversTypes['File'], ParentType, ContextType, RequireFields<MutationUploadAvatarArgs, 'file'>>;
 };
 
@@ -306,6 +312,8 @@ export type BookResolvers<ContextType = MyContext, ParentType extends ResolversP
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   author?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
+  summary?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  content?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   created?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   lastChanged?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;

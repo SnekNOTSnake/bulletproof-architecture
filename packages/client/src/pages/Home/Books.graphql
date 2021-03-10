@@ -6,6 +6,7 @@ query Books($first: Int!, $after: String, $where: BooksWhereInput) {
 			title
 			created
 			lastChanged
+			summary
 			author {
 				id
 				name

@@ -47,6 +47,8 @@ export type Mutation = {
 
 export type MutationCreateBookArgs = {
   title: Scalars['String'];
+  summary: Scalars['String'];
+  content: Scalars['String'];
 };
 
 
@@ -71,6 +73,8 @@ export type MutationSignupArgs = {
 export type MutationUpdateBookArgs = {
   id: Scalars['ID'];
   title: Scalars['String'];
+  summary: Scalars['String'];
+  content: Scalars['String'];
 };
 
 
@@ -102,6 +106,8 @@ export type Book = {
   id: Scalars['ID'];
   title: Scalars['String'];
   author: User;
+  summary: Scalars['String'];
+  content: Scalars['String'];
   created: Scalars['DateTime'];
   lastChanged: Scalars['DateTime'];
 };
@@ -146,6 +152,8 @@ export type File = {
 export type UpdateBookMutationVariables = Exact<{
   id: Scalars['ID'];
   title: Scalars['String'];
+  summary: Scalars['String'];
+  content: Scalars['String'];
 }>;
 
 
@@ -153,7 +161,7 @@ export type UpdateBookMutation = (
   { __typename?: 'Mutation' }
   & { updateBook?: Maybe<(
     { __typename?: 'Book' }
-    & Pick<Book, 'id' | 'title' | 'created' | 'lastChanged'>
+    & Pick<Book, 'id' | 'title' | 'created' | 'lastChanged' | 'summary' | 'content'>
     & { author: (
       { __typename?: 'User' }
       & Pick<User, 'id' | 'name' | 'email'>
@@ -170,7 +178,7 @@ export type BookQuery = (
   { __typename?: 'Query' }
   & { book?: Maybe<(
     { __typename?: 'Book' }
-    & Pick<Book, 'id' | 'title' | 'created' | 'lastChanged'>
+    & Pick<Book, 'id' | 'title' | 'summary' | 'content' | 'created' | 'lastChanged'>
     & { author: (
       { __typename?: 'User' }
       & Pick<User, 'id' | 'name'>
@@ -190,6 +198,8 @@ export type DeleteBookMutation = (
 
 export type CreateBookMutationVariables = Exact<{
   title: Scalars['String'];
+  summary: Scalars['String'];
+  content: Scalars['String'];
 }>;
 
 
@@ -197,7 +207,7 @@ export type CreateBookMutation = (
   { __typename?: 'Mutation' }
   & { createBook?: Maybe<(
     { __typename?: 'Book' }
-    & Pick<Book, 'id' | 'title' | 'created' | 'lastChanged'>
+    & Pick<Book, 'id' | 'title' | 'created' | 'lastChanged' | 'summary' | 'content'>
     & { author: (
       { __typename?: 'User' }
       & Pick<User, 'id' | 'name' | 'avatar'>
@@ -218,7 +228,7 @@ export type BooksQuery = (
     { __typename?: 'BookConnection' }
     & { nodes: Array<(
       { __typename?: 'Book' }
-      & Pick<Book, 'id' | 'title' | 'created' | 'lastChanged'>
+      & Pick<Book, 'id' | 'title' | 'created' | 'lastChanged' | 'summary'>
       & { author: (
         { __typename?: 'User' }
         & Pick<User, 'id' | 'name' | 'avatar'>
@@ -245,12 +255,14 @@ export type UploadAvatarMutation = (
 
 
 export const UpdateBookDocument = gql`
-    mutation UpdateBook($id: ID!, $title: String!) {
-  updateBook(id: $id, title: $title) {
+    mutation UpdateBook($id: ID!, $title: String!, $summary: String!, $content: String!) {
+  updateBook(id: $id, title: $title, summary: $summary, content: $content) {
     id
     title
     created
     lastChanged
+    summary
+    content
     author {
       id
       name
@@ -276,6 +288,8 @@ export type UpdateBookMutationFn = Apollo.MutationFunction<UpdateBookMutation, U
  *   variables: {
  *      id: // value for 'id'
  *      title: // value for 'title'
+ *      summary: // value for 'summary'
+ *      content: // value for 'content'
  *   },
  * });
  */
@@ -290,6 +304,8 @@ export const BookDocument = gql`
   book(id: $id) {
     id
     title
+    summary
+    content
     author {
       id
       name
@@ -356,12 +372,14 @@ export type DeleteBookMutationHookResult = ReturnType<typeof useDeleteBookMutati
 export type DeleteBookMutationResult = Apollo.MutationResult<DeleteBookMutation>;
 export type DeleteBookMutationOptions = Apollo.BaseMutationOptions<DeleteBookMutation, DeleteBookMutationVariables>;
 export const CreateBookDocument = gql`
-    mutation CreateBook($title: String!) {
-  createBook(title: $title) {
+    mutation CreateBook($title: String!, $summary: String!, $content: String!) {
+  createBook(title: $title, summary: $summary, content: $content) {
     id
     title
     created
     lastChanged
+    summary
+    content
     author {
       id
       name
@@ -386,6 +404,8 @@ export type CreateBookMutationFn = Apollo.MutationFunction<CreateBookMutation, C
  * const [createBookMutation, { data, loading, error }] = useCreateBookMutation({
  *   variables: {
  *      title: // value for 'title'
+ *      summary: // value for 'summary'
+ *      content: // value for 'content'
  *   },
  * });
  */
@@ -403,6 +423,7 @@ export const BooksDocument = gql`
       title
       created
       lastChanged
+      summary
       author {
         id
         name

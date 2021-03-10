@@ -23,9 +23,13 @@ export const signinSchema = Joi.object({
 // Book
 const title = Joi.string().max(50).required()
 const bookId = Joi.string().max(50).required()
+const summary = Joi.string().max(200).required()
+const content = Joi.string().min(100).max(2000).required()
 
 export const createBookSchema = Joi.object({
 	title,
+	summary,
+	content,
 })
 
 export const updateBookSchema = Joi.object({
