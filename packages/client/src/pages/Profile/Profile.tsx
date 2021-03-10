@@ -57,6 +57,7 @@ const Profile: React.FC<Props> = ({ user, setCurrentUser }) => {
 			if (!fileInput.current) return
 			fileInput.current.value = ''
 		},
+		onError: () => {},
 	})
 
 	React.useEffect(() => {
@@ -113,10 +114,7 @@ const Profile: React.FC<Props> = ({ user, setCurrentUser }) => {
 							<Box className={classes.alert}>
 								{error ? <Alert severity="error">{error.message}</Alert> : ''}
 								{data?.uploadAvatar ? (
-									<Alert>
-										Uploaded {data.uploadAvatar.filename} with an id of{' '}
-										{data.uploadAvatar.id}
-									</Alert>
+									<Alert>Uploaded {data.uploadAvatar.filename}</Alert>
 								) : (
 									''
 								)}

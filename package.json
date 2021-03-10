@@ -40,6 +40,7 @@
 		"@types/react-dom": "^17.0.1",
 		"@types/react-router-dom": "^5.1.7",
 		"@types/safe-regex": "^1.1.2",
+		"@types/sharp": "^0.27.1",
 		"@types/uuid": "^8.3.0",
 		"babel-loader": "^8.2.2",
 		"clean-webpack-plugin": "^3.0.0",

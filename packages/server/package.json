@@ -28,6 +28,7 @@
 		"passport-google-oauth20": "^2.0.0",
 		"reflect-metadata": "^0.1.13",
 		"safe-regex": "^2.1.1",
+		"sharp": "^0.27.2",
 		"typedi": "^0.10.0",
 		"uuid": "^8.3.2",
 		"winston": "^3.3.3",

@@ -4,6 +4,7 @@ import bcrypt from 'bcrypt'
 import xss from 'xss'
 import { v4 as uuid } from 'uuid'
 import { createWriteStream, unlink } from 'fs'
+import sharp from 'sharp'
 
 import {
 	createAccessToken,
@@ -105,24 +106,40 @@ class AuthService {
 		const { createReadStream, filename, mimetype } = await file
 		const stream = createReadStream()
 		const id = uuid()
-		const newFilename = id + '-' + filename
+		const newFilename = id + '.jpg'
 		const path = `${UPLOAD_DIR}/${newFilename}`
 		const storedFile = { id, filename: newFilename, mimetype, path }
+
+		if (
+			!mimetype.startsWith('image/') ||
+			!['jpeg', 'png', 'gif'].includes(mimetype.split('/')[1])
+		) {
+			throw new Error('Invalid image type. JPEG PNG and GIF only')
+		}
 
 		await new Promise((resolve, reject) => {
 			const writeStream = createWriteStream(path)
 
 			writeStream.on('finish', resolve)
-
 			writeStream.on('error', (error) => {
-				unlink(path, () => {
-					reject(error)
-				})
+				unlink(path, () => {})
+				reject(new Error('Something went wrong while processing image'))
 			})
 
 			stream.on('error', (error) => writeStream.destroy(error))
-
-			stream.pipe(writeStream)
+			stream
+				.pipe(
+					sharp()
+						.resize(256, 256, { position: 'centre', fit: 'cover' })
+						.blur(1)
+						.jpeg({ quality: 50, chromaSubsampling: '4:2:0' })
+						.on('error', (err) => {
+							stream.destroy(err)
+							unlink(path, () => {})
+							reject(new Error('Something went wrong while processing image'))
+						}),
+				)
+				.pipe(writeStream)
 		})
 
 		user.avatar = newFilename

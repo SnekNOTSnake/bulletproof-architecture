@@ -6,7 +6,7 @@ import context from '../../utils/context'
 import { getSchema } from './schema'
 
 export const apolloServer = (app: Application) => {
-	app.use(graphqlUploadExpress())
+	app.use(graphqlUploadExpress({ maxFiles: 1, maxFileSize: 2000000 }))
 
 	const server = new ApolloServer({
 		/*
