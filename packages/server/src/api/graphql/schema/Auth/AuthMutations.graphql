@@ -1,5 +1,5 @@
 extend type Mutation {
 	signup(name: String!, email: String!, password: String!): User
 	signin(email: String!, password: String!): AuthData
-	uploadAvatar(file: Upload!): File! @isAuthenticated
+	updateMe(file: Upload, name: String!): User! @isAuthenticated
 }

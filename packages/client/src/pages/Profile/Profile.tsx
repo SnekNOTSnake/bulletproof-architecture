@@ -1,7 +1,6 @@
 import React from 'react'
 import { formatDistance } from 'date-fns'
 
-import Alert from '@material-ui/lab/Alert'
 import Avatar from '@material-ui/core/Avatar'
 import Button from '@material-ui/core/Button'
 import Box from '@material-ui/core/Box'
@@ -19,10 +18,9 @@ import EmailIcon from '@material-ui/icons/Email'
 import IdentityIcon from '@material-ui/icons/PermIdentity'
 import { SvgIconComponent } from '@material-ui/icons'
 
-import { useUploadAvatarMutation } from '../../generated/types'
 import useStyles from './Profile.style'
+import EditProfile from '../../components/EditProfile'
 
-type FileChange = React.ChangeEvent<HTMLInputElement>
 type MyListProps = { icon: SvgIconComponent; text: string | Date }
 
 const MyList: React.FC<MyListProps> = ({ icon: Icon, text }) => (
@@ -40,56 +38,9 @@ type Props = {
 }
 
 const Profile: React.FC<Props> = ({ user, setCurrentUser }) => {
-	const fileInput = React.useRef<HTMLInputElement>(null)
+	const [isEditing, setIsEditing] = React.useState<boolean>(false)
 
-	const [progress, setProgress] = React.useState<number>(0)
-	const [file, setFile] = React.useState<File | null>(null)
-	const [upload, { loading, data, error }] = useUploadAvatarMutation({
-		onCompleted: (file) => {
-			setCurrentUser((initVal) => {
-				if (!initVal) return null
-				return {
-					...initVal,
-					avatar: file.uploadAvatar.filename,
-				}
-			})
-
-			if (!fileInput.current) return
-			fileInput.current.value = ''
-		},
-		onError: () => {},
-	})
-
-	React.useEffect(() => {
-		if (!file || loading) return
-
-		let abort: any
-
-		upload({
-			variables: { file },
-			context: {
-				fetchOptions: {
-					useUpload: true,
-					onProgress: (ev: ProgressEvent) => {
-						setProgress((ev.loaded / ev.total) * 100)
-					},
-					onAbortPossible: (abortHandler: any) => {
-						abort = abortHandler
-					},
-				},
-			},
-		})
-
-		return () => {
-			if (!abort) return
-			abort()
-		}
-	}, [file])
-
-	const onFileChange = ({ currentTarget: { files } }: FileChange) => {
-		if (!files) return
-		setFile(files[0])
-	}
+	const toggleEditting = () => setIsEditing((initVal) => !initVal)
 
 	const classes = useStyles()
 
@@ -99,7 +50,7 @@ const Profile: React.FC<Props> = ({ user, setCurrentUser }) => {
 	return (
 		<Box>
 			<Grid container>
-				<Grid item>
+				<Grid item md={6} xs={12}>
 					<Card>
 						<CardHeader
 							avatar={
@@ -115,22 +66,6 @@ const Profile: React.FC<Props> = ({ user, setCurrentUser }) => {
 							)} ago`}
 						/>
 						<CardContent>
-							<Box>
-								{error ? (
-									<Alert className={classes.alert} severity="error">
-										{error.message}
-									</Alert>
-								) : (
-									''
-								)}
-								{data?.uploadAvatar ? (
-									<Alert className={classes.alert}>
-										Uploaded {data.uploadAvatar.filename}
-									</Alert>
-								) : (
-									''
-								)}
-							</Box>
 							<List>
 								<MyList icon={IdentityIcon} text={user.id} />
 								{user.email ? (
@@ -142,27 +77,20 @@ const Profile: React.FC<Props> = ({ user, setCurrentUser }) => {
 						</CardContent>
 						<CardActions>
 							<Button
-								disabled={loading}
+								onClick={toggleEditting}
 								color="primary"
 								variant="contained"
 								component="label"
 							>
-								Upload PFP
-								<input
-									ref={fileInput}
-									onChange={onFileChange}
-									type="file"
-									accept="image/*"
-									hidden
-								/>
+								{isEditing ? 'Close Edit' : 'Edit Profile'}
 							</Button>
-							{loading ? (
-								<Typography variant="body1">{Math.ceil(progress)}%</Typography>
-							) : (
-								''
-							)}
 						</CardActions>
 					</Card>
+					{isEditing ? (
+						<EditProfile setCurrentUser={setCurrentUser} user={user} />
+					) : (
+						''
+					)}
 				</Grid>
 			</Grid>
 		</Box>

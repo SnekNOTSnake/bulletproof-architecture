@@ -101,13 +101,7 @@ class AuthService {
 		}
 	}
 
-	async uploadAvatar({
-		file,
-		user,
-	}: {
-		file: Promise<GraphQLFileUpload>
-		user: IUser
-	}) {
+	static async _upload(file: Promise<GraphQLFileUpload>) {
 		const { createReadStream, filename, mimetype } = await file
 		const stream = createReadStream()
 		const id = uuid()
@@ -136,8 +130,7 @@ class AuthService {
 				.pipe(
 					sharp()
 						.resize(256, 256, { position: 'centre', fit: 'cover' })
-						.blur(1)
-						.jpeg({ quality: 50, chromaSubsampling: '4:2:0' })
+						.jpeg({ quality: 85, chromaSubsampling: '4:2:0' })
 						.on('error', (err) => {
 							stream.destroy(err)
 							unlinkSync(path)
@@ -152,10 +145,28 @@ class AuthService {
 				.pipe(writeStream)
 		})
 
-		user.avatar = newFilename
+		return storedFile
+	}
+
+	async updateMe({
+		newName,
+		file,
+		user,
+	}: {
+		newName: string
+		file?: Promise<GraphQLFileUpload> | null
+		user: IUser
+	}) {
+		user.name = newName
+
+		if (file) {
+			const uploadResult = await AuthService._upload(file)
+			user.avatar = uploadResult.filename
+		}
+
 		await user.save()
 
-		return storedFile
+		return user
 	}
 }
 

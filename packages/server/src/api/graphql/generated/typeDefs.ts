@@ -22,7 +22,7 @@ type Mutation {
   signin(email: String!, password: String!): AuthData
   signup(name: String!, email: String!, password: String!): User
   updateBook(id: ID!, title: String!, summary: String!, content: String!): Book @isAuthenticated
-  uploadAvatar(file: Upload!): File! @isAuthenticated
+  updateMe(file: Upload, name: String!): User! @isAuthenticated
 }
 type Query {
   book(id: ID!): Book

@@ -45,7 +45,7 @@ export type Mutation = {
   signin?: Maybe<AuthData>;
   signup?: Maybe<User>;
   updateBook?: Maybe<Book>;
-  uploadAvatar: File;
+  updateMe: User;
 };
 
 
@@ -82,8 +82,9 @@ export type MutationUpdateBookArgs = {
 };
 
 
-export type MutationUploadAvatarArgs = {
-  file: Scalars['Upload'];
+export type MutationUpdateMeArgs = {
+  file?: Maybe<Scalars['Upload']>;
+  name: Scalars['String'];
 };
 
 export type Query = {
@@ -299,7 +300,7 @@ export type MutationResolvers<ContextType = MyContext, ParentType extends Resolv
   signin?: Resolver<Maybe<ResolversTypes['AuthData']>, ParentType, ContextType, RequireFields<MutationSigninArgs, 'email' | 'password'>>;
   signup?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<MutationSignupArgs, 'name' | 'email' | 'password'>>;
   updateBook?: Resolver<Maybe<ResolversTypes['Book']>, ParentType, ContextType, RequireFields<MutationUpdateBookArgs, 'id' | 'title' | 'summary' | 'content'>>;
-  uploadAvatar?: Resolver<ResolversTypes['File'], ParentType, ContextType, RequireFields<MutationUploadAvatarArgs, 'file'>>;
+  updateMe?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationUpdateMeArgs, 'name'>>;
 };
 
 export type QueryResolvers<ContextType = MyContext, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {

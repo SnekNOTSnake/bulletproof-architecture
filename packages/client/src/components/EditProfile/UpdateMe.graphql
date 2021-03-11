@@ -1,0 +1,7 @@
+mutation UpdateMe($file: Upload, $name: String!) {
+	updateMe(file: $file, name: $name) {
+		id
+		avatar
+		name
+	}
+}

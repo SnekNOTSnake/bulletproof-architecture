@@ -7,12 +7,15 @@ import { modifyLastCharacter } from '../utils'
 import UserModel from '../../src/models/Users'
 import AuthService from '../../src/services/Auth'
 
+const ASSETS_DIR = path.join(__dirname, '../assets')
+const UPLOAD_DIR = path.join(__dirname, '../../public/img')
 const authServiceInstance = new AuthService(UserModel)
 
 export const testUser = {
 	name: 'test',
 	email: 'test@test.com',
 	password: 'somethingcool',
+	avatar: 'default.jpg',
 }
 
 describe('Auth Service', function () {
@@ -114,16 +117,13 @@ describe('Auth Service', function () {
 		})
 	})
 
-	describe('uploadAvatar', () => {
+	describe('_upload', () => {
 		it("Should be able to upload images, store it in the FS, and change user's avatar document field", async () => {
-			const user = await authServiceInstance.getUser(loginUserID)
 			const filename = 'pixiv.jpg'
-			const filePath = path.resolve(__dirname, '../assets', filename)
+			const filePath = path.resolve(ASSETS_DIR, filename)
 
-			if (!user) throw new Error('User is empty')
-
-			const result = await authServiceInstance.uploadAvatar({
-				file: new Promise((resolve, reject) => {
+			const result = await AuthService._upload(
+				new Promise((resolve, reject) => {
 					resolve({
 						createReadStream: () => createReadStream(filePath),
 						filename,
@@ -131,22 +131,92 @@ describe('Auth Service', function () {
 						encoding: '7bit',
 					})
 				}),
-				user,
-			})
+			)
 
 			expect(existsSync(result.path)).toBe(true)
-			expect(user.avatar).toBe(result.filename)
 			unlinkSync(result.path)
 		})
 
 		it('Should be able to upload png images', async () => {
-			const user = await authServiceInstance.getUser(loginUserID)
 			const filename = 'myanimelist.png'
-			const filePath = path.resolve(__dirname, '../assets', filename)
+			const filePath = path.resolve(ASSETS_DIR, filename)
 
-			if (!user) throw new Error('User is empty')
+			const result = await AuthService._upload(
+				new Promise((resolve, reject) => {
+					resolve({
+						createReadStream: () => createReadStream(filePath),
+						filename,
+						mimetype: 'image/jpeg',
+						encoding: '7bit',
+					})
+				}),
+			)
 
-			const result = await authServiceInstance.uploadAvatar({
+			expect(existsSync(result.path)).toBe(true)
+			unlinkSync(result.path)
+		})
+
+		it('Should throw when dealing with unknown file extensions', async () => {
+			const filename = 'danganronpa.torrent'
+			const filePath = path.resolve(ASSETS_DIR, filename)
+
+			await expect(
+				AuthService._upload(
+					new Promise((resolve, reject) => {
+						resolve({
+							createReadStream: () => createReadStream(filePath),
+							filename,
+							mimetype: 'image/jpeg',
+							encoding: '7bit',
+						})
+					}),
+				),
+			).rejects.toThrow()
+		})
+
+		it('Should throw when dealing with suspicious images (images that claim to be images)', async () => {
+			const filename = 'fake-image.jpg'
+			const filePath = path.resolve(ASSETS_DIR, filename)
+
+			await expect(
+				AuthService._upload(
+					new Promise((resolve, reject) => {
+						resolve({
+							createReadStream: () => createReadStream(filePath),
+							filename,
+							mimetype: 'image/jpeg',
+							encoding: '7bit',
+						})
+					}),
+				),
+			).rejects.toThrow()
+		})
+	})
+
+	describe('updateMe', () => {
+		it('Should be able to update name without updating PFP', async () => {
+			const user = await authServiceInstance.getUser(loginUserID)
+			const newName = 'Glass'
+
+			if (!user) throw new Error('User is undefined')
+
+			const oldAvatar = user.avatar
+			const result = await authServiceInstance.updateMe({ newName, user })
+
+			expect(result.name).toBe(newName)
+			expect(result.avatar).toBe(oldAvatar)
+		})
+
+		it('Should be able to update name as well as updating PFP', async () => {
+			const user = await authServiceInstance.getUser(loginUserID)
+			const newName = 'Glass2'
+			const filename = 'pixiv.jpg'
+			const filePath = path.resolve(ASSETS_DIR, filename)
+
+			if (!user) throw new Error('User is undefined')
+
+			const result = await authServiceInstance.updateMe({
+				newName,
 				file: new Promise((resolve, reject) => {
 					resolve({
 						createReadStream: () => createReadStream(filePath),
@@ -158,53 +228,10 @@ describe('Auth Service', function () {
 				user,
 			})
 
-			expect(existsSync(result.path)).toBe(true)
-			expect(user.avatar).toBe(result.filename)
-			unlinkSync(result.path)
-		})
-
-		it('Should throw when dealing with unknown file extensions', async () => {
-			const user = await authServiceInstance.getUser(loginUserID)
-			const filename = 'danganronpa.torrent'
-			const filePath = path.resolve(__dirname, '../assets', filename)
-
-			if (!user) throw new Error('User is empty')
-
-			await expect(
-				authServiceInstance.uploadAvatar({
-					file: new Promise((resolve, reject) => {
-						resolve({
-							createReadStream: () => createReadStream(filePath),
-							filename,
-							mimetype: 'image/jpeg',
-							encoding: '7bit',
-						})
-					}),
-					user,
-				}),
-			).rejects.toThrow()
-		})
-
-		it('Should throw when dealing with suspicious images (images that claim to be images)', async () => {
-			const user = await authServiceInstance.getUser(loginUserID)
-			const filename = 'fake-image.jpg'
-			const filePath = path.resolve(__dirname, '../assets', filename)
-
-			if (!user) throw new Error('User is empty')
-
-			await expect(
-				authServiceInstance.uploadAvatar({
-					file: new Promise((resolve, reject) => {
-						resolve({
-							createReadStream: () => createReadStream(filePath),
-							filename,
-							mimetype: 'image/jpeg',
-							encoding: '7bit',
-						})
-					}),
-					user,
-				}),
-			).rejects.toThrow()
+			expect(result.name).toBe(newName)
+			expect(result.avatar).toBeTruthy()
+			expect(existsSync(path.resolve(UPLOAD_DIR, result.avatar))).toBe(true)
+			unlinkSync(path.resolve(UPLOAD_DIR, result.avatar))
 		})
 	})
 })

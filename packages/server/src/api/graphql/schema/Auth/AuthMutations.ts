@@ -36,13 +36,17 @@ export const signin: MutationResolvers['signin'] = async (
 	}
 }
 
-export const uploadAvatar: MutationResolvers['uploadAvatar'] = async (
+export const updateMe: MutationResolvers['updateMe'] = async (
 	parent,
-	{ file },
+	{ file, name },
 	{ user },
 ) => {
 	const authServiceInstance = Container.get(AuthService)
-	const result = await authServiceInstance.uploadAvatar({ file, user })
+	const result = await authServiceInstance.updateMe({
+		newName: name,
+		file,
+		user,
+	})
 
 	return result
 }
