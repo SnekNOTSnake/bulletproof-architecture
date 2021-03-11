@@ -121,6 +121,22 @@ export const gitHubCallback = catchAsync(async (req, res, next) => {
 	sendOAuthResponse(res, authData)
 })
 
+export const changePassword = catchAsync(async (req, res, next) => {
+	const { password, newPassword } = req.body
+	const user = req.user
+
+	if (!user) throw new AppError('Something went terribly wrong', 500)
+
+	const authServiceInstance = Container.get(AuthService)
+	await authServiceInstance.changePassword({
+		user,
+		password,
+		newPassword,
+	})
+
+	logout(req, res, next)
+})
+
 export const me = catchAsync(async (req, res, next) => {
 	envelope(res, { user: req.user })
 })

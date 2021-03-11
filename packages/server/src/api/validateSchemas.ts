@@ -20,6 +20,15 @@ export const signinSchema = Joi.object({
 	password,
 })
 
+export const updateMeSchema = Joi.object({
+	name,
+})
+
+export const changePasswordSchema = Joi.object({
+	password,
+	newPassword: password,
+})
+
 // Book
 const title = Joi.string().max(50).required()
 const bookId = Joi.string().max(50).required()

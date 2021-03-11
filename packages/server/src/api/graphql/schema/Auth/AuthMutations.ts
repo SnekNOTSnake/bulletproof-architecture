@@ -2,7 +2,11 @@ import { Container } from 'typedi'
 
 import validate from '../validate'
 import myEmitter, { userSignup } from '../../../../events/events'
-import { signupSchema, signinSchema } from '../../../validateSchemas'
+import {
+	signupSchema,
+	signinSchema,
+	updateMeSchema,
+} from '../../../validateSchemas'
 import AuthService from '../../../../services/Auth'
 import { MutationResolvers } from '../../generated/types'
 
@@ -41,6 +45,8 @@ export const updateMe: MutationResolvers['updateMe'] = async (
 	{ file, name },
 	{ user },
 ) => {
+	await validate(updateMeSchema, { name })
+
 	const authServiceInstance = Container.get(AuthService)
 	const result = await authServiceInstance.updateMe({
 		newName: name,

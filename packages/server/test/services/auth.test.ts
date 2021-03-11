@@ -234,4 +234,55 @@ describe('Auth Service', function () {
 			unlinkSync(path.resolve(UPLOAD_DIR, result.avatar))
 		})
 	})
+
+	describe('changePassword', () => {
+		it("Should be able to change user's password", async () => {
+			const user = await authServiceInstance.getUser(loginUserID)
+			const newPassword = 'somethingcooler'
+
+			if (!user) throw new Error('User is undefined')
+
+			const result = await authServiceInstance.changePassword({
+				user,
+				password: testUser.password,
+				newPassword,
+			})
+
+			expect(result).toBeTruthy()
+			expect(result).toHaveProperty('password')
+			expect(bcrypt.compareSync(newPassword, result.password!)).toBe(true)
+		})
+
+		it('Should throw when password is incorrect', async () => {
+			const user = await authServiceInstance.getUser(loginUserID)
+			const newPassword = 'somethingcooler'
+
+			if (!user) throw new Error('User is undefined')
+
+			await expect(
+				authServiceInstance.changePassword({
+					user,
+					password: 'random-password',
+					newPassword,
+				}),
+			).rejects.toThrow()
+		})
+
+		it("Should throw when user don't have password (Not using password authentication)", async () => {
+			const user = await authServiceInstance.getUser(loginUserID)
+			const newPassword = 'somethingcooler'
+
+			if (!user) throw new Error('User is undefined')
+
+			user.password = undefined
+
+			await expect(
+				authServiceInstance.changePassword({
+					user,
+					password: testUser.password,
+					newPassword,
+				}),
+			).rejects.toThrow()
+		})
+	})
 })

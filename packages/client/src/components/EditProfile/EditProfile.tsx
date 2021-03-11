@@ -6,12 +6,11 @@ import Button from '@material-ui/core/Button'
 import Card from '@material-ui/core/Card'
 import CardHeader from '@material-ui/core/CardHeader'
 import CardContent from '@material-ui/core/CardContent'
-import CardActions from '@material-ui/core/CardActions'
-import CardMedia from '@material-ui/core/CardMedia'
 import Grid from '@material-ui/core/Grid'
 import TextField from '@material-ui/core/TextField'
 import Typography from '@material-ui/core/Typography'
 
+import EditPassword from '../EditPassword'
 import { useUpdateMeMutation } from '../../generated/types'
 import useStyles from './EditProfile.style'
 
@@ -51,7 +50,11 @@ const EditProfile: React.FC<Props> = ({ user, setCurrentUser }) => {
 				}
 			})
 
-			reset()
+			setPreview('')
+			setFile(null)
+			setProgress(0)
+
+			if (fileInput.current) fileInput.current.value = ''
 		},
 		onError: () => {},
 	})
@@ -106,79 +109,82 @@ const EditProfile: React.FC<Props> = ({ user, setCurrentUser }) => {
 	return (
 		<Box className={classes.root}>
 			<Card>
-				<form onSubmit={onSubmit}>
-					<CardHeader title="Edit Profile" />
-					<CardContent>
-						<Grid container spacing={2}>
-							<Grid item xs={3}>
-								<Card
-									style={{
-										backgroundImage: `url(${preview ? preview : avatar})`,
-									}}
-									className={classes.preview}
-									variant="outlined"
-								/>
-							</Grid>
-							<Grid item xs={9}>
-								<Box>
-									{error ? (
-										<Alert className={classes.alert} severity="error">
-											{error.message}
-										</Alert>
-									) : (
-										''
-									)}
-									{data?.updateMe ? (
-										<Alert className={classes.alert}>Changes saved</Alert>
-									) : (
-										''
-									)}
-								</Box>
-								<TextField
-									fullWidth
-									label="Name"
-									variant="outlined"
-									value={name}
-									onChange={onNameChange}
-									className={classes.input}
-								/>
-								<Button
-									disabled={loading}
-									color="primary"
-									variant="contained"
-									component="label"
-								>
-									Upload PFP
-									<input
-										ref={fileInput}
-										onChange={onFileChange}
-										type="file"
-										accept="image/jpeg,image/png,image/gif"
-										hidden
+				<CardHeader title="Edit Profile" />
+				<CardContent>
+					<Box className={classes.generals}>
+						<form onSubmit={onSubmit}>
+							<Grid className={classes.generalsContent} container spacing={2}>
+								<Grid item xs={3}>
+									<Card
+										style={{
+											backgroundImage: `url(${preview ? preview : avatar})`,
+										}}
+										className={classes.preview}
+										variant="outlined"
 									/>
-								</Button>
+								</Grid>
+								<Grid item xs={9}>
+									<Box>
+										{error ? (
+											<Alert className={classes.alert} severity="error">
+												{error.message}
+											</Alert>
+										) : (
+											''
+										)}
+										{data?.updateMe ? (
+											<Alert className={classes.alert}>Changes saved</Alert>
+										) : (
+											''
+										)}
+									</Box>
+									<TextField
+										fullWidth
+										label="Name"
+										variant="outlined"
+										value={name}
+										onChange={onNameChange}
+										className={classes.input}
+									/>
+									<Button
+										disabled={loading}
+										color="primary"
+										variant="contained"
+										component="label"
+									>
+										Upload PFP
+										<input
+											ref={fileInput}
+											onChange={onFileChange}
+											type="file"
+											accept="image/jpeg,image/png,image/gif"
+											hidden
+										/>
+									</Button>
+								</Grid>
 							</Grid>
-						</Grid>
-					</CardContent>
-					<CardActions>
-						<Button color="primary" variant="contained" type="submit">
-							Save
-						</Button>
-						<Button
-							onClick={reset}
-							color="primary"
-							variant="contained"
-							type="button"
-						>
-							Reset
-						</Button>
-						{loading && file ? (
-							<Typography variant="body1">{Math.ceil(progress)}%</Typography>
-						) : (
-							''
-						)}
-					</CardActions>
-				</form>
+							<Button color="primary" variant="contained" type="submit">
+								Save
+							</Button>
+							<Button
+								onClick={reset}
+								color="primary"
+								variant="contained"
+								type="button"
+							>
+								Reset
+							</Button>
+							{loading && file ? (
+								<Typography variant="body1">{Math.ceil(progress)}%</Typography>
+							) : (
+								''
+							)}
+						</form>
+					</Box>
+					<Box>
+						<EditPassword setCurrentUser={setCurrentUser} />
+					</Box>
+				</CardContent>
 			</Card>
 		</Box>
 	)

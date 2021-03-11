@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-import { setAccessToken } from '../accessToken'
+import { setAccessToken, getAccessToken } from '../accessToken'
 import openOAuthWindow from '../utils/openOAuthWindow'
 
 const AUTH_URI = 'http://localhost:4200/api/auth'
@@ -82,6 +82,31 @@ class AuthService {
 
 		setAccessToken(data.accessToken)
 		return data
+	}
+
+	static async editPassword({
+		password,
+		newPassword,
+	}: {
+		password: string
+		newPassword: string
+	}) {
+		const accessToken = getAccessToken()
+
+		const res = await axios.post(
+			AUTH_URI + '/change-password',
+			{ password, newPassword },
+			{
+				withCredentials: true,
+				headers: {
+					authorization: `Bearer ${accessToken}`,
+				},
+			},
+		)
+
+		setAccessToken('')
+
+		return res.data.data
 	}
 }
 

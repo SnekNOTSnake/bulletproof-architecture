@@ -3,6 +3,9 @@ import { makeStyles } from '@material-ui/core/styles'
 export default makeStyles((theme) => ({
 	root: {
 		marginTop: theme.spacing(3),
+		'& button': {
+			marginRight: theme.spacing(1),
+		},
 	},
 	alert: {
 		marginBottom: theme.spacing(2),
@@ -16,5 +19,11 @@ export default makeStyles((theme) => ({
 		backgroundRepeat: 'no-repeat',
 		backgroundSize: 'cover',
 		border: 'none',
+	},
+	generals: {
+		marginBottom: theme.spacing(6),
+	},
+	generalsContent: {
+		marginBottom: theme.spacing(1),
 	},
 }))

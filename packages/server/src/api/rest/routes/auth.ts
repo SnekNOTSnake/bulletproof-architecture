@@ -2,7 +2,11 @@ import express from 'express'
 import passport from 'passport'
 import validate from '../middlewares/validate'
 import protect from '../middlewares/protect'
-import { signupSchema, signinSchema } from '../../validateSchemas'
+import {
+	signupSchema,
+	signinSchema,
+	changePasswordSchema,
+} from '../../validateSchemas'
 import {
 	refreshToken,
 	signup,
@@ -11,6 +15,7 @@ import {
 	googleCallback,
 	gitHubCallback,
 	me,
+	changePassword,
 } from '../controllers/auth'
 
 const router = express.Router()
@@ -19,6 +24,12 @@ router.post('/refresh-token', refreshToken)
 router.post('/signup', validate(signupSchema), signup)
 router.post('/signin', validate(signinSchema), signin)
 router.post('/logout', logout)
+router.post(
+	'/change-password',
+	protect,
+	validate(changePasswordSchema),
+	changePassword,
+)
 
 // Google
 router.get(

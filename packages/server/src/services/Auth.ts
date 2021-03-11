@@ -157,12 +157,35 @@ class AuthService {
 		file?: Promise<GraphQLFileUpload> | null
 		user: IUser
 	}) {
-		user.name = newName
+		user.name = xss(trim(newName))
 
 		if (file) {
 			const uploadResult = await AuthService._upload(file)
 			user.avatar = uploadResult.filename
 		}
+
+		await user.save()
+
+		return user
+	}
+
+	async changePassword({
+		user,
+		password,
+		newPassword,
+	}: {
+		user: IUser
+		password: string
+		newPassword: string
+	}) {
+		if (!user.password)
+			throw new AppError('You are not using password authentication', 400)
+
+		if (!bcrypt.compareSync(password, user.password))
+			throw new AppError('Incorrect password', 403)
+
+		const encrypted = await bcrypt.hash(newPassword, SALT_ROUND)
+		user.password = encrypted
 
 		await user.save()
 
