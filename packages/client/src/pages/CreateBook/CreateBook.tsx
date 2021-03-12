@@ -77,7 +77,7 @@ const CreateBook: React.FC<Props> = ({ user }) => {
 			<Grid container>
 				<Grid item md={6} xs={12}>
 					<form onSubmit={onSubmit}>
-						<Card>
+						<Card variant="outlined">
 							<CardHeader title="Create a book" />
 							<CardContent>
 								<Box>
@@ -125,6 +125,7 @@ const CreateBook: React.FC<Props> = ({ user }) => {
 							<CardActions>
 								<Button
 									variant="contained"
+									disableElevation
 									color="primary"
 									disabled={loading}
 									type="submit"

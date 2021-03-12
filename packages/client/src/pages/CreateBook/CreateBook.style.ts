@@ -5,6 +5,6 @@ export default makeStyles((theme) => ({
 		marginBottom: theme.spacing(2),
 	},
 	input: {
-		marginBottom: theme.spacing(3),
+		marginBottom: theme.spacing(2),
 	},
 }))

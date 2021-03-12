@@ -55,7 +55,7 @@ const Login: React.FC<Props> = ({ history, setCurrentUser }) => {
 		<Box>
 			<Grid container>
 				<Grid item md={6} xs={12}>
-					<Card>
+					<Card variant="outlined">
 						<form onSubmit={onSubmit}>
 							<CardHeader title="Login" />
 							<CardContent>
@@ -72,6 +72,7 @@ const Login: React.FC<Props> = ({ history, setCurrentUser }) => {
 								)}
 								<Box className={classes.oAuthBox}>
 									<Button
+										disableElevation
 										onClick={() => onOAuthLogin('google')}
 										className={classes.oAuthButton}
 										color="primary"
@@ -83,6 +84,7 @@ const Login: React.FC<Props> = ({ history, setCurrentUser }) => {
 										Google
 									</Button>
 									<Button
+										disableElevation
 										onClick={() => onOAuthLogin('github')}
 										className={classes.oAuthButton}
 										color="primary"
@@ -103,7 +105,6 @@ const Login: React.FC<Props> = ({ history, setCurrentUser }) => {
 									onChange={onEmailChange}
 								/>
 								<TextField
-									className={classes.input}
 									fullWidth
 									type="password"
 									variant="outlined"
@@ -113,7 +114,12 @@ const Login: React.FC<Props> = ({ history, setCurrentUser }) => {
 								/>
 							</CardContent>
 							<CardActions>
-								<Button variant="contained" color="primary" type="submit">
+								<Button
+									disableElevation
+									variant="contained"
+									color="primary"
+									type="submit"
+								>
 									Submit
 								</Button>
 								<Typography>

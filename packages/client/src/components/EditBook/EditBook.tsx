@@ -47,7 +47,7 @@ const EditBook: React.FC<Props> = ({ id, book }) => {
 
 	return (
 		<Box className={classes.root}>
-			<Card>
+			<Card variant="outlined">
 				<form onSubmit={onSubmit}>
 					<CardHeader title="Edit book" />
 					<CardContent>
@@ -86,21 +86,22 @@ const EditBook: React.FC<Props> = ({ id, book }) => {
 							variant="outlined"
 							value={content}
 							onChange={onContentChange}
-							className={classes.input}
 						/>
 					</CardContent>
 					<CardActions>
 						<Button
-							disabled={loading}
 							variant="contained"
+							disableElevation
+							disabled={loading}
 							color="primary"
 							type="submit"
 						>
 							Save
 						</Button>
 						<Button
-							disabled={loading}
 							variant="contained"
+							disableElevation
+							disabled={loading}
 							color="primary"
 							type="button"
 							onClick={onReset}

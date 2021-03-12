@@ -14,6 +14,7 @@ const Login = React.lazy(() => import('../Login'))
 const Profile = React.lazy(() => import('../Profile'))
 const CreateBook = React.lazy(() => import('../CreateBook'))
 const Signup = React.lazy(() => import('../Signup'))
+const Search = React.lazy(() => import('../Search'))
 
 const App: React.FC = () => {
 	const [loading, setLoading] = React.useState<boolean>(true)
@@ -69,6 +70,7 @@ const App: React.FC = () => {
 						render={() => <CreateBook user={currentUser} />}
 					/>
 					<Route exact path="/signup" render={() => <Signup />} />
+					<Route exact path="/search" render={() => <Search />} />
 				</Switch>
 			</React.Suspense>
 		</Container>

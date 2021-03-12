@@ -108,7 +108,7 @@ const EditProfile: React.FC<Props> = ({ user, setCurrentUser }) => {
 
 	return (
 		<Box className={classes.root}>
-			<Card>
+			<Card variant="outlined">
 				<CardHeader title="Edit Profile" />
 				<CardContent>
 					<Box className={classes.generals}>
@@ -147,9 +147,9 @@ const EditProfile: React.FC<Props> = ({ user, setCurrentUser }) => {
 										className={classes.input}
 									/>
 									<Button
+										variant="outlined"
 										disabled={loading}
 										color="primary"
-										variant="contained"
 										component="label"
 									>
 										Upload PFP
@@ -163,15 +163,10 @@ const EditProfile: React.FC<Props> = ({ user, setCurrentUser }) => {
 									</Button>
 								</Grid>
 							</Grid>
-							<Button color="primary" variant="contained" type="submit">
+							<Button color="primary" type="submit">
 								Save
 							</Button>
-							<Button
-								onClick={reset}
-								color="primary"
-								variant="contained"
-								type="button"
-							>
+							<Button onClick={reset} color="primary" type="button">
 								Reset
 							</Button>
 							{loading && file ? (

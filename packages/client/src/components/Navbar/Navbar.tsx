@@ -4,6 +4,7 @@ import { Link, useHistory } from 'react-router-dom'
 import Box from '@material-ui/core/Box'
 import LinkComponent from '@material-ui/core/Link'
 import Button from '@material-ui/core/Button'
+import SearchIcon from '@material-ui/icons/Search'
 
 import AuthService from '../../services/Auth'
 import useStyles from './Navbar.style'
@@ -32,7 +33,7 @@ const Navbar: React.FC<NavbarProps> = ({ currentUser, setCurrentUser }) => {
 		<React.Fragment>
 			<LinkButton to="/me" text={currentUser.name} />
 			<LinkButton to="/create-book" text="Create Book" />
-			<Button type="button" onClick={logout}>
+			<Button color="inherit" type="button" onClick={logout}>
 				Logout
 			</Button>
 		</React.Fragment>
@@ -47,6 +48,13 @@ const Navbar: React.FC<NavbarProps> = ({ currentUser, setCurrentUser }) => {
 		<Box className={classes.root}>
 			<LinkButton to="/" text="Home" />
 			{RenderLogin}
+			<Box className={classes.grow} />
+			<LinkComponent underline="none" component={Link} to="/search">
+				<Button type="button" color="inherit">
+					<SearchIcon className={classes.searchIcon} />
+					Search
+				</Button>
+			</LinkComponent>
 		</Box>
 	)
 }

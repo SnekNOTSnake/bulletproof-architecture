@@ -51,7 +51,7 @@ const Profile: React.FC<Props> = ({ user, setCurrentUser }) => {
 		<Box>
 			<Grid container>
 				<Grid item md={6} xs={12}>
-					<Card>
+					<Card variant="outlined">
 						<CardHeader
 							avatar={
 								<Avatar
@@ -79,7 +79,6 @@ const Profile: React.FC<Props> = ({ user, setCurrentUser }) => {
 							<Button
 								onClick={toggleEditting}
 								color="primary"
-								variant="contained"
 								component="label"
 							>
 								{isEditing ? 'Close Edit' : 'Edit Profile'}

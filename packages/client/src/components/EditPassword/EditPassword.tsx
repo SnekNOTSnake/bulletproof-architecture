@@ -73,7 +73,12 @@ const EditPassword: React.FC<Props> = ({ setCurrentUser }) => {
 				onChange={onNewPasswordChange}
 				className={classes.input}
 			/>
-			<Button color="primary" variant="contained" type="submit">
+			<Button
+				color="primary"
+				variant="contained"
+				disableElevation
+				type="submit"
+			>
 				Save
 			</Button>
 		</form>

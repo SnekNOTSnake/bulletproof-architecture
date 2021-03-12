@@ -59,13 +59,23 @@ const Signup: React.FC = () => {
 		<Box>
 			<Grid container>
 				<Grid item md={6} xs={12}>
-					<Card>
+					<Card variant="outlined">
 						<form onSubmit={onSubmit}>
 							<CardHeader title="Sign up" />
 							<CardContent>
-								<Box className={classes.alert}>
-									{error ? <Alert severity="error">{error}</Alert> : ''}
-									{success ? <Alert>{success}</Alert> : ''}
+								<Box>
+									{error ? (
+										<Alert className={classes.alert} severity="error">
+											{error}
+										</Alert>
+									) : (
+										''
+									)}
+									{success ? (
+										<Alert className={classes.alert}>{success}</Alert>
+									) : (
+										''
+									)}
 								</Box>
 								<TextField
 									className={classes.input}
@@ -84,7 +94,6 @@ const Signup: React.FC = () => {
 									onChange={onEmailChange}
 								/>
 								<TextField
-									className={classes.input}
 									fullWidth
 									variant="outlined"
 									label="Password"
@@ -94,10 +103,15 @@ const Signup: React.FC = () => {
 								/>
 							</CardContent>
 							<CardActions>
-								<Button variant="contained" color="primary" type="submit">
+								<Button
+									disableElevation
+									variant="contained"
+									color="primary"
+									type="submit"
+								>
 									Submit
 								</Button>
-								<Typography>
+								<Typography variant="body2">
 									Already have an account?{' '}
 									<LinkComponent component={Link} to="/login">
 										Sign in

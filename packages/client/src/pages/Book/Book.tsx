@@ -61,7 +61,7 @@ const Book: React.FC<Props> = ({ match, history }) => {
 		<Box>
 			<Grid container>
 				<Grid item md={6} xs={12}>
-					<Card>
+					<Card variant="outlined">
 						<CardHeader
 							title={data.book.title}
 							subheader={`By ${data.book.author.name}, ${formatDistance(
@@ -97,17 +97,11 @@ const Book: React.FC<Props> = ({ match, history }) => {
 								disabled={deleteLoading}
 								onClick={() => deleteBook({ variables: { id } })}
 								type="button"
-								variant="contained"
 								color="primary"
 							>
 								Delete
 							</Button>
-							<Button
-								onClick={toggleEditing}
-								type="button"
-								variant="contained"
-								color="primary"
-							>
+							<Button onClick={toggleEditing} type="button" color="primary">
 								{isEditing ? 'Close edit' : 'Edit'}
 							</Button>
 						</CardActions>

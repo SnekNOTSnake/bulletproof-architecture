@@ -37,7 +37,7 @@ const Home: React.FC = () => {
 						xs={12}
 						key={book.id}
 					>
-						<Card>
+						<Card variant="outlined">
 							<CardHeader
 								title={book.title}
 								avatar={
@@ -77,6 +77,7 @@ const Home: React.FC = () => {
 				<Button
 					color="primary"
 					variant="contained"
+					disableElevation
 					type="button"
 					onClick={() =>
 						fetchMore({
