@@ -28,6 +28,8 @@ const userSchema = new Schema<IUser>({
 			message: 'Invalid email',
 		},
 		maxlength: 50,
+		unique: true,
+		sparse: true,
 	},
 	password: {
 		type: String,
