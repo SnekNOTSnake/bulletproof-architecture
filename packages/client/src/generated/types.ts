@@ -259,6 +259,31 @@ export type BooksQuery = (
   ) }
 );
 
+export type SearchQueryVariables = Exact<{
+  first: Scalars['Int'];
+  search: Scalars['String'];
+  after?: Maybe<Scalars['String']>;
+}>;
+
+
+export type SearchQuery = (
+  { __typename?: 'Query' }
+  & { books: (
+    { __typename?: 'BookConnection' }
+    & { nodes: Array<(
+      { __typename?: 'Book' }
+      & Pick<Book, 'id' | 'title' | 'created' | 'summary'>
+      & { author: (
+        { __typename?: 'User' }
+        & Pick<User, 'id' | 'name'>
+      ) }
+    )>, pageInfo: (
+      { __typename?: 'PageInfo' }
+      & Pick<PageInfo, 'hasNextPage' | 'endCursor'>
+    ) }
+  ) }
+);
+
 
 export const UpdateBookDocument = gql`
     mutation UpdateBook($id: ID!, $title: String!, $summary: String!, $content: String!) {
@@ -514,3 +539,51 @@ export function useBooksLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Book
 export type BooksQueryHookResult = ReturnType<typeof useBooksQuery>;
 export type BooksLazyQueryHookResult = ReturnType<typeof useBooksLazyQuery>;
 export type BooksQueryResult = Apollo.QueryResult<BooksQuery, BooksQueryVariables>;
+export const SearchDocument = gql`
+    query Search($first: Int!, $search: String!, $after: String) {
+  books(first: $first, search: $search, after: $after) {
+    nodes {
+      id
+      title
+      created
+      summary
+      author {
+        id
+        name
+      }
+    }
+    pageInfo {
+      hasNextPage
+      endCursor
+    }
+  }
+}
+    `;
+
+/**
+ * __useSearchQuery__
+ *
+ * To run a query within a React component, call `useSearchQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSearchQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSearchQuery({
+ *   variables: {
+ *      first: // value for 'first'
+ *      search: // value for 'search'
+ *      after: // value for 'after'
+ *   },
+ * });
+ */
+export function useSearchQuery(baseOptions: Apollo.QueryHookOptions<SearchQuery, SearchQueryVariables>) {
+        return Apollo.useQuery<SearchQuery, SearchQueryVariables>(SearchDocument, baseOptions);
+      }
+export function useSearchLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SearchQuery, SearchQueryVariables>) {
+          return Apollo.useLazyQuery<SearchQuery, SearchQueryVariables>(SearchDocument, baseOptions);
+        }
+export type SearchQueryHookResult = ReturnType<typeof useSearchQuery>;
+export type SearchLazyQueryHookResult = ReturnType<typeof useSearchLazyQuery>;
+export type SearchQueryResult = Apollo.QueryResult<SearchQuery, SearchQueryVariables>;

@@ -1,0 +1,18 @@
+query Search($first: Int!, $search: String!, $after: String) {
+	books(first: $first, search: $search, after: $after) {
+		nodes {
+			id
+			title
+			created
+			summary
+			author {
+				id
+				name
+			}
+		}
+		pageInfo {
+			hasNextPage
+			endCursor
+		}
+	}
+}
