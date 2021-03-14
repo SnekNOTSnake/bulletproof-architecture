@@ -97,9 +97,10 @@ export type QueryBookArgs = {
 
 
 export type QueryBooksArgs = {
+  first?: Maybe<Scalars['Int']>;
   after?: Maybe<Scalars['String']>;
-  first: Scalars['Int'];
-  where?: Maybe<BooksWhereInput>;
+  last?: Maybe<Scalars['Int']>;
+  before?: Maybe<Scalars['String']>;
 };
 
 export type Book = {
@@ -231,9 +232,10 @@ export type CreateBookMutation = (
 );
 
 export type BooksQueryVariables = Exact<{
-  first: Scalars['Int'];
+  first?: Maybe<Scalars['Int']>;
   after?: Maybe<Scalars['String']>;
-  where?: Maybe<BooksWhereInput>;
+  last?: Maybe<Scalars['Int']>;
+  before?: Maybe<Scalars['String']>;
 }>;
 
 
@@ -453,8 +455,8 @@ export type CreateBookMutationHookResult = ReturnType<typeof useCreateBookMutati
 export type CreateBookMutationResult = Apollo.MutationResult<CreateBookMutation>;
 export type CreateBookMutationOptions = Apollo.BaseMutationOptions<CreateBookMutation, CreateBookMutationVariables>;
 export const BooksDocument = gql`
-    query Books($first: Int!, $after: String, $where: BooksWhereInput) {
-  books(first: $first, after: $after, where: $where) {
+    query Books($first: Int, $after: String, $last: Int, $before: String) {
+  books(first: $first, after: $after, last: $last, before: $before) {
     nodes {
       id
       title
@@ -489,11 +491,12 @@ export const BooksDocument = gql`
  *   variables: {
  *      first: // value for 'first'
  *      after: // value for 'after'
- *      where: // value for 'where'
+ *      last: // value for 'last'
+ *      before: // value for 'before'
  *   },
  * });
  */
-export function useBooksQuery(baseOptions: Apollo.QueryHookOptions<BooksQuery, BooksQueryVariables>) {
+export function useBooksQuery(baseOptions?: Apollo.QueryHookOptions<BooksQuery, BooksQueryVariables>) {
         return Apollo.useQuery<BooksQuery, BooksQueryVariables>(BooksDocument, baseOptions);
       }
 export function useBooksLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<BooksQuery, BooksQueryVariables>) {

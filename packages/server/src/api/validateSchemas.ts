@@ -50,10 +50,12 @@ export const deleteBookSchema = Joi.object({
 	id: bookId,
 })
 
-export const getBooksSchema = Joi.object({
-	first: Joi.number().min(1).max(100).required(),
-	where: Joi.object({
-		_id: Joi.string().max(50),
-	}),
-	after: Joi.string().max(50),
-})
+export const getBooksSchema = Joi.object()
+	.keys({
+		first: Joi.number().min(1).max(100),
+		after: Joi.string().max(50),
+		last: Joi.number().min(1).max(100),
+		before: Joi.string().max(50),
+	})
+	.xor('first', 'last')
+	.oxor('after', 'before')

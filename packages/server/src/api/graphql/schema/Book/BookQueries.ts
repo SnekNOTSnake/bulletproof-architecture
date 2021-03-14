@@ -14,14 +14,15 @@ export const book: QueryResolvers['book'] = async (parent, { id }) => {
 
 export const books: QueryResolvers['books'] = connection({
 	cursorFromNode: (node) => node.created.toISOString(),
-	nodes: async (parent, { first, after, where }, context, info) => {
-		await validate(getBooksSchema, { first, after, where })
+	nodes: async (parent, { first, after, last, before }, context, info) => {
+		await validate(getBooksSchema, { first, after, last, before })
 
 		const bookServiceInstance = Container.get(BookService)
 		const bookDocuments = await bookServiceInstance.getBooks({
 			first,
 			after,
-			where,
+			last,
+			before,
 		})
 
 		return bookDocuments

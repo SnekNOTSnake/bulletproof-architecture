@@ -26,7 +26,7 @@ type Mutation {
 }
 type Query {
   book(id: ID!): Book
-  books(after: String, first: Int!, where: BooksWhereInput): BookConnection!
+  books(first: Int, after: String, last: Int, before: String): BookConnection!
   me: User @isAuthenticated
 }
 type Book {

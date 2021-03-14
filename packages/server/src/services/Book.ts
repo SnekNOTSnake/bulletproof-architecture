@@ -1,11 +1,10 @@
-import { Model } from 'mongoose'
+import { Model, ObjectId } from 'mongoose'
 import { Service, Inject } from 'typedi'
 import xss from 'xss'
 
 import { trim } from '../utils/helpers'
 import AppError from '../utils/AppError'
 import { IBook } from '../models/Books'
-import { compactMap } from '../utils/helpers'
 
 @Service()
 class BookService {
@@ -85,18 +84,33 @@ class BookService {
 	async getBooks({
 		first,
 		after,
-		where,
+		last,
+		before,
 	}: {
-		first: number
+		first?: number | null
 		after?: string | null
-		where?: { _id?: string | null } | null
+		last?: number | null
+		before?: string | null
 	}) {
+		if (first && last)
+			throw new AppError(
+				'`first` and `last` cannot be used at the same time',
+				400,
+			)
+		if (!first && !last)
+			throw new AppError('Either `first` or `last` is required', 400)
+		if (after && before)
+			throw new AppError(
+				'`after` and `before` cannot be used at the same time',
+				400,
+			)
+
 		const books = await this.BooksModel.find({
-			...compactMap(where || {}),
 			...(after ? { created: { $lt: new Date(after) } } : null),
+			...(before ? { created: { $gt: new Date(before) } } : null),
 		})
-			.sort({ created: -1 })
-			.limit(first)
+			.sort({ created: first ? -1 : 1 })
+			.limit(first ? first : last!)
 			.exec()
 
 		return books
