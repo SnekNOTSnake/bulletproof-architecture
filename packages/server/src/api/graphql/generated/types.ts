@@ -105,6 +105,7 @@ export type QueryBooksArgs = {
   after?: Maybe<Scalars['String']>;
   last?: Maybe<Scalars['Int']>;
   before?: Maybe<Scalars['String']>;
+  search?: Maybe<Scalars['String']>;
 };
 
 export type Book = {

@@ -44,6 +44,15 @@ const bookSchema: Schema<IBook> = new Schema<IBook>({
 	},
 })
 
+bookSchema.index(
+	{ title: 'text', summary: 'text', content: 'text' },
+	{
+		name: 'BookTextIndices',
+		default_language: 'english',
+		weights: { title: 10, summary: 3, content: 1 },
+	},
+)
+
 bookSchema.methods.toJSON = function (): any {
 	const userObject = this.toObject()
 	userObject.id = userObject._id

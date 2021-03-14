@@ -101,6 +101,7 @@ export type QueryBooksArgs = {
   after?: Maybe<Scalars['String']>;
   last?: Maybe<Scalars['Int']>;
   before?: Maybe<Scalars['String']>;
+  search?: Maybe<Scalars['String']>;
 };
 
 export type Book = {
@@ -236,6 +237,7 @@ export type BooksQueryVariables = Exact<{
   after?: Maybe<Scalars['String']>;
   last?: Maybe<Scalars['Int']>;
   before?: Maybe<Scalars['String']>;
+  search?: Maybe<Scalars['String']>;
 }>;
 
 
@@ -455,8 +457,14 @@ export type CreateBookMutationHookResult = ReturnType<typeof useCreateBookMutati
 export type CreateBookMutationResult = Apollo.MutationResult<CreateBookMutation>;
 export type CreateBookMutationOptions = Apollo.BaseMutationOptions<CreateBookMutation, CreateBookMutationVariables>;
 export const BooksDocument = gql`
-    query Books($first: Int, $after: String, $last: Int, $before: String) {
-  books(first: $first, after: $after, last: $last, before: $before) {
+    query Books($first: Int, $after: String, $last: Int, $before: String, $search: String) {
+  books(
+    first: $first
+    after: $after
+    last: $last
+    before: $before
+    search: $search
+  ) {
     nodes {
       id
       title
@@ -493,6 +501,7 @@ export const BooksDocument = gql`
  *      after: // value for 'after'
  *      last: // value for 'last'
  *      before: // value for 'before'
+ *      search: // value for 'search'
  *   },
  * });
  */

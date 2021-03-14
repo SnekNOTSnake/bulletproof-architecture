@@ -15,7 +15,10 @@ export const testUser = {
 	password: 'somethingcool',
 }
 
-export const createTestBook = (authorId: string, title = 'test book') => ({
+export const createTestBook = (
+	authorId: string,
+	title = 'Test book',
+): { title: string; author: string; summary: string; content: string } => ({
 	title,
 	author: authorId,
 	summary: 's'.repeat(50),
@@ -32,6 +35,7 @@ const newBookForm = {
 }
 
 let createdBookID = ''
+let uniqueBookID = ''
 let loginResult: ThenArg<
 	ReturnType<typeof authServiceInstance.signin>
 > = {} as any
@@ -58,11 +62,23 @@ describe('Book Service', async () => {
 
 			// Create more books for other testings
 			await bookServiceInstance.createBook(
-				createTestBook(loginResult.user.id, 'test book 2'),
+				createTestBook(loginResult.user.id, 'Darny darn!'),
 			)
 			await bookServiceInstance.createBook(
-				createTestBook(loginResult.user.id, 'test book 3'),
+				createTestBook(loginResult.user.id, 'Test book 2'),
 			)
+			const uniqueBook1 = await bookServiceInstance.createBook({
+				...createTestBook(loginResult.user.id, 'Unique book to search for'),
+				summary: 'This one is with a different summary',
+				content:
+					'gibberish content to help the engine find me padding padding padding padding padding padding padding',
+			})
+			await bookServiceInstance.createBook({
+				...createTestBook(loginResult.user.id),
+				summary: 'book with a "search" keyword but less priority',
+			})
+
+			uniqueBookID = uniqueBook1.id
 		})
 	})
 
@@ -157,10 +173,94 @@ describe('Book Service', async () => {
 			expect(reqBooks1).toBeTruthy()
 			expect(reqBooks1).toHaveLength(2)
 
-			const reqBooks2 = await bookServiceInstance.getBooks({ first: 5 })
+			const reqBooks2 = await bookServiceInstance.getBooks({ first: 8 })
 
 			expect(reqBooks2).toBeTruthy()
-			expect(reqBooks2).toHaveLength(3)
+			expect(reqBooks2).toHaveLength(5)
+		})
+
+		it('Should be able to search for a certain books', async () => {
+			const title1 = 'Test'
+			const title2 = '"Unique book to search for"'
+
+			const result1 = await bookServiceInstance.getBooks({
+				first: 5,
+				search: title1,
+			})
+			const result2 = await bookServiceInstance.getBooks({
+				first: 5,
+				search: title2,
+			})
+
+			expect(result1).toHaveLength(2)
+
+			expect(result2).toHaveLength(1)
+			expect(String(result2[0].id)).toBe(uniqueBookID)
+		})
+
+		it('Should be able to search with summary and content', async () => {
+			const roughSummary = 'This is different summary'
+			const roughContent = 'gibberish engine'
+
+			const result1 = await bookServiceInstance.getBooks({
+				first: 5,
+				search: roughSummary,
+			})
+			const result2 = await bookServiceInstance.getBooks({
+				first: 5,
+				search: roughContent,
+			})
+
+			expect(result1).toHaveLength(1)
+			expect(String(result1[0].id)).toBe(uniqueBookID)
+			expect(result2).toHaveLength(1)
+			expect(String(result2[0].id)).toBe(uniqueBookID)
+		})
+
+		it('Should prioritize title more than summary', async () => {
+			const result = await bookServiceInstance.getBooks({
+				first: 5,
+				search: 'search',
+			})
+
+			expect(result).toHaveLength(2)
+			expect(String(result[0].id)).toBe(uniqueBookID)
+		})
+
+		it('Should return empty array when no book matches', async () => {
+			const result = await bookServiceInstance.getBooks({
+				first: 5,
+				search: 'i8923hr823m7',
+			})
+
+			expect(result).toHaveLength(0)
+		})
+
+		it('Should be able to paginate search results', async () => {
+			const query = 'test'
+
+			const result1 = await bookServiceInstance.getBooks({
+				first: 1,
+				search: query,
+			})
+
+			expect(result1[0].id).toBeTruthy()
+
+			const result2 = await bookServiceInstance.getBooks({
+				first: 1,
+				search: query,
+				after: result1[0].created,
+			})
+
+			expect(result2[0].id).toBeTruthy()
+
+			const result3 = await bookServiceInstance.getBooks({
+				first: 1,
+				search: query,
+				after: result2[0].created,
+			})
+
+			expect(result3).toHaveLength(0)
 		})
 	})
 

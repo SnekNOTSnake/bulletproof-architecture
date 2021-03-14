@@ -86,11 +86,13 @@ class BookService {
 		after,
 		last,
 		before,
+		search,
 	}: {
 		first?: number | null
 		after?: string | null
 		last?: number | null
 		before?: string | null
+		search?: string | null
 	}) {
 		if (first && last)
 			throw new AppError(
@@ -104,16 +106,49 @@ class BookService {
 				'`after` and `before` cannot be used at the same time',
 				400,
 			)
+		if (search && last)
+			throw new AppError('`search` and `last` is not allowed', 400)
 
-		const books = await this.BooksModel.find({
-			...(after ? { created: { $lt: new Date(after) } } : null),
-			...(before ? { created: { $gt: new Date(before) } } : null),
-		})
-			.sort({ created: first ? -1 : 1 })
-			.limit(first ? first : last!)
-			.exec()
+		if (search) {
+			let score = null
+			if (after) {
+				const date = new Date(after)
+				const result: any = await this.BooksModel.findOne(
+					{
+						created: date,
+						$text: { $search: search },
+					},
+					{ score: { $meta: 'textScore' } },
+				)
+				score = result._doc.score
+			}
 
-		return books
+			const filter = { score: { $lt: score } }
+			const limit = first ? first : last!
+
+			const books = await this.BooksModel.aggregate([
+				{ $match: { $text: { $search: search } } },
+				{ $addFields: { score: { $meta: 'textScore' }, id: '$_id' } },
+				...(score ? [{ $match: filter }] : []),
+				{ $sort: { score: { $meta: 'textScore' } } },
+				{ $limit: limit },
+			])
+
+			return books
+		} else {
+			const sort = { created: first ? -1 : 1 }
+			const limit = first ? first : last!
+
+			const books = await this.BooksModel.find({
+				...(after ? { created: { $lt: new Date(after) } } : null),
+				...(before ? { created: { $gt: new Date(before) } } : null),
+			})
+				.sort(sort)
+				.limit(limit)
+				.exec()
+
+			return books
+		}
 	}
 }
 

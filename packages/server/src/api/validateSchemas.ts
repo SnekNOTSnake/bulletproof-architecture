@@ -56,6 +56,7 @@ export const getBooksSchema = Joi.object()
 		after: Joi.string().max(50),
 		last: Joi.number().min(1).max(100),
 		before: Joi.string().max(50),
+		search: Joi.string().max(50),
 	})
 	.xor('first', 'last')
 	.oxor('after', 'before')

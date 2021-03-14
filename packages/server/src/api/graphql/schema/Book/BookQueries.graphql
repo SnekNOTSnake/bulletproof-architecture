@@ -1,6 +1,12 @@
 extend type Query {
 	book(id: ID!): Book
-	books(first: Int, after: String, last: Int, before: String): BookConnection!
+	books(
+		first: Int
+		after: String
+		last: Int
+		before: String
+		search: String
+	): BookConnection!
 }
 
 input BooksWhereInput {
