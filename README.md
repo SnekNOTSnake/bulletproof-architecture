@@ -1,6 +1,6 @@
 <h1 align="center">
 	<a href="https://github.com/SnekNOTSnake">
-		<img src="./assets/SNS.png" alt="Markdownify" width="200">
+		<img src="https://github.com/SnekNOTSnake/bulletproof-architecture/blob/main/assets/SNS.png?raw=true" alt="Markdownify" width="200">
 	</a>
 	<br>
   	Bulletproof Architecture
@@ -31,7 +31,7 @@
   <a href="#resources">Resources</a>
 </p>
 
-![home-screenshot](./assets/screenshot-1.jpg)
+![home-screenshot](https://github.com/SnekNOTSnake/bulletproof-architecture/blob/main/assets/SNS.png?raw=true)
 
 ## 🗡️ Features
 
@@ -42,6 +42,8 @@ Some of the worth-highlighted features:
 - GraphQL Codegen
 - GitHub and Google OAuth
 - Modular Architecture
+
+Some screenshots are placed inside [`assets`](https://github.com/SnekNOTSnake/bulletproof-architecture/blob/main/assets) directory.
 
 ## ⛷️ Installation and Running
 

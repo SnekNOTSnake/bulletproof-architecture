@@ -3,6 +3,28 @@
 	"version": "1.0.0",
 	"license": "MIT",
 	"private": true,
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/SnekNOTSnake/bulletproof-architecture.git"
+	},
+	"keywords": [
+		"js",
+		"javascript",
+		"typescript",
+		"node",
+		"express",
+		"graphql",
+		"bulletproof",
+		"architecture",
+		"react",
+		"monorepo"
+	],
+	"author": "Akhmad Najmuddin",
+	"bugs": {
+		"email": "udintobe@gmail.com",
+		"url": "https://github.com/SnekNOTSnake/bulletproof-architecture/issues"
+	},
+	"homepage": "https://github.com/SnekNOTSnake/bulletproof-architecture#readme",
 	"workspaces": [
 		"packages/*"
 	],

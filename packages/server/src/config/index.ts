@@ -16,7 +16,7 @@ export const SALT_ROUND = 12
 
 export const MONGODB_URI =
 	process.env.MONGODB_URI || 'mongodb://localhost:27017'
-export const DB_NAME = process.env.DB_NAME || 'bulletproof-graphql'
+export const DB_NAME = process.env.DB_NAME || 'bulletproof-architecture'
 
 export const MAILGUN_SMTP_USERNAME = process.env.MAILGUN_SMTP_USERNAME || ''
 export const MAILGUN_SMTP_PASSWORD = process.env.MAILGUN_SMTP_PASSWORD || ''
