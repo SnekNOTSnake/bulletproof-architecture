@@ -129,6 +129,7 @@ class AuthService {
 			stream
 				.pipe(
 					sharp()
+						.flatten({ background: { r: 255, g: 255, b: 255 } })
 						.resize(256, 256, { position: 'centre', fit: 'cover' })
 						.jpeg({ quality: 85, chromaSubsampling: '4:2:0' })
 						.on('error', (err) => {
