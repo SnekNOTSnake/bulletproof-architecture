@@ -31,7 +31,7 @@
   <a href="#resources">Resources</a>
 </p>
 
-![home-screenshot](https://github.com/SnekNOTSnake/bulletproof-architecture/blob/main/assets/SNS.png?raw=true)
+![home-screenshot](https://github.com/SnekNOTSnake/bulletproof-architecture/blob/main/assets/screenshot-1.jpg?raw=true)
 
 ## 🗡️ Features
 
