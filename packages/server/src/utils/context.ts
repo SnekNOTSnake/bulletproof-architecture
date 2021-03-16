@@ -1,6 +1,6 @@
 import { Request } from 'express'
 import { decodeToken } from './token'
-import { IUser } from '../models/Users'
+import { IUser } from '../models/User'
 import loaders, { ILoaders } from './dataloaders'
 
 // Users

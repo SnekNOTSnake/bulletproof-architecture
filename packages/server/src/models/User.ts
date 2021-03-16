@@ -69,4 +69,4 @@ userSchema.methods.toJSON = function (): any {
 	return userObject
 }
 
-export default model<IUser>('Users', userSchema)
+export default model<IUser>('User', userSchema)

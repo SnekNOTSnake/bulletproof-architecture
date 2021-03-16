@@ -14,7 +14,7 @@ import {
 	decodeToken,
 } from '../utils/token'
 import { SALT_ROUND } from '../config'
-import { IUser } from '../models/Users'
+import { IUser } from '../models/User'
 
 const UPLOAD_DIR = 'public/img/'
 

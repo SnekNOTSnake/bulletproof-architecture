@@ -4,7 +4,7 @@ import xss from 'xss'
 
 import { trim } from '../utils/helpers'
 import AppError from '../utils/AppError'
-import { IBook } from '../models/Books'
+import { IBook } from '../models/Book'
 
 @Service()
 class BookService {

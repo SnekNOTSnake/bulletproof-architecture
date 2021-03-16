@@ -9,7 +9,7 @@ import {
 	GITHUB_CLIENT_ID,
 	GITHUB_CLIENT_SECRET,
 } from '../config'
-import UserModel from '../models/Users'
+import UserModel from '../models/User'
 
 export default function initializePassport(app: Application) {
 	app.use(passport.initialize())

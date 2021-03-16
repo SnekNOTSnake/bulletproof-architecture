@@ -1,7 +1,7 @@
 import DataLoader from 'dataloader'
 
-import UserModel, { IUser } from '../models/Users'
-import BookModel, { IBook } from '../models/Books'
+import UserModel, { IUser } from '../models/User'
+import BookModel, { IBook } from '../models/Book'
 
 /**
  * A function to ensure Dataloader returns the same order as requested.

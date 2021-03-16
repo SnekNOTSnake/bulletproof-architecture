@@ -1,6 +1,6 @@
 import { GraphQLResolveInfo, GraphQLScalarType, GraphQLScalarTypeConfig } from 'graphql';
-import { IUser } from '../../../models/Users';
-import { IBook } from '../../../models/Books';
+import { IUser } from '../../../models/User';
+import { IBook } from '../../../models/Book';
 import { MyContext } from '../../../utils/context';
 export type Maybe<T> = T | null;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };

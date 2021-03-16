@@ -31,8 +31,8 @@ generates:
       scalars:
         Upload: 'Promise<GraphQLFileUpload>'
       mappers:
-        User: ../../../models/Users#IUser
-        Book: ../../../models/Books#IBook
+        User: ../../../models/User#IUser
+        Book: ../../../models/Book#IBook
       contextType: ../../../utils/context#MyContext
   ./packages/client/src/generated/types.ts:
     plugins:

@@ -1,7 +1,7 @@
 import expect from 'expect'
-import UserModel from '../../src/models/Users'
+import UserModel from '../../src/models/User'
 import AuthService from '../../src/services/Auth'
-import BookModel from '../../src/models/Books'
+import BookModel from '../../src/models/Book'
 import BookService from '../../src/services/Book'
 
 type ThenArg<T> = T extends PromiseLike<infer U> ? U : T

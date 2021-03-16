@@ -4,7 +4,7 @@ import { createReadStream, existsSync, unlinkSync } from 'fs'
 import path from 'path'
 
 import { modifyLastCharacter } from '../utils'
-import UserModel from '../../src/models/Users'
+import UserModel from '../../src/models/User'
 import AuthService from '../../src/services/Auth'
 
 const ASSETS_DIR = path.join(__dirname, '../assets')

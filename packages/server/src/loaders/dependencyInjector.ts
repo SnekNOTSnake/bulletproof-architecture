@@ -1,7 +1,7 @@
 import { Container } from 'typedi'
 import { connect } from 'mongoose'
-import Users from '../models/Users'
-import Books from '../models/Books'
+import Users from '../models/User'
+import Books from '../models/Book'
 
 type Props = { mongoConnection: ThenArg<ReturnType<typeof connect>> }
 

@@ -1,4 +1,4 @@
-import { IUser } from '../models/Users'
+import { IUser } from '../models/User'
 import myEmitter, { userSignup } from './events'
 import { sendGreetingMail } from '../utils/mail'
 

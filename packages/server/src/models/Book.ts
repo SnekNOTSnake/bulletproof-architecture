@@ -19,7 +19,7 @@ const bookSchema: Schema<IBook> = new Schema<IBook>({
 	author: {
 		type: Types.ObjectId,
 		required: true,
-		ref: 'Users',
+		ref: 'User',
 	},
 	summary: {
 		type: String,
@@ -60,4 +60,4 @@ bookSchema.methods.toJSON = function (): any {
 	return userObject
 }
 
-export default model<IBook>('Books', bookSchema)
+export default model<IBook>('Book', bookSchema)

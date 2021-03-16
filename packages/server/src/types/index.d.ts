@@ -1,4 +1,4 @@
-type IUser = import('../models/Users').IUser
+type IUser = import('../models/User').IUser
 type ReadStream = import('fs').ReadStream
 
 type ThenArg<T> = T extends PromiseLike<infer U> ? U : T
