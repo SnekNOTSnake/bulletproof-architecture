@@ -28,11 +28,13 @@ generates:
       - typescript
       - typescript-resolvers
     config:
+      enumsAsTypes: true
       scalars:
         Upload: 'Promise<GraphQLFileUpload>'
       mappers:
         User: ../../../models/User#IUser
         Book: ../../../models/Book#IBook
+        Review: ../../../models/Review#IReview
       contextType: ../../../utils/context#MyContext
   ./packages/client/src/generated/types.ts:
     plugins:

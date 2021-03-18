@@ -6,6 +6,8 @@ export interface IBook extends Document {
 	author: object
 	summary: string
 	content: string
+	ratingsAverage: number
+	ratingsQuantity: number
 	created: Date
 	lastChanged: Date
 }
@@ -31,6 +33,16 @@ const bookSchema: Schema<IBook> = new Schema<IBook>({
 		required: true,
 		minlength: 100,
 		maxlength: 2000,
+	},
+	ratingsAverage: {
+		type: Number,
+		required: true,
+		default: 0,
+	},
+	ratingsQuantity: {
+		type: Number,
+		required: true,
+		default: 0,
 	},
 	created: {
 		type: Date,

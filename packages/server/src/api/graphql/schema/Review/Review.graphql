@@ -1,0 +1,19 @@
+type Review {
+	id: ID!
+	book: Book!
+	author: User!
+	content: String!
+	rating: Int!
+	created: DateTime!
+}
+
+type ReviewConnection {
+	edges: [ReviewEdge!]!
+	nodes: [Review!]!
+	pageInfo: PageInfo!
+}
+
+type ReviewEdge {
+	node: Review!
+	cursor: String!
+}

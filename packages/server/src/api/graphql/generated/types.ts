@@ -1,6 +1,7 @@
 import { GraphQLResolveInfo, GraphQLScalarType, GraphQLScalarTypeConfig } from 'graphql';
 import { IUser } from '../../../models/User';
 import { IBook } from '../../../models/Book';
+import { IReview } from '../../../models/Review';
 import { MyContext } from '../../../utils/context';
 export type Maybe<T> = T | null;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -41,11 +42,14 @@ export type User = {
 export type Mutation = {
   __typename?: 'Mutation';
   createBook?: Maybe<Book>;
+  createReview?: Maybe<Review>;
   deleteBook?: Maybe<Scalars['ID']>;
+  deleteReview?: Maybe<Scalars['ID']>;
   signin?: Maybe<AuthData>;
   signup?: Maybe<User>;
   updateBook?: Maybe<Book>;
   updateMe: User;
+  updateReview?: Maybe<Review>;
 };
 
 
@@ -56,7 +60,19 @@ export type MutationCreateBookArgs = {
 };
 
 
+export type MutationCreateReviewArgs = {
+  book: Scalars['ID'];
+  content: Scalars['String'];
+  rating: Scalars['Int'];
+};
+
+
 export type MutationDeleteBookArgs = {
+  id: Scalars['ID'];
+};
+
+
+export type MutationDeleteReviewArgs = {
   id: Scalars['ID'];
 };
 
@@ -87,11 +103,20 @@ export type MutationUpdateMeArgs = {
   name: Scalars['String'];
 };
 
+
+export type MutationUpdateReviewArgs = {
+  id: Scalars['ID'];
+  content: Scalars['String'];
+  rating: Scalars['Int'];
+};
+
 export type Query = {
   __typename?: 'Query';
   book?: Maybe<Book>;
   books: BookConnection;
   me?: Maybe<User>;
+  review?: Maybe<Review>;
+  reviews: ReviewConnection;
 };
 
 
@@ -108,6 +133,19 @@ export type QueryBooksArgs = {
   search?: Maybe<Scalars['String']>;
 };
 
+
+export type QueryReviewArgs = {
+  id: Scalars['ID'];
+};
+
+
+export type QueryReviewsArgs = {
+  first: Scalars['Int'];
+  after?: Maybe<Scalars['String']>;
+  where?: Maybe<ReviewsWhereInput>;
+  orderBy?: Maybe<ReviewOrder>;
+};
+
 export type Book = {
   __typename?: 'Book';
   id: Scalars['ID'];
@@ -115,6 +153,8 @@ export type Book = {
   author: User;
   summary: Scalars['String'];
   content: Scalars['String'];
+  ratingsAverage: Scalars['Int'];
+  ratingsQuantity: Scalars['Int'];
   created: Scalars['DateTime'];
   lastChanged: Scalars['DateTime'];
 };
@@ -134,6 +174,40 @@ export type BookEdge = {
 
 export type BooksWhereInput = {
   _id?: Maybe<Scalars['String']>;
+};
+
+export type Review = {
+  __typename?: 'Review';
+  id: Scalars['ID'];
+  book: Book;
+  author: User;
+  content: Scalars['String'];
+  rating: Scalars['Int'];
+  created: Scalars['DateTime'];
+};
+
+export type ReviewConnection = {
+  __typename?: 'ReviewConnection';
+  edges: Array<ReviewEdge>;
+  nodes: Array<Review>;
+  pageInfo: PageInfo;
+};
+
+export type ReviewEdge = {
+  __typename?: 'ReviewEdge';
+  node: Review;
+  cursor: Scalars['String'];
+};
+
+export type ReviewOrder =
+  | 'created_ASC'
+  | 'created_DESC'
+  | 'rating_ASC'
+  | 'rating_DESC';
+
+export type ReviewsWhereInput = {
+  book?: Maybe<Scalars['String']>;
+  author?: Maybe<Scalars['String']>;
 };
 
 
@@ -239,12 +313,17 @@ export type ResolversTypes = {
   User: ResolverTypeWrapper<IUser>;
   ID: ResolverTypeWrapper<Scalars['ID']>;
   Mutation: ResolverTypeWrapper<{}>;
-  Query: ResolverTypeWrapper<{}>;
   Int: ResolverTypeWrapper<Scalars['Int']>;
+  Query: ResolverTypeWrapper<{}>;
   Book: ResolverTypeWrapper<IBook>;
   BookConnection: ResolverTypeWrapper<Omit<BookConnection, 'edges' | 'nodes'> & { edges: Array<ResolversTypes['BookEdge']>, nodes: Array<ResolversTypes['Book']> }>;
   BookEdge: ResolverTypeWrapper<Omit<BookEdge, 'node'> & { node: ResolversTypes['Book'] }>;
   BooksWhereInput: BooksWhereInput;
+  Review: ResolverTypeWrapper<IReview>;
+  ReviewConnection: ResolverTypeWrapper<Omit<ReviewConnection, 'edges' | 'nodes'> & { edges: Array<ResolversTypes['ReviewEdge']>, nodes: Array<ResolversTypes['Review']> }>;
+  ReviewEdge: ResolverTypeWrapper<Omit<ReviewEdge, 'node'> & { node: ResolversTypes['Review'] }>;
+  ReviewOrder: ReviewOrder;
+  ReviewsWhereInput: ReviewsWhereInput;
   DateTime: ResolverTypeWrapper<Scalars['DateTime']>;
   Date: ResolverTypeWrapper<Scalars['Date']>;
   Time: ResolverTypeWrapper<Scalars['Time']>;
@@ -261,12 +340,16 @@ export type ResolversParentTypes = {
   User: IUser;
   ID: Scalars['ID'];
   Mutation: {};
-  Query: {};
   Int: Scalars['Int'];
+  Query: {};
   Book: IBook;
   BookConnection: Omit<BookConnection, 'edges' | 'nodes'> & { edges: Array<ResolversParentTypes['BookEdge']>, nodes: Array<ResolversParentTypes['Book']> };
   BookEdge: Omit<BookEdge, 'node'> & { node: ResolversParentTypes['Book'] };
   BooksWhereInput: BooksWhereInput;
+  Review: IReview;
+  ReviewConnection: Omit<ReviewConnection, 'edges' | 'nodes'> & { edges: Array<ResolversParentTypes['ReviewEdge']>, nodes: Array<ResolversParentTypes['Review']> };
+  ReviewEdge: Omit<ReviewEdge, 'node'> & { node: ResolversParentTypes['Review'] };
+  ReviewsWhereInput: ReviewsWhereInput;
   DateTime: Scalars['DateTime'];
   Date: Scalars['Date'];
   Time: Scalars['Time'];
@@ -298,17 +381,22 @@ export type UserResolvers<ContextType = MyContext, ParentType extends ResolversP
 
 export type MutationResolvers<ContextType = MyContext, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
   createBook?: Resolver<Maybe<ResolversTypes['Book']>, ParentType, ContextType, RequireFields<MutationCreateBookArgs, 'title' | 'summary' | 'content'>>;
+  createReview?: Resolver<Maybe<ResolversTypes['Review']>, ParentType, ContextType, RequireFields<MutationCreateReviewArgs, 'book' | 'content' | 'rating'>>;
   deleteBook?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType, RequireFields<MutationDeleteBookArgs, 'id'>>;
+  deleteReview?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType, RequireFields<MutationDeleteReviewArgs, 'id'>>;
   signin?: Resolver<Maybe<ResolversTypes['AuthData']>, ParentType, ContextType, RequireFields<MutationSigninArgs, 'email' | 'password'>>;
   signup?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<MutationSignupArgs, 'name' | 'email' | 'password'>>;
   updateBook?: Resolver<Maybe<ResolversTypes['Book']>, ParentType, ContextType, RequireFields<MutationUpdateBookArgs, 'id' | 'title' | 'summary' | 'content'>>;
   updateMe?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationUpdateMeArgs, 'name'>>;
+  updateReview?: Resolver<Maybe<ResolversTypes['Review']>, ParentType, ContextType, RequireFields<MutationUpdateReviewArgs, 'id' | 'content' | 'rating'>>;
 };
 
 export type QueryResolvers<ContextType = MyContext, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
   book?: Resolver<Maybe<ResolversTypes['Book']>, ParentType, ContextType, RequireFields<QueryBookArgs, 'id'>>;
   books?: Resolver<ResolversTypes['BookConnection'], ParentType, ContextType, RequireFields<QueryBooksArgs, never>>;
   me?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
+  review?: Resolver<Maybe<ResolversTypes['Review']>, ParentType, ContextType, RequireFields<QueryReviewArgs, 'id'>>;
+  reviews?: Resolver<ResolversTypes['ReviewConnection'], ParentType, ContextType, RequireFields<QueryReviewsArgs, 'first' | 'orderBy'>>;
 };
 
 export type BookResolvers<ContextType = MyContext, ParentType extends ResolversParentTypes['Book'] = ResolversParentTypes['Book']> = {
@@ -317,6 +405,8 @@ export type BookResolvers<ContextType = MyContext, ParentType extends ResolversP
   author?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
   summary?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   content?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  ratingsAverage?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  ratingsQuantity?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   created?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   lastChanged?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
@@ -331,6 +421,29 @@ export type BookConnectionResolvers<ContextType = MyContext, ParentType extends 
 
 export type BookEdgeResolvers<ContextType = MyContext, ParentType extends ResolversParentTypes['BookEdge'] = ResolversParentTypes['BookEdge']> = {
   node?: Resolver<ResolversTypes['Book'], ParentType, ContextType>;
+  cursor?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type ReviewResolvers<ContextType = MyContext, ParentType extends ResolversParentTypes['Review'] = ResolversParentTypes['Review']> = {
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  book?: Resolver<ResolversTypes['Book'], ParentType, ContextType>;
+  author?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
+  content?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  rating?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  created?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type ReviewConnectionResolvers<ContextType = MyContext, ParentType extends ResolversParentTypes['ReviewConnection'] = ResolversParentTypes['ReviewConnection']> = {
+  edges?: Resolver<Array<ResolversTypes['ReviewEdge']>, ParentType, ContextType>;
+  nodes?: Resolver<Array<ResolversTypes['Review']>, ParentType, ContextType>;
+  pageInfo?: Resolver<ResolversTypes['PageInfo'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type ReviewEdgeResolvers<ContextType = MyContext, ParentType extends ResolversParentTypes['ReviewEdge'] = ResolversParentTypes['ReviewEdge']> = {
+  node?: Resolver<ResolversTypes['Review'], ParentType, ContextType>;
   cursor?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
@@ -375,6 +488,9 @@ export type Resolvers<ContextType = MyContext> = {
   Book?: BookResolvers<ContextType>;
   BookConnection?: BookConnectionResolvers<ContextType>;
   BookEdge?: BookEdgeResolvers<ContextType>;
+  Review?: ReviewResolvers<ContextType>;
+  ReviewConnection?: ReviewConnectionResolvers<ContextType>;
+  ReviewEdge?: ReviewEdgeResolvers<ContextType>;
   DateTime?: GraphQLScalarType;
   Date?: GraphQLScalarType;
   Time?: GraphQLScalarType;

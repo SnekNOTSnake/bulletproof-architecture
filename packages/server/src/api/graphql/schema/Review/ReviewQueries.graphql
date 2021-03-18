@@ -1,0 +1,21 @@
+extend type Query {
+	review(id: ID!): Review
+	reviews(
+		first: Int!
+		after: String
+		where: ReviewsWhereInput
+		orderBy: ReviewOrder = created_DESC
+	): ReviewConnection!
+}
+
+enum ReviewOrder {
+	created_ASC
+	created_DESC
+	rating_ASC
+	rating_DESC
+}
+
+input ReviewsWhereInput {
+	book: String
+	author: String
+}

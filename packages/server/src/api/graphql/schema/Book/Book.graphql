@@ -4,6 +4,8 @@ type Book {
 	author: User!
 	summary: String!
 	content: String!
+	ratingsAverage: Int!
+	ratingsQuantity: Int!
 	created: DateTime!
 	lastChanged: DateTime!
 }

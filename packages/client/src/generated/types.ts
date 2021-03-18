@@ -37,11 +37,14 @@ export type User = {
 export type Mutation = {
   __typename?: 'Mutation';
   createBook?: Maybe<Book>;
+  createReview?: Maybe<Review>;
   deleteBook?: Maybe<Scalars['ID']>;
+  deleteReview?: Maybe<Scalars['ID']>;
   signin?: Maybe<AuthData>;
   signup?: Maybe<User>;
   updateBook?: Maybe<Book>;
   updateMe: User;
+  updateReview?: Maybe<Review>;
 };
 
 
@@ -52,7 +55,19 @@ export type MutationCreateBookArgs = {
 };
 
 
+export type MutationCreateReviewArgs = {
+  book: Scalars['ID'];
+  content: Scalars['String'];
+  rating: Scalars['Int'];
+};
+
+
 export type MutationDeleteBookArgs = {
+  id: Scalars['ID'];
+};
+
+
+export type MutationDeleteReviewArgs = {
   id: Scalars['ID'];
 };
 
@@ -83,11 +98,20 @@ export type MutationUpdateMeArgs = {
   name: Scalars['String'];
 };
 
+
+export type MutationUpdateReviewArgs = {
+  id: Scalars['ID'];
+  content: Scalars['String'];
+  rating: Scalars['Int'];
+};
+
 export type Query = {
   __typename?: 'Query';
   book?: Maybe<Book>;
   books: BookConnection;
   me?: Maybe<User>;
+  review?: Maybe<Review>;
+  reviews: ReviewConnection;
 };
 
 
@@ -104,6 +128,19 @@ export type QueryBooksArgs = {
   search?: Maybe<Scalars['String']>;
 };
 
+
+export type QueryReviewArgs = {
+  id: Scalars['ID'];
+};
+
+
+export type QueryReviewsArgs = {
+  first: Scalars['Int'];
+  after?: Maybe<Scalars['String']>;
+  where?: Maybe<ReviewsWhereInput>;
+  orderBy?: Maybe<ReviewOrder>;
+};
+
 export type Book = {
   __typename?: 'Book';
   id: Scalars['ID'];
@@ -111,6 +148,8 @@ export type Book = {
   author: User;
   summary: Scalars['String'];
   content: Scalars['String'];
+  ratingsAverage: Scalars['Int'];
+  ratingsQuantity: Scalars['Int'];
   created: Scalars['DateTime'];
   lastChanged: Scalars['DateTime'];
 };
@@ -130,6 +169,41 @@ export type BookEdge = {
 
 export type BooksWhereInput = {
   _id?: Maybe<Scalars['String']>;
+};
+
+export type Review = {
+  __typename?: 'Review';
+  id: Scalars['ID'];
+  book: Book;
+  author: User;
+  content: Scalars['String'];
+  rating: Scalars['Int'];
+  created: Scalars['DateTime'];
+};
+
+export type ReviewConnection = {
+  __typename?: 'ReviewConnection';
+  edges: Array<ReviewEdge>;
+  nodes: Array<Review>;
+  pageInfo: PageInfo;
+};
+
+export type ReviewEdge = {
+  __typename?: 'ReviewEdge';
+  node: Review;
+  cursor: Scalars['String'];
+};
+
+export enum ReviewOrder {
+  CreatedAsc = 'created_ASC',
+  CreatedDesc = 'created_DESC',
+  RatingAsc = 'rating_ASC',
+  RatingDesc = 'rating_DESC'
+}
+
+export type ReviewsWhereInput = {
+  book?: Maybe<Scalars['String']>;
+  author?: Maybe<Scalars['String']>;
 };
 
 
