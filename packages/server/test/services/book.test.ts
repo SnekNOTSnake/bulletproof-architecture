@@ -1,54 +1,37 @@
 import expect from 'expect'
-import UserModel from '../../src/models/User'
-import AuthService from '../../src/services/Auth'
+import { Types } from 'mongoose'
+
 import BookModel from '../../src/models/Book'
 import BookService from '../../src/services/Book'
 
-type ThenArg<T> = T extends PromiseLike<infer U> ? U : T
-
-const authServiceInstance = new AuthService(UserModel)
 const bookServiceInstance = new BookService(BookModel)
 
-export const testUser = {
-	name: 'darn',
-	email: 'darn@darn.com',
-	password: 'somethingcool',
-}
+const userID = String(Types.ObjectId())
+const userID2 = String(Types.ObjectId())
 
-export const createTestBook = (
-	authorId: string,
-	title = 'Test book',
-): { title: string; author: string; summary: string; content: string } => ({
-	title,
-	author: authorId,
-	summary: 's'.repeat(50),
-	content: 'c'.repeat(100),
-})
+const bookID = String(Types.ObjectId())
+let createdBookID = ''
+let uniqueBookID = ''
 
-const notDefinedBookId = '602122682ec3752763f2e7fe'
-const notDefinedUserId = '602144683ec3751763f2f9ff'
-
-const newBookForm = {
+const updatedBookForm = {
 	title: 'Darny darn!',
 	summary: 'a'.repeat(50),
 	content: 'b'.repeat(100),
 }
 
-let createdBookID = ''
-let uniqueBookID = ''
-let loginResult: ThenArg<
-	ReturnType<typeof authServiceInstance.signin>
-> = {} as any
+export const createTestBook = (
+	title = 'Test book',
+): { title: string; author: string; summary: string; content: string } => ({
+	title,
+	author: userID,
+	summary: 's'.repeat(50),
+	content: 'c'.repeat(100),
+})
 
 describe('Book Service', async () => {
-	before(async () => {
-		await authServiceInstance.signup(testUser)
-		loginResult = await authServiceInstance.signin(testUser)
-	})
-
 	describe('createBook', () => {
 		it('Should return the same user with an additional ID field', async () => {
-			const testBook = createTestBook(loginResult.user.id)
+			const testBook = createTestBook()
 			const book = await bookServiceInstance.createBook(testBook)
 
 			createdBookID = book.id
@@ -58,23 +41,19 @@ describe('Book Service', async () => {
 			expect(book.title).toBe(testBook.title)
 			expect(book.summary).toBe(testBook.summary)
 			expect(book.content).toBe(testBook.content)
-			expect(String(book.author)).toBe(loginResult.user.id)
+			expect(String(book.author)).toBe(userID)
 
 			// Create more books for other testings
-			await bookServiceInstance.createBook(
-				createTestBook(loginResult.user.id, 'Darny darn!'),
-			)
-			await bookServiceInstance.createBook(
-				createTestBook(loginResult.user.id, 'Test book 2'),
-			)
+			await bookServiceInstance.createBook(createTestBook('Darny darn!'))
+			await bookServiceInstance.createBook(createTestBook('Test book 2'))
 			const uniqueBook1 = await bookServiceInstance.createBook({
-				...createTestBook(loginResult.user.id, 'Unique book to search for'),
+				...createTestBook('Unique book to search for'),
 				summary: 'This one is with a different summary',
 				content:
 					'gibberish content to help the engine find me padding padding padding padding padding padding padding',
 			})
 			await bookServiceInstance.createBook({
-				...createTestBook(loginResult.user.id),
+				...createTestBook(),
 				summary: 'book with a "search" keyword but less priority',
 			})
 
@@ -85,23 +64,23 @@ describe('Book Service', async () => {
 	describe('updateBook', () => {
 		it('Should be able to update book', async () => {
 			const updatedBook = await bookServiceInstance.updateBook({
-				...newBookForm,
+				...updatedBookForm,
 				id: createdBookID,
-				userId: loginResult.user.id,
+				userId: userID,
 			})
 
 			expect(updatedBook).toBeTruthy()
 			expect(updatedBook.id).toBe(createdBookID)
 			expect(updatedBook.title).toBe(updatedBook.title)
-			expect(String(updatedBook.author)).toBe(loginResult.user.id)
+			expect(String(updatedBook.author)).toBe(userID)
 		})
 
 		it('Should throw when no book is found with given ID', async () => {
 			await expect(
 				bookServiceInstance.updateBook({
-					...newBookForm,
-					id: notDefinedBookId,
-					userId: loginResult.user.id,
+					...updatedBookForm,
+					id: bookID,
+					userId: userID,
 				}),
 			).rejects.toThrow()
 		})
@@ -109,10 +88,10 @@ describe('Book Service', async () => {
 		it("Should throw when a user is updating other user's book", async () => {
 			await expect(
 				bookServiceInstance.updateBook({
-					...newBookForm,
+					...updatedBookForm,
 					id: createdBookID,
 					title: 'Trolled!',
-					userId: notDefinedUserId,
+					userId: userID2,
 				}),
 			).rejects.toThrow()
 		})
@@ -120,27 +99,27 @@ describe('Book Service', async () => {
 		it('Should throw when exceeding limited length', async () => {
 			await expect(
 				bookServiceInstance.updateBook({
-					...newBookForm,
+					...updatedBookForm,
 					id: createdBookID,
-					userId: loginResult.user.id,
+					userId: userID,
 					content: 'c'.repeat(2001),
 				}),
 			).rejects.toThrow()
 
 			await expect(
 				bookServiceInstance.updateBook({
-					...newBookForm,
+					...updatedBookForm,
 					id: createdBookID,
-					userId: loginResult.user.id,
+					userId: userID,
 					summary: 's'.repeat(201),
 				}),
 			).rejects.toThrow()
 
 			await expect(
 				bookServiceInstance.updateBook({
-					...newBookForm,
+					...updatedBookForm,
 					id: createdBookID,
-					userId: loginResult.user.id,
+					userId: userID,
 					title: 't'.repeat(51),
 				}),
 			).rejects.toThrow()
@@ -160,7 +139,7 @@ describe('Book Service', async () => {
 		})
 
 		it('Should return null when no book is found', async () => {
-			const book = await bookServiceInstance.getBook(notDefinedBookId)
+			const book = await bookServiceInstance.getBook(bookID)
 
 			expect(book).toBeNull()
 		})
@@ -268,7 +247,7 @@ describe('Book Service', async () => {
 		it('Should be able to delete selected book', async () => {
 			const deletedBookId = await bookServiceInstance.deleteBook({
 				id: createdBookID,
-				userId: loginResult.user.id,
+				userId: userID,
 			})
 
 			expect(deletedBookId).toBe(createdBookID)
@@ -277,8 +256,8 @@ describe('Book Service', async () => {
 		it('Should throw when no book is found with given ID', async () => {
 			await expect(
 				bookServiceInstance.deleteBook({
-					id: notDefinedBookId,
-					userId: loginResult.user.id,
+					id: bookID,
+					userId: userID,
 				}),
 			).rejects.toThrow()
 		})
@@ -287,7 +266,7 @@ describe('Book Service', async () => {
 			await expect(
 				bookServiceInstance.deleteBook({
 					id: createdBookID,
-					userId: notDefinedUserId,
+					userId: userID2,
 				}),
 			).rejects.toThrow()
 		})
