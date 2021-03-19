@@ -10,6 +10,7 @@ import CardContent from '@material-ui/core/CardContent'
 import CardActions from '@material-ui/core/CardActions'
 import TextField from '@material-ui/core/TextField'
 import Typography from '@material-ui/core/Typography'
+import Rating from '@material-ui/lab/Rating'
 
 import {
 	ReviewsQuery,
@@ -152,6 +153,7 @@ const Review: React.FC<Props> = ({ review }) => {
 				)}
 
 				<Typography className={classes.content}>{review.content}</Typography>
+				<Rating readOnly value={review.rating} precision={0.5} />
 			</CardContent>
 			<CardActions>
 				<Button

@@ -148,7 +148,7 @@ export type Book = {
   author: User;
   summary: Scalars['String'];
   content: Scalars['String'];
-  ratingsAverage: Scalars['Int'];
+  ratingsAverage: Scalars['Float'];
   ratingsQuantity: Scalars['Int'];
   created: Scalars['DateTime'];
   lastChanged: Scalars['DateTime'];
@@ -342,7 +342,7 @@ export type BookQuery = (
   { __typename?: 'Query' }
   & { book?: Maybe<(
     { __typename?: 'Book' }
-    & Pick<Book, 'id' | 'title' | 'summary' | 'content' | 'created' | 'lastChanged'>
+    & Pick<Book, 'id' | 'title' | 'summary' | 'content' | 'ratingsAverage' | 'ratingsQuantity' | 'created' | 'lastChanged'>
     & { author: (
       { __typename?: 'User' }
       & Pick<User, 'id' | 'name'>
@@ -394,7 +394,7 @@ export type BooksQuery = (
     { __typename?: 'BookConnection' }
     & { nodes: Array<(
       { __typename?: 'Book' }
-      & Pick<Book, 'id' | 'title' | 'created' | 'lastChanged' | 'summary'>
+      & Pick<Book, 'id' | 'title' | 'created' | 'lastChanged' | 'summary' | 'ratingsAverage' | 'ratingsQuantity'>
       & { author: (
         { __typename?: 'User' }
         & Pick<User, 'id' | 'name' | 'avatar'>
@@ -680,6 +680,8 @@ export const BookDocument = gql`
     title
     summary
     content
+    ratingsAverage
+    ratingsQuantity
     author {
       id
       name
@@ -804,6 +806,8 @@ export const BooksDocument = gql`
       created
       lastChanged
       summary
+      ratingsAverage
+      ratingsQuantity
       author {
         id
         name

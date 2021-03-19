@@ -4,6 +4,8 @@ query Book($id: ID!) {
 		title
 		summary
 		content
+		ratingsAverage
+		ratingsQuantity
 		author {
 			id
 			name

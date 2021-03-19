@@ -12,6 +12,7 @@ import CardActions from '@material-ui/core/CardActions'
 import Button from '@material-ui/core/Button'
 import LinkComponent from '@material-ui/core/Link'
 import Typography from '@material-ui/core/Typography'
+import Rating from '@material-ui/lab/Rating'
 
 import useStyles from './Home.style'
 import { useBooksQuery } from '../../generated/types'
@@ -55,6 +56,15 @@ const Home: React.FC = () => {
 								<Typography className={classes.summary}>
 									{book.summary}
 								</Typography>
+								<Box className={classes.rating}>
+									<Rating
+										className={classes.stars}
+										readOnly
+										value={book.ratingsAverage}
+										precision={0.5}
+									/>
+									<Box>({book.ratingsQuantity})</Box>
+								</Box>
 								<Typography color="textSecondary">
 									Updated {formatDistance(new Date(book.created), new Date())}{' '}
 									ago
@@ -73,6 +83,7 @@ const Home: React.FC = () => {
 					</Grid>
 				))}
 			</Grid>
+
 			{data?.books.pageInfo.hasNextPage ? (
 				<Button
 					color="primary"

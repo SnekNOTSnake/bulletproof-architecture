@@ -13,5 +13,6 @@ export default makeStyles((theme) => ({
 	content: {
 		whiteSpace: 'break-spaces',
 		textAlign: 'justify',
+		marginBottom: theme.spacing(2),
 	},
 }))

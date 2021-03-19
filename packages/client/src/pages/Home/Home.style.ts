@@ -11,4 +11,12 @@ export default makeStyles((theme) => ({
 		whiteSpace: 'break-spaces',
 		marginBottom: theme.spacing(2),
 	},
+	rating: {
+		display: 'flex',
+		alignItems: 'center',
+		marginBottom: theme.spacing(1),
+	},
+	stars: {
+		marginRight: theme.spacing(1),
+	},
 }))

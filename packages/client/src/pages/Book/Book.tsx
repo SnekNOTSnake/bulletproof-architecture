@@ -12,6 +12,7 @@ import CardContent from '@material-ui/core/CardContent'
 import CardActions from '@material-ui/core/CardActions'
 import Button from '@material-ui/core/Button'
 import Typography from '@material-ui/core/Typography'
+import Rating from '@material-ui/lab/Rating'
 
 import { useBookQuery, useDeleteBookMutation } from '../../generated/types'
 import Reviews from '../../components/Reviews'
@@ -90,10 +91,22 @@ const Book: React.FC<Props> = ({ match, history }) => {
 							<Typography className={classes.content}>
 								{data.book.content}
 							</Typography>
-							<Typography color="textSecondary">
-								Updated{' '}
-								{formatDistance(new Date(data.book.created), new Date())} ago
-							</Typography>
+
+							<Box>
+								<Box className={classes.rating}>
+									<Rating
+										className={classes.stars}
+										readOnly
+										value={4.5}
+										precision={0.5}
+									/>
+									<Box>({data.book.ratingsQuantity})</Box>
+								</Box>
+								<Typography color="textSecondary">
+									Updated{' '}
+									{formatDistance(new Date(data.book.created), new Date())} ago
+								</Typography>
+							</Box>
 						</CardContent>
 
 						<CardActions>

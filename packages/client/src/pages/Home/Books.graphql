@@ -19,6 +19,8 @@ query Books(
 			created
 			lastChanged
 			summary
+			ratingsAverage
+			ratingsQuantity
 			author {
 				id
 				name

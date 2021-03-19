@@ -16,4 +16,12 @@ export default makeStyles((theme) => ({
 		marginBottom: theme.spacing(4),
 		textAlign: 'justify',
 	},
+	rating: {
+		display: 'flex',
+		alignItems: 'center',
+		marginBottom: theme.spacing(1),
+	},
+	stars: {
+		marginRight: theme.spacing(1),
+	},
 }))
