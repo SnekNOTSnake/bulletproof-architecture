@@ -259,11 +259,7 @@ export type UpdateBookMutation = (
   { __typename?: 'Mutation' }
   & { updateBook?: Maybe<(
     { __typename?: 'Book' }
-    & Pick<Book, 'id' | 'title' | 'created' | 'lastChanged' | 'summary' | 'content'>
-    & { author: (
-      { __typename?: 'User' }
-      & Pick<User, 'id' | 'name' | 'email'>
-    ) }
+    & Pick<Book, 'id' | 'title' | 'lastChanged' | 'summary' | 'content'>
   )> }
 );
 
@@ -309,11 +305,8 @@ export type UpdateReviewMutation = (
   { __typename?: 'Mutation' }
   & { updateReview?: Maybe<(
     { __typename?: 'Review' }
-    & Pick<Review, 'id' | 'content' | 'rating' | 'created'>
-    & { author: (
-      { __typename?: 'User' }
-      & Pick<User, 'id' | 'name'>
-    ), book: (
+    & Pick<Review, 'id' | 'content' | 'rating'>
+    & { book: (
       { __typename?: 'Book' }
       & Pick<Book, 'id' | 'ratingsAverage' | 'ratingsQuantity'>
     ) }
@@ -496,15 +489,9 @@ export const UpdateBookDocument = gql`
   updateBook(id: $id, title: $title, summary: $summary, content: $content) {
     id
     title
-    created
     lastChanged
     summary
     content
-    author {
-      id
-      name
-      email
-    }
   }
 }
     `;
@@ -612,10 +599,6 @@ export const UpdateReviewDocument = gql`
     mutation UpdateReview($id: ID!, $content: String!, $rating: Int!) {
   updateReview(id: $id, content: $content, rating: $rating) {
     id
-    author {
-      id
-      name
-    }
     book {
       id
       ratingsAverage
@@ -623,7 +606,6 @@ export const UpdateReviewDocument = gql`
     }
     content
     rating
-    created
   }
 }
     `;

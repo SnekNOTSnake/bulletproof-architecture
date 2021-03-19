@@ -1,10 +1,6 @@
 mutation UpdateReview($id: ID!, $content: String!, $rating: Int!) {
 	updateReview(id: $id, content: $content, rating: $rating) {
 		id
-		author {
-			id
-			name
-		}
 		book {
 			id
 			ratingsAverage
@@ -12,6 +8,5 @@ mutation UpdateReview($id: ID!, $content: String!, $rating: Int!) {
 		}
 		content
 		rating
-		created
 	}
 }

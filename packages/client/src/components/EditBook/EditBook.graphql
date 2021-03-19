@@ -7,14 +7,8 @@ mutation UpdateBook(
 	updateBook(id: $id, title: $title, summary: $summary, content: $content) {
 		id
 		title
-		created
 		lastChanged
 		summary
 		content
-		author {
-			id
-			name
-			email
-		}
 	}
 }
