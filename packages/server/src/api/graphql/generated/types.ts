@@ -153,7 +153,7 @@ export type Book = {
   author: User;
   summary: Scalars['String'];
   content: Scalars['String'];
-  ratingsAverage: Scalars['Int'];
+  ratingsAverage: Scalars['Float'];
   ratingsQuantity: Scalars['Int'];
   created: Scalars['DateTime'];
   lastChanged: Scalars['DateTime'];
@@ -316,6 +316,7 @@ export type ResolversTypes = {
   Int: ResolverTypeWrapper<Scalars['Int']>;
   Query: ResolverTypeWrapper<{}>;
   Book: ResolverTypeWrapper<IBook>;
+  Float: ResolverTypeWrapper<Scalars['Float']>;
   BookConnection: ResolverTypeWrapper<Omit<BookConnection, 'edges' | 'nodes'> & { edges: Array<ResolversTypes['BookEdge']>, nodes: Array<ResolversTypes['Book']> }>;
   BookEdge: ResolverTypeWrapper<Omit<BookEdge, 'node'> & { node: ResolversTypes['Book'] }>;
   BooksWhereInput: BooksWhereInput;
@@ -343,6 +344,7 @@ export type ResolversParentTypes = {
   Int: Scalars['Int'];
   Query: {};
   Book: IBook;
+  Float: Scalars['Float'];
   BookConnection: Omit<BookConnection, 'edges' | 'nodes'> & { edges: Array<ResolversParentTypes['BookEdge']>, nodes: Array<ResolversParentTypes['Book']> };
   BookEdge: Omit<BookEdge, 'node'> & { node: ResolversParentTypes['Book'] };
   BooksWhereInput: BooksWhereInput;
@@ -405,7 +407,7 @@ export type BookResolvers<ContextType = MyContext, ParentType extends ResolversP
   author?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
   summary?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   content?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  ratingsAverage?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  ratingsAverage?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
   ratingsQuantity?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   created?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   lastChanged?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;

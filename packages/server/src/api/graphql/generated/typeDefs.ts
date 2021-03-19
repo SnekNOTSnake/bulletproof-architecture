@@ -40,7 +40,7 @@ type Book {
   author: User!
   summary: String!
   content: String!
-  ratingsAverage: Int!
+  ratingsAverage: Float!
   ratingsQuantity: Int!
   created: DateTime!
   lastChanged: DateTime!
