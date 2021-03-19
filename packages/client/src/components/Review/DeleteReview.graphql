@@ -1,3 +1,10 @@
 mutation DeleteReview($id: ID!) {
-	deleteReview(id: $id)
+	deleteReview(id: $id) {
+		id
+		book {
+			id
+			ratingsAverage
+			ratingsQuantity
+		}
+	}
 }

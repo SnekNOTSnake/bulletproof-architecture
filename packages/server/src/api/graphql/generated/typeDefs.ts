@@ -20,7 +20,7 @@ type Mutation {
   createBook(title: String!, summary: String!, content: String!): Book @isAuthenticated
   createReview(book: ID!, content: String!, rating: Int!): Review @isAuthenticated
   deleteBook(id: ID!): ID @isAuthenticated
-  deleteReview(id: ID!): ID @isAuthenticated
+  deleteReview(id: ID!): Review @isAuthenticated
   signin(email: String!, password: String!): AuthData
   signup(name: String!, email: String!, password: String!): User
   updateBook(id: ID!, title: String!, summary: String!, content: String!): Book @isAuthenticated

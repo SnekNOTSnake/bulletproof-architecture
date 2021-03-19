@@ -97,7 +97,7 @@ const Book: React.FC<Props> = ({ match, history }) => {
 									<Rating
 										className={classes.stars}
 										readOnly
-										value={4.5}
+										value={data.book.ratingsAverage}
 										precision={0.5}
 									/>
 									<Box>({data.book.ratingsQuantity})</Box>

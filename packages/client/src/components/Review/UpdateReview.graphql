@@ -5,6 +5,11 @@ mutation UpdateReview($id: ID!, $content: String!, $rating: Int!) {
 			id
 			name
 		}
+		book {
+			id
+			ratingsAverage
+			ratingsQuantity
+		}
 		content
 		rating
 		created

@@ -39,7 +39,7 @@ export type Mutation = {
   createBook?: Maybe<Book>;
   createReview?: Maybe<Review>;
   deleteBook?: Maybe<Scalars['ID']>;
-  deleteReview?: Maybe<Scalars['ID']>;
+  deleteReview?: Maybe<Review>;
   signin?: Maybe<AuthData>;
   signup?: Maybe<User>;
   updateBook?: Maybe<Book>;
@@ -240,6 +240,9 @@ export type CreateReviewMutation = (
     & { author: (
       { __typename?: 'User' }
       & Pick<User, 'id' | 'name'>
+    ), book: (
+      { __typename?: 'Book' }
+      & Pick<Book, 'id' | 'ratingsAverage' | 'ratingsQuantity'>
     ) }
   )> }
 );
@@ -285,7 +288,14 @@ export type DeleteReviewMutationVariables = Exact<{
 
 export type DeleteReviewMutation = (
   { __typename?: 'Mutation' }
-  & Pick<Mutation, 'deleteReview'>
+  & { deleteReview?: Maybe<(
+    { __typename?: 'Review' }
+    & Pick<Review, 'id'>
+    & { book: (
+      { __typename?: 'Book' }
+      & Pick<Book, 'id' | 'ratingsAverage' | 'ratingsQuantity'>
+    ) }
+  )> }
 );
 
 export type UpdateReviewMutationVariables = Exact<{
@@ -303,6 +313,9 @@ export type UpdateReviewMutation = (
     & { author: (
       { __typename?: 'User' }
       & Pick<User, 'id' | 'name'>
+    ), book: (
+      { __typename?: 'Book' }
+      & Pick<Book, 'id' | 'ratingsAverage' | 'ratingsQuantity'>
     ) }
   )> }
 );
@@ -440,6 +453,11 @@ export const CreateReviewDocument = gql`
       id
       name
     }
+    book {
+      id
+      ratingsAverage
+      ratingsQuantity
+    }
     content
     rating
     created
@@ -555,7 +573,14 @@ export type UpdateMeMutationResult = Apollo.MutationResult<UpdateMeMutation>;
 export type UpdateMeMutationOptions = Apollo.BaseMutationOptions<UpdateMeMutation, UpdateMeMutationVariables>;
 export const DeleteReviewDocument = gql`
     mutation DeleteReview($id: ID!) {
-  deleteReview(id: $id)
+  deleteReview(id: $id) {
+    id
+    book {
+      id
+      ratingsAverage
+      ratingsQuantity
+    }
+  }
 }
     `;
 export type DeleteReviewMutationFn = Apollo.MutationFunction<DeleteReviewMutation, DeleteReviewMutationVariables>;
@@ -590,6 +615,11 @@ export const UpdateReviewDocument = gql`
     author {
       id
       name
+    }
+    book {
+      id
+      ratingsAverage
+      ratingsQuantity
     }
     content
     rating

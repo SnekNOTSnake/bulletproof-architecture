@@ -107,7 +107,7 @@ class ReviewService {
 		await this.ReviewsModel.findByIdAndDelete(id)
 		await this._updateBook({ book: String(review.book) })
 
-		return id
+		return review
 	}
 
 	async getReview(id: string) {

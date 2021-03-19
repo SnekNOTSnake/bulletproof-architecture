@@ -2,5 +2,5 @@ extend type Mutation {
 	createReview(book: ID!, content: String!, rating: Int!): Review
 		@isAuthenticated
 	updateReview(id: ID!, content: String!, rating: Int!): Review @isAuthenticated
-	deleteReview(id: ID!): ID @isAuthenticated
+	deleteReview(id: ID!): Review @isAuthenticated
 }

@@ -43,7 +43,7 @@ export const signin: MutationResolvers['signin'] = async (
 export const updateMe: MutationResolvers['updateMe'] = async (
 	parent,
 	{ file, name },
-	{ user },
+	{ user, loaders: { userByIds } },
 ) => {
 	await validate(updateMeSchema, { name })
 
@@ -53,6 +53,7 @@ export const updateMe: MutationResolvers['updateMe'] = async (
 		file,
 		user,
 	})
+	userByIds.clear(user.id)
 
 	return result
 }

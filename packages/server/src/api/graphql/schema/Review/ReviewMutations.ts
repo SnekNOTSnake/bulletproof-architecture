@@ -6,7 +6,7 @@ import { MutationResolvers } from '../../generated/types'
 export const createReview: MutationResolvers['createReview'] = async (
 	parent,
 	{ book, content, rating },
-	{ user },
+	{ user, loaders: { bookByIds } },
 ) => {
 	const reviewServiceInstance = Container.get(ReviewService)
 	const result = await reviewServiceInstance.createReview({
@@ -15,6 +15,7 @@ export const createReview: MutationResolvers['createReview'] = async (
 		content,
 		rating,
 	})
+	bookByIds.clear(String(result.book))
 
 	return result
 }
@@ -22,7 +23,7 @@ export const createReview: MutationResolvers['createReview'] = async (
 export const updateReview: MutationResolvers['updateReview'] = async (
 	parent,
 	{ id, content, rating },
-	{ user },
+	{ user, loaders: { bookByIds } },
 ) => {
 	const reviewServiceInstance = Container.get(ReviewService)
 	const result = await reviewServiceInstance.updateReview({
@@ -31,6 +32,7 @@ export const updateReview: MutationResolvers['updateReview'] = async (
 		content,
 		rating,
 	})
+	bookByIds.clear(String(result.book))
 
 	return result
 }
@@ -38,13 +40,14 @@ export const updateReview: MutationResolvers['updateReview'] = async (
 export const deleteReview: MutationResolvers['deleteReview'] = async (
 	parent,
 	{ id },
-	{ user },
+	{ user, loaders: { bookByIds } },
 ) => {
 	const reviewServiceInstance = Container.get(ReviewService)
 	const result = await reviewServiceInstance.deleteReview({
 		id,
 		userId: user.id,
 	})
+	bookByIds.clear(String(result.book))
 
 	return result
 }

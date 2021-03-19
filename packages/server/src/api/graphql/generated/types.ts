@@ -44,7 +44,7 @@ export type Mutation = {
   createBook?: Maybe<Book>;
   createReview?: Maybe<Review>;
   deleteBook?: Maybe<Scalars['ID']>;
-  deleteReview?: Maybe<Scalars['ID']>;
+  deleteReview?: Maybe<Review>;
   signin?: Maybe<AuthData>;
   signup?: Maybe<User>;
   updateBook?: Maybe<Book>;
@@ -385,7 +385,7 @@ export type MutationResolvers<ContextType = MyContext, ParentType extends Resolv
   createBook?: Resolver<Maybe<ResolversTypes['Book']>, ParentType, ContextType, RequireFields<MutationCreateBookArgs, 'title' | 'summary' | 'content'>>;
   createReview?: Resolver<Maybe<ResolversTypes['Review']>, ParentType, ContextType, RequireFields<MutationCreateReviewArgs, 'book' | 'content' | 'rating'>>;
   deleteBook?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType, RequireFields<MutationDeleteBookArgs, 'id'>>;
-  deleteReview?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType, RequireFields<MutationDeleteReviewArgs, 'id'>>;
+  deleteReview?: Resolver<Maybe<ResolversTypes['Review']>, ParentType, ContextType, RequireFields<MutationDeleteReviewArgs, 'id'>>;
   signin?: Resolver<Maybe<ResolversTypes['AuthData']>, ParentType, ContextType, RequireFields<MutationSigninArgs, 'email' | 'password'>>;
   signup?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<MutationSignupArgs, 'name' | 'email' | 'password'>>;
   updateBook?: Resolver<Maybe<ResolversTypes['Book']>, ParentType, ContextType, RequireFields<MutationUpdateBookArgs, 'id' | 'title' | 'summary' | 'content'>>;

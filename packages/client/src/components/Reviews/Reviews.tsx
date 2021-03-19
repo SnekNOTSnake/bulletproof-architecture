@@ -50,7 +50,8 @@ const Reviews: React.FC<Props> = ({ bookId }) => {
 							</Button>
 						)}
 
-						{data?.reviews.nodes.length === 0 ? (
+						{data?.reviews.nodes.length === 0 &&
+						!data.reviews.pageInfo.hasNextPage ? (
 							<Typography variant="h6">No reviews, be the first!</Typography>
 						) : (
 							''

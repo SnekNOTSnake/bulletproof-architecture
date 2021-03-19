@@ -11,5 +11,6 @@ export default makeStyles((theme) => ({
 	},
 	addReviewButton: {
 		marginBottom: theme.spacing(3),
+		display: 'block',
 	},
 }))

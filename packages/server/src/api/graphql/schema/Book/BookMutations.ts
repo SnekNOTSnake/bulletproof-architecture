@@ -29,7 +29,7 @@ export const createBook: MutationResolvers['createBook'] = async (
 export const updateBook: MutationResolvers['updateBook'] = async (
 	parent,
 	{ id, title, summary, content },
-	{ user },
+	{ user, loaders: { bookByIds } },
 ) => {
 	await validate(updateBookSchema, { id, title })
 
@@ -41,6 +41,7 @@ export const updateBook: MutationResolvers['updateBook'] = async (
 		summary,
 		content,
 	})
+	bookByIds.clear(book.id)
 
 	return book
 }
