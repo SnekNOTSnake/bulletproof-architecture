@@ -77,6 +77,9 @@ After that, you can run the following command to run the server:
 NODE_ENV=production yarn workspace @bulletproof/server node dist/server.js
 ```
 
+> **Note about testing**<br>
+> First time you run test, it will download the latest MongoDB binary to node_modules. If you have an average internet speed, there would be mocha timeout errors while downloading. You can ignore the errors, and then try running test again after the download is completed.
+
 ## 📜️ Resources
 
 Repositories on GitHub that helped me build this project:
