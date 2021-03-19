@@ -1,0 +1,35 @@
+query Reviews(
+	$first: Int!
+	$after: String
+	$where: ReviewsWhereInput
+	$orderBy: ReviewOrder
+) {
+	reviews(first: $first, after: $after, where: $where, orderBy: $orderBy) {
+		nodes {
+			id
+			author {
+				id
+				name
+			}
+			content
+			rating
+			created
+		}
+		pageInfo {
+			endCursor
+			hasNextPage
+		}
+	}
+}
+
+enum ReviewOrder {
+	created_ASC
+	created_DESC
+	rating_ASC
+	rating_DESC
+}
+
+input ReviewsWhereInput {
+	book: String
+	author: String
+}

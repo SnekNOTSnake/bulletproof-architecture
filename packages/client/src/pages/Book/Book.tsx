@@ -14,6 +14,7 @@ import Button from '@material-ui/core/Button'
 import Typography from '@material-ui/core/Typography'
 
 import { useBookQuery, useDeleteBookMutation } from '../../generated/types'
+import Reviews from '../../components/Reviews'
 import EditBook from '../../components/EditBook'
 import useStyles from './Book.style'
 
@@ -22,6 +23,7 @@ type Props = RouteComponentProps<{ id: string }>
 const Book: React.FC<Props> = ({ match, history }) => {
 	const id = match.params.id
 
+	const [showReviews, setShowReviews] = React.useState<boolean>(false)
 	const [isEditing, setIsEditing] = React.useState(false)
 	const [mutationError, setMutationError] = React.useState<string>('')
 	const { loading, data, error } = useBookQuery({ variables: { id } })
@@ -69,6 +71,7 @@ const Book: React.FC<Props> = ({ match, history }) => {
 								new Date(),
 							)} ago`}
 						/>
+
 						<CardContent>
 							{mutationError ? (
 								<Alert
@@ -92,6 +95,7 @@ const Book: React.FC<Props> = ({ match, history }) => {
 								{formatDistance(new Date(data.book.created), new Date())} ago
 							</Typography>
 						</CardContent>
+
 						<CardActions>
 							<Button
 								disabled={deleteLoading}
@@ -104,9 +108,23 @@ const Book: React.FC<Props> = ({ match, history }) => {
 							<Button onClick={toggleEditing} type="button" color="primary">
 								{isEditing ? 'Close edit' : 'Edit'}
 							</Button>
+							{showReviews ? (
+								''
+							) : (
+								<Button
+									onClick={() => setShowReviews(true)}
+									type="button"
+									color="primary"
+								>
+									Show Reviews
+								</Button>
+							)}
 						</CardActions>
 					</Card>
+
 					{isEditing ? <EditBook id={data.book.id} book={data.book} /> : ''}
+
+					{showReviews ? <Reviews bookId={data.book.id} /> : ''}
 				</Grid>
 			</Grid>
 		</Box>

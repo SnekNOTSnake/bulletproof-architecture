@@ -1,3 +1,5 @@
+type ArrayElement<A> = A extends readonly (infer T)[] ? T : never
+
 interface IUser {
 	id: string
 	name: string

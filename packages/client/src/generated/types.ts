@@ -194,12 +194,11 @@ export type ReviewEdge = {
   cursor: Scalars['String'];
 };
 
-export enum ReviewOrder {
-  CreatedAsc = 'created_ASC',
-  CreatedDesc = 'created_DESC',
-  RatingAsc = 'rating_ASC',
-  RatingDesc = 'rating_DESC'
-}
+export type ReviewOrder =
+  | 'created_ASC'
+  | 'created_DESC'
+  | 'rating_ASC'
+  | 'rating_DESC';
 
 export type ReviewsWhereInput = {
   book?: Maybe<Scalars['String']>;
@@ -225,6 +224,25 @@ export type File = {
   filename: Scalars['String'];
   mimetype: Scalars['String'];
 };
+
+export type CreateReviewMutationVariables = Exact<{
+  book: Scalars['ID'];
+  content: Scalars['String'];
+  rating: Scalars['Int'];
+}>;
+
+
+export type CreateReviewMutation = (
+  { __typename?: 'Mutation' }
+  & { createReview?: Maybe<(
+    { __typename?: 'Review' }
+    & Pick<Review, 'id' | 'content' | 'rating' | 'created'>
+    & { author: (
+      { __typename?: 'User' }
+      & Pick<User, 'id' | 'name'>
+    ) }
+  )> }
+);
 
 export type UpdateBookMutationVariables = Exact<{
   id: Scalars['ID'];
@@ -257,6 +275,61 @@ export type UpdateMeMutation = (
   & { updateMe: (
     { __typename?: 'User' }
     & Pick<User, 'id' | 'avatar' | 'name'>
+  ) }
+);
+
+export type DeleteReviewMutationVariables = Exact<{
+  id: Scalars['ID'];
+}>;
+
+
+export type DeleteReviewMutation = (
+  { __typename?: 'Mutation' }
+  & Pick<Mutation, 'deleteReview'>
+);
+
+export type UpdateReviewMutationVariables = Exact<{
+  id: Scalars['ID'];
+  content: Scalars['String'];
+  rating: Scalars['Int'];
+}>;
+
+
+export type UpdateReviewMutation = (
+  { __typename?: 'Mutation' }
+  & { updateReview?: Maybe<(
+    { __typename?: 'Review' }
+    & Pick<Review, 'id' | 'content' | 'rating' | 'created'>
+    & { author: (
+      { __typename?: 'User' }
+      & Pick<User, 'id' | 'name'>
+    ) }
+  )> }
+);
+
+export type ReviewsQueryVariables = Exact<{
+  first: Scalars['Int'];
+  after?: Maybe<Scalars['String']>;
+  where?: Maybe<ReviewsWhereInput>;
+  orderBy?: Maybe<ReviewOrder>;
+}>;
+
+
+export type ReviewsQuery = (
+  { __typename?: 'Query' }
+  & { reviews: (
+    { __typename?: 'ReviewConnection' }
+    & { nodes: Array<(
+      { __typename?: 'Review' }
+      & Pick<Review, 'id' | 'content' | 'rating' | 'created'>
+      & { author: (
+        { __typename?: 'User' }
+        & Pick<User, 'id' | 'name'>
+      ) }
+    )>, pageInfo: (
+      { __typename?: 'PageInfo' }
+      & Pick<PageInfo, 'endCursor' | 'hasNextPage'>
+    ) }
   ) }
 );
 
@@ -359,6 +432,47 @@ export type SearchQuery = (
 );
 
 
+export const CreateReviewDocument = gql`
+    mutation CreateReview($book: ID!, $content: String!, $rating: Int!) {
+  createReview(book: $book, content: $content, rating: $rating) {
+    id
+    author {
+      id
+      name
+    }
+    content
+    rating
+    created
+  }
+}
+    `;
+export type CreateReviewMutationFn = Apollo.MutationFunction<CreateReviewMutation, CreateReviewMutationVariables>;
+
+/**
+ * __useCreateReviewMutation__
+ *
+ * To run a mutation, you first call `useCreateReviewMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateReviewMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createReviewMutation, { data, loading, error }] = useCreateReviewMutation({
+ *   variables: {
+ *      book: // value for 'book'
+ *      content: // value for 'content'
+ *      rating: // value for 'rating'
+ *   },
+ * });
+ */
+export function useCreateReviewMutation(baseOptions?: Apollo.MutationHookOptions<CreateReviewMutation, CreateReviewMutationVariables>) {
+        return Apollo.useMutation<CreateReviewMutation, CreateReviewMutationVariables>(CreateReviewDocument, baseOptions);
+      }
+export type CreateReviewMutationHookResult = ReturnType<typeof useCreateReviewMutation>;
+export type CreateReviewMutationResult = Apollo.MutationResult<CreateReviewMutation>;
+export type CreateReviewMutationOptions = Apollo.BaseMutationOptions<CreateReviewMutation, CreateReviewMutationVariables>;
 export const UpdateBookDocument = gql`
     mutation UpdateBook($id: ID!, $title: String!, $summary: String!, $content: String!) {
   updateBook(id: $id, title: $title, summary: $summary, content: $content) {
@@ -439,6 +553,126 @@ export function useUpdateMeMutation(baseOptions?: Apollo.MutationHookOptions<Upd
 export type UpdateMeMutationHookResult = ReturnType<typeof useUpdateMeMutation>;
 export type UpdateMeMutationResult = Apollo.MutationResult<UpdateMeMutation>;
 export type UpdateMeMutationOptions = Apollo.BaseMutationOptions<UpdateMeMutation, UpdateMeMutationVariables>;
+export const DeleteReviewDocument = gql`
+    mutation DeleteReview($id: ID!) {
+  deleteReview(id: $id)
+}
+    `;
+export type DeleteReviewMutationFn = Apollo.MutationFunction<DeleteReviewMutation, DeleteReviewMutationVariables>;
+
+/**
+ * __useDeleteReviewMutation__
+ *
+ * To run a mutation, you first call `useDeleteReviewMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteReviewMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteReviewMutation, { data, loading, error }] = useDeleteReviewMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useDeleteReviewMutation(baseOptions?: Apollo.MutationHookOptions<DeleteReviewMutation, DeleteReviewMutationVariables>) {
+        return Apollo.useMutation<DeleteReviewMutation, DeleteReviewMutationVariables>(DeleteReviewDocument, baseOptions);
+      }
+export type DeleteReviewMutationHookResult = ReturnType<typeof useDeleteReviewMutation>;
+export type DeleteReviewMutationResult = Apollo.MutationResult<DeleteReviewMutation>;
+export type DeleteReviewMutationOptions = Apollo.BaseMutationOptions<DeleteReviewMutation, DeleteReviewMutationVariables>;
+export const UpdateReviewDocument = gql`
+    mutation UpdateReview($id: ID!, $content: String!, $rating: Int!) {
+  updateReview(id: $id, content: $content, rating: $rating) {
+    id
+    author {
+      id
+      name
+    }
+    content
+    rating
+    created
+  }
+}
+    `;
+export type UpdateReviewMutationFn = Apollo.MutationFunction<UpdateReviewMutation, UpdateReviewMutationVariables>;
+
+/**
+ * __useUpdateReviewMutation__
+ *
+ * To run a mutation, you first call `useUpdateReviewMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateReviewMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateReviewMutation, { data, loading, error }] = useUpdateReviewMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      content: // value for 'content'
+ *      rating: // value for 'rating'
+ *   },
+ * });
+ */
+export function useUpdateReviewMutation(baseOptions?: Apollo.MutationHookOptions<UpdateReviewMutation, UpdateReviewMutationVariables>) {
+        return Apollo.useMutation<UpdateReviewMutation, UpdateReviewMutationVariables>(UpdateReviewDocument, baseOptions);
+      }
+export type UpdateReviewMutationHookResult = ReturnType<typeof useUpdateReviewMutation>;
+export type UpdateReviewMutationResult = Apollo.MutationResult<UpdateReviewMutation>;
+export type UpdateReviewMutationOptions = Apollo.BaseMutationOptions<UpdateReviewMutation, UpdateReviewMutationVariables>;
+export const ReviewsDocument = gql`
+    query Reviews($first: Int!, $after: String, $where: ReviewsWhereInput, $orderBy: ReviewOrder) {
+  reviews(first: $first, after: $after, where: $where, orderBy: $orderBy) {
+    nodes {
+      id
+      author {
+        id
+        name
+      }
+      content
+      rating
+      created
+    }
+    pageInfo {
+      endCursor
+      hasNextPage
+    }
+  }
+}
+    `;
+
+/**
+ * __useReviewsQuery__
+ *
+ * To run a query within a React component, call `useReviewsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useReviewsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useReviewsQuery({
+ *   variables: {
+ *      first: // value for 'first'
+ *      after: // value for 'after'
+ *      where: // value for 'where'
+ *      orderBy: // value for 'orderBy'
+ *   },
+ * });
+ */
+export function useReviewsQuery(baseOptions: Apollo.QueryHookOptions<ReviewsQuery, ReviewsQueryVariables>) {
+        return Apollo.useQuery<ReviewsQuery, ReviewsQueryVariables>(ReviewsDocument, baseOptions);
+      }
+export function useReviewsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ReviewsQuery, ReviewsQueryVariables>) {
+          return Apollo.useLazyQuery<ReviewsQuery, ReviewsQueryVariables>(ReviewsDocument, baseOptions);
+        }
+export type ReviewsQueryHookResult = ReturnType<typeof useReviewsQuery>;
+export type ReviewsLazyQueryHookResult = ReturnType<typeof useReviewsLazyQuery>;
+export type ReviewsQueryResult = Apollo.QueryResult<ReviewsQuery, ReviewsQueryVariables>;
 export const BookDocument = gql`
     query Book($id: ID!) {
   book(id: $id) {

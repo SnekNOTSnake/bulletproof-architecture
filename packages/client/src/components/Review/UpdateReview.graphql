@@ -1,0 +1,12 @@
+mutation UpdateReview($id: ID!, $content: String!, $rating: Int!) {
+	updateReview(id: $id, content: $content, rating: $rating) {
+		id
+		author {
+			id
+			name
+		}
+		content
+		rating
+		created
+	}
+}

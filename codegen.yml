@@ -43,3 +43,4 @@ generates:
       - typescript-react-apollo
     config:
       withHooks: true
+      enumsAsTypes: true
