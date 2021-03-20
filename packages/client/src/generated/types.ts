@@ -383,7 +383,7 @@ export type CreateBookMutation = (
   { __typename?: 'Mutation' }
   & { createBook?: Maybe<(
     { __typename?: 'Book' }
-    & Pick<Book, 'id' | 'title' | 'created' | 'lastChanged' | 'summary' | 'content'>
+    & Pick<Book, 'id' | 'title' | 'created' | 'lastChanged' | 'summary' | 'content' | 'ratingsAverage' | 'ratingsQuantity'>
     & { author: (
       { __typename?: 'User' }
       & Pick<User, 'id' | 'name' | 'avatar'>
@@ -787,6 +787,8 @@ export const CreateBookDocument = gql`
     lastChanged
     summary
     content
+    ratingsAverage
+    ratingsQuantity
     author {
       id
       name

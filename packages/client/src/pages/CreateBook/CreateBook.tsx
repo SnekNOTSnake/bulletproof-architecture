@@ -39,8 +39,14 @@ const CreateBook: React.FC<Props> = ({ user }) => {
 									title
 									created
 									lastChanged
+									summary
+									content
+									ratingsAverage
+									ratingsQuantity
 									author {
+										id
 										name
+										avatar
 									}
 								}
 							`,

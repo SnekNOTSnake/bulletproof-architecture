@@ -6,7 +6,7 @@ import BookService from '../../src/services/Book'
 import ReviewModel from '../../src/models/Review'
 import ReviewService from '../../src/services/Review'
 
-const Book = new BookService(BookModel)
+const Book = new BookService(BookModel, ReviewModel)
 const Review = new ReviewService(ReviewModel, BookModel)
 
 const userID = String(Types.ObjectId())

@@ -5,10 +5,14 @@ import xss from 'xss'
 import { trim } from '../utils/helpers'
 import AppError from '../utils/AppError'
 import { IBook } from '../models/Book'
+import { IReview } from '../models/Review'
 
 @Service()
 class BookService {
-	constructor(@Inject('booksModel') private BooksModel: Model<IBook>) {}
+	constructor(
+		@Inject('booksModel') private BooksModel: Model<IBook>,
+		@Inject('reviewsModel') private ReviewsModel: Model<IReview>,
+	) {}
 
 	async createBook({
 		title,
@@ -72,6 +76,9 @@ class BookService {
 			)
 
 		await this.BooksModel.findByIdAndDelete(id)
+
+		// Delete associated reviews
+		await this.ReviewsModel.deleteMany({ book: id })
 
 		return id
 	}

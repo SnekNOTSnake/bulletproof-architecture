@@ -2,9 +2,12 @@ import expect from 'expect'
 import { Types } from 'mongoose'
 
 import BookModel from '../../src/models/Book'
+import ReviewModel from '../../src/models/Review'
 import BookService from '../../src/services/Book'
+import ReviewService from '../../src/services/Review'
 
-const bookServiceInstance = new BookService(BookModel)
+const bookServiceInstance = new BookService(BookModel, ReviewModel)
+const reviewServiceInstance = new ReviewService(ReviewModel, BookModel)
 
 const userID = String(Types.ObjectId())
 const userID2 = String(Types.ObjectId())
@@ -251,6 +254,22 @@ describe('Book Service', async () => {
 			})
 
 			expect(deletedBookId).toBe(createdBookID)
+		})
+
+		it('Should also delete the associated reviews', async () => {
+			const book = await bookServiceInstance.createBook(createTestBook())
+
+			const review = await reviewServiceInstance.createReview({
+				author: userID,
+				book: book.id,
+				content: 'c'.repeat(20),
+				rating: 4,
+			})
+
+			await bookServiceInstance.deleteBook({ id: book.id, userId: userID })
+			const result = await reviewServiceInstance.getReview(review.id)
+
+			expect(result).toBeNull()
 		})
 
 		it('Should throw when no book is found with given ID', async () => {

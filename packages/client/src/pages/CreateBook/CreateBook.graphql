@@ -6,6 +6,8 @@ mutation CreateBook($title: String!, $summary: String!, $content: String!) {
 		lastChanged
 		summary
 		content
+		ratingsAverage
+		ratingsQuantity
 		author {
 			id
 			name
