@@ -15,7 +15,19 @@ import Typography from '@material-ui/core/Typography'
 import Rating from '@material-ui/lab/Rating'
 
 import useStyles from './Home.style'
-import { useBooksQuery } from '../../generated/types'
+import { useBooksQuery, BooksQuery } from '../../generated/types'
+
+type CardSubheaderProps = { book: ArrayElement<BooksQuery['books']['nodes']> }
+
+const CardSubheader: React.FC<CardSubheaderProps> = ({ book }) => (
+	<Typography variant="body2" color="textSecondary">
+		By{' '}
+		<LinkComponent component={Link} to={`/user/${book.author.id}`}>
+			{book.author.name}
+		</LinkComponent>
+		, {formatDistance(new Date(book.created), new Date())} ago
+	</Typography>
+)
 
 const options = { variables: { first: 2 } }
 const Home: React.FC = () => {
@@ -47,10 +59,7 @@ const Home: React.FC = () => {
 										src={`http://localhost:4200/img/${book.author.avatar}`}
 									/>
 								}
-								subheader={`By ${book.author.name}, ${formatDistance(
-									new Date(book.created),
-									new Date(),
-								)} ago`}
+								subheader={<CardSubheader book={book} />}
 							/>
 							<CardContent>
 								<Typography className={classes.summary}>

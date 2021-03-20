@@ -112,6 +112,7 @@ export type Query = {
   me?: Maybe<User>;
   review?: Maybe<Review>;
   reviews: ReviewConnection;
+  user?: Maybe<User>;
 };
 
 
@@ -139,6 +140,11 @@ export type QueryReviewsArgs = {
   after?: Maybe<Scalars['String']>;
   where?: Maybe<ReviewsWhereInput>;
   orderBy?: Maybe<ReviewOrder>;
+};
+
+
+export type QueryUserArgs = {
+  id: Scalars['ID'];
 };
 
 export type Book = {
@@ -277,23 +283,6 @@ export type UpdateMeMutation = (
   ) }
 );
 
-export type DeleteReviewMutationVariables = Exact<{
-  id: Scalars['ID'];
-}>;
-
-
-export type DeleteReviewMutation = (
-  { __typename?: 'Mutation' }
-  & { deleteReview?: Maybe<(
-    { __typename?: 'Review' }
-    & Pick<Review, 'id'>
-    & { book: (
-      { __typename?: 'Book' }
-      & Pick<Book, 'id' | 'ratingsAverage' | 'ratingsQuantity'>
-    ) }
-  )> }
-);
-
 export type UpdateReviewMutationVariables = Exact<{
   id: Scalars['ID'];
   content: Scalars['String'];
@@ -306,6 +295,23 @@ export type UpdateReviewMutation = (
   & { updateReview?: Maybe<(
     { __typename?: 'Review' }
     & Pick<Review, 'id' | 'content' | 'rating'>
+    & { book: (
+      { __typename?: 'Book' }
+      & Pick<Book, 'id' | 'ratingsAverage' | 'ratingsQuantity'>
+    ) }
+  )> }
+);
+
+export type DeleteReviewMutationVariables = Exact<{
+  id: Scalars['ID'];
+}>;
+
+
+export type DeleteReviewMutation = (
+  { __typename?: 'Mutation' }
+  & { deleteReview?: Maybe<(
+    { __typename?: 'Review' }
+    & Pick<Review, 'id'>
     & { book: (
       { __typename?: 'Book' }
       & Pick<Book, 'id' | 'ratingsAverage' | 'ratingsQuantity'>
@@ -410,6 +416,19 @@ export type BooksQuery = (
       & Pick<PageInfo, 'endCursor' | 'hasNextPage'>
     ) }
   ) }
+);
+
+export type UserQueryVariables = Exact<{
+  id: Scalars['ID'];
+}>;
+
+
+export type UserQuery = (
+  { __typename?: 'Query' }
+  & { user?: Maybe<(
+    { __typename?: 'User' }
+    & Pick<User, 'id' | 'name' | 'email' | 'joined' | 'avatar'>
+  )> }
 );
 
 export type SearchQueryVariables = Exact<{
@@ -558,43 +577,6 @@ export function useUpdateMeMutation(baseOptions?: Apollo.MutationHookOptions<Upd
 export type UpdateMeMutationHookResult = ReturnType<typeof useUpdateMeMutation>;
 export type UpdateMeMutationResult = Apollo.MutationResult<UpdateMeMutation>;
 export type UpdateMeMutationOptions = Apollo.BaseMutationOptions<UpdateMeMutation, UpdateMeMutationVariables>;
-export const DeleteReviewDocument = gql`
-    mutation DeleteReview($id: ID!) {
-  deleteReview(id: $id) {
-    id
-    book {
-      id
-      ratingsAverage
-      ratingsQuantity
-    }
-  }
-}
-    `;
-export type DeleteReviewMutationFn = Apollo.MutationFunction<DeleteReviewMutation, DeleteReviewMutationVariables>;
-
-/**
- * __useDeleteReviewMutation__
- *
- * To run a mutation, you first call `useDeleteReviewMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useDeleteReviewMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [deleteReviewMutation, { data, loading, error }] = useDeleteReviewMutation({
- *   variables: {
- *      id: // value for 'id'
- *   },
- * });
- */
-export function useDeleteReviewMutation(baseOptions?: Apollo.MutationHookOptions<DeleteReviewMutation, DeleteReviewMutationVariables>) {
-        return Apollo.useMutation<DeleteReviewMutation, DeleteReviewMutationVariables>(DeleteReviewDocument, baseOptions);
-      }
-export type DeleteReviewMutationHookResult = ReturnType<typeof useDeleteReviewMutation>;
-export type DeleteReviewMutationResult = Apollo.MutationResult<DeleteReviewMutation>;
-export type DeleteReviewMutationOptions = Apollo.BaseMutationOptions<DeleteReviewMutation, DeleteReviewMutationVariables>;
 export const UpdateReviewDocument = gql`
     mutation UpdateReview($id: ID!, $content: String!, $rating: Int!) {
   updateReview(id: $id, content: $content, rating: $rating) {
@@ -636,6 +618,43 @@ export function useUpdateReviewMutation(baseOptions?: Apollo.MutationHookOptions
 export type UpdateReviewMutationHookResult = ReturnType<typeof useUpdateReviewMutation>;
 export type UpdateReviewMutationResult = Apollo.MutationResult<UpdateReviewMutation>;
 export type UpdateReviewMutationOptions = Apollo.BaseMutationOptions<UpdateReviewMutation, UpdateReviewMutationVariables>;
+export const DeleteReviewDocument = gql`
+    mutation DeleteReview($id: ID!) {
+  deleteReview(id: $id) {
+    id
+    book {
+      id
+      ratingsAverage
+      ratingsQuantity
+    }
+  }
+}
+    `;
+export type DeleteReviewMutationFn = Apollo.MutationFunction<DeleteReviewMutation, DeleteReviewMutationVariables>;
+
+/**
+ * __useDeleteReviewMutation__
+ *
+ * To run a mutation, you first call `useDeleteReviewMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteReviewMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteReviewMutation, { data, loading, error }] = useDeleteReviewMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useDeleteReviewMutation(baseOptions?: Apollo.MutationHookOptions<DeleteReviewMutation, DeleteReviewMutationVariables>) {
+        return Apollo.useMutation<DeleteReviewMutation, DeleteReviewMutationVariables>(DeleteReviewDocument, baseOptions);
+      }
+export type DeleteReviewMutationHookResult = ReturnType<typeof useDeleteReviewMutation>;
+export type DeleteReviewMutationResult = Apollo.MutationResult<DeleteReviewMutation>;
+export type DeleteReviewMutationOptions = Apollo.BaseMutationOptions<DeleteReviewMutation, DeleteReviewMutationVariables>;
 export const ReviewsDocument = gql`
     query Reviews($first: Int!, $after: String, $where: ReviewsWhereInput, $orderBy: ReviewOrder) {
   reviews(first: $first, after: $after, where: $where, orderBy: $orderBy) {
@@ -863,6 +882,43 @@ export function useBooksLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Book
 export type BooksQueryHookResult = ReturnType<typeof useBooksQuery>;
 export type BooksLazyQueryHookResult = ReturnType<typeof useBooksLazyQuery>;
 export type BooksQueryResult = Apollo.QueryResult<BooksQuery, BooksQueryVariables>;
+export const UserDocument = gql`
+    query User($id: ID!) {
+  user(id: $id) {
+    id
+    name
+    email
+    joined
+    avatar
+  }
+}
+    `;
+
+/**
+ * __useUserQuery__
+ *
+ * To run a query within a React component, call `useUserQuery` and pass it any options that fit your needs.
+ * When your component renders, `useUserQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useUserQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useUserQuery(baseOptions: Apollo.QueryHookOptions<UserQuery, UserQueryVariables>) {
+        return Apollo.useQuery<UserQuery, UserQueryVariables>(UserDocument, baseOptions);
+      }
+export function useUserLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<UserQuery, UserQueryVariables>) {
+          return Apollo.useLazyQuery<UserQuery, UserQueryVariables>(UserDocument, baseOptions);
+        }
+export type UserQueryHookResult = ReturnType<typeof useUserQuery>;
+export type UserLazyQueryHookResult = ReturnType<typeof useUserLazyQuery>;
+export type UserQueryResult = Apollo.QueryResult<UserQuery, UserQueryVariables>;
 export const SearchDocument = gql`
     query Search($first: Int!, $search: String!, $after: String) {
   books(first: $first, search: $search, after: $after) {

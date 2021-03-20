@@ -59,9 +59,13 @@ const App: React.FC = () => {
 					/>
 					<Route
 						exact
-						path="/me"
-						render={() => (
-							<Profile setCurrentUser={setCurrentUser} user={currentUser} />
+						path="/user/:id"
+						render={(params) => (
+							<Profile
+								{...params}
+								setCurrentUser={setCurrentUser}
+								user={currentUser}
+							/>
 						)}
 					/>
 					<Route

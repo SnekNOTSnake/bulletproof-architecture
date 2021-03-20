@@ -1,5 +1,6 @@
 import React from 'react'
 import { formatDistance } from 'date-fns'
+import { RouteComponentProps } from 'react-router-dom'
 
 import Avatar from '@material-ui/core/Avatar'
 import Button from '@material-ui/core/Button'
@@ -18,6 +19,7 @@ import EmailIcon from '@material-ui/icons/Email'
 import IdentityIcon from '@material-ui/icons/PermIdentity'
 import { SvgIconComponent } from '@material-ui/icons'
 
+import { useUserQuery } from '../../generated/types'
 import useStyles from './Profile.style'
 import EditProfile from '../../components/EditProfile'
 
@@ -32,20 +34,26 @@ const MyList: React.FC<MyListProps> = ({ icon: Icon, text }) => (
 	</ListItem>
 )
 
-type Props = {
-	user: IUser | null
+type Props = RouteComponentProps<{ id: string }> & {
+	user?: IUser | null
 	setCurrentUser: React.Dispatch<React.SetStateAction<IUser | null>>
 }
 
-const Profile: React.FC<Props> = ({ user, setCurrentUser }) => {
+const Profile: React.FC<Props> = ({ setCurrentUser, user, match }) => {
 	const [isEditing, setIsEditing] = React.useState<boolean>(false)
 
 	const toggleEditting = () => setIsEditing((initVal) => !initVal)
 
+	const { data, loading, error } = useUserQuery({
+		variables: { id: match.params.id },
+	})
+
 	const classes = useStyles()
 
-	if (!user)
-		return <Typography variant="h5">You have to be logged in first</Typography>
+	if (loading) return <Typography variant="h6">Loading data...</Typography>
+	if (error) return <Typography variant="h6">{error.message}</Typography>
+	if (!data?.user)
+		return <Typography variant="h5">No book with that ID</Typography>
 
 	return (
 		<Box>
@@ -55,37 +63,43 @@ const Profile: React.FC<Props> = ({ user, setCurrentUser }) => {
 						<CardHeader
 							avatar={
 								<Avatar
-									alt={user.name}
-									src={`http://localhost:4200/img/${user.avatar}`}
+									alt={data.user.name}
+									src={`http://localhost:4200/img/${data.user.avatar}`}
 								/>
 							}
-							title={user.name}
+							title={data.user.name}
 							subheader={`Joined ${formatDistance(
-								new Date(user.joined),
+								new Date(data.user.joined),
 								new Date(),
 							)} ago`}
 						/>
 						<CardContent>
 							<List>
-								<MyList icon={IdentityIcon} text={user.id} />
-								{user.email ? (
-									<MyList icon={EmailIcon} text={user.email} />
+								<MyList icon={IdentityIcon} text={data.user.id} />
+								{data.user.email ? (
+									<MyList icon={EmailIcon} text={data.user.email} />
 								) : (
 									''
 								)}
 							</List>
 						</CardContent>
-						<CardActions>
-							<Button
-								onClick={toggleEditting}
-								color="primary"
-								component="label"
-							>
-								{isEditing ? 'Close Edit' : 'Edit Profile'}
-							</Button>
-						</CardActions>
+
+						{user?.id === match.params.id ? (
+							<CardActions>
+								<Button
+									onClick={toggleEditting}
+									color="primary"
+									component="label"
+								>
+									{isEditing ? 'Close Edit' : 'Edit Profile'}
+								</Button>
+							</CardActions>
+						) : (
+							''
+						)}
 					</Card>
-					{isEditing ? (
+
+					{isEditing && user?.id === match.params.id ? (
 						<EditProfile setCurrentUser={setCurrentUser} user={user} />
 					) : (
 						''

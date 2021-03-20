@@ -1,3 +1,4 @@
 extend type Query {
 	me: User @isAuthenticated
+	user(id: ID!): User
 }

@@ -32,6 +32,7 @@ type Query {
   me: User @isAuthenticated
   review(id: ID!): Review
   reviews(first: Int!, after: String, where: ReviewsWhereInput, orderBy: ReviewOrder = created_DESC): ReviewConnection!
+  user(id: ID!): User
 }
 type Book {
   id: ID!

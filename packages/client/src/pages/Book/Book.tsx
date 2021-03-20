@@ -1,5 +1,5 @@
 import React from 'react'
-import { RouteComponentProps } from 'react-router-dom'
+import { RouteComponentProps, Link } from 'react-router-dom'
 import { Reference } from '@apollo/client'
 import { formatDistance } from 'date-fns'
 
@@ -11,6 +11,7 @@ import CardHeader from '@material-ui/core/CardHeader'
 import CardContent from '@material-ui/core/CardContent'
 import CardActions from '@material-ui/core/CardActions'
 import Button from '@material-ui/core/Button'
+import LinkComponent from '@material-ui/core/Link'
 import Typography from '@material-ui/core/Typography'
 import Rating from '@material-ui/lab/Rating'
 
@@ -60,18 +61,22 @@ const Book: React.FC<Props> = ({ match, history }) => {
 	if (!data?.book)
 		return <Typography variant="h5">No book with that ID</Typography>
 
+	const cardSubheader = (
+		<Typography variant="body2" color="textSecondary">
+			By{' '}
+			<LinkComponent component={Link} to={`/user/${data.book.author.id}`}>
+				{data.book.author.name}
+			</LinkComponent>
+			, {formatDistance(new Date(data.book.created), new Date())} ago
+		</Typography>
+	)
+
 	return (
 		<Box>
 			<Grid container>
 				<Grid item md={6} xs={12}>
 					<Card variant="outlined">
-						<CardHeader
-							title={data.book.title}
-							subheader={`By ${data.book.author.name}, ${formatDistance(
-								new Date(data.book.created),
-								new Date(),
-							)} ago`}
-						/>
+						<CardHeader title={data.book.title} subheader={cardSubheader} />
 
 						<CardContent>
 							{mutationError ? (

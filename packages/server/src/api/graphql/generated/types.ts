@@ -117,6 +117,7 @@ export type Query = {
   me?: Maybe<User>;
   review?: Maybe<Review>;
   reviews: ReviewConnection;
+  user?: Maybe<User>;
 };
 
 
@@ -144,6 +145,11 @@ export type QueryReviewsArgs = {
   after?: Maybe<Scalars['String']>;
   where?: Maybe<ReviewsWhereInput>;
   orderBy?: Maybe<ReviewOrder>;
+};
+
+
+export type QueryUserArgs = {
+  id: Scalars['ID'];
 };
 
 export type Book = {
@@ -399,6 +405,7 @@ export type QueryResolvers<ContextType = MyContext, ParentType extends Resolvers
   me?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
   review?: Resolver<Maybe<ResolversTypes['Review']>, ParentType, ContextType, RequireFields<QueryReviewArgs, 'id'>>;
   reviews?: Resolver<ResolversTypes['ReviewConnection'], ParentType, ContextType, RequireFields<QueryReviewsArgs, 'first' | 'orderBy'>>;
+  user?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<QueryUserArgs, 'id'>>;
 };
 
 export type BookResolvers<ContextType = MyContext, ParentType extends ResolversParentTypes['Book'] = ResolversParentTypes['Book']> = {

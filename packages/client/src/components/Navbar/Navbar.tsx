@@ -31,7 +31,7 @@ const Navbar: React.FC<NavbarProps> = ({ currentUser, setCurrentUser }) => {
 
 	const RenderLogin = currentUser ? (
 		<React.Fragment>
-			<LinkButton to="/me" text={currentUser.name} />
+			<LinkButton to={`/user/${currentUser.id}`} text={currentUser.name} />
 			<LinkButton to="/create-book" text="Create Book" />
 			<Button color="inherit" type="button" onClick={logout}>
 				Logout
