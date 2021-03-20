@@ -1,5 +1,11 @@
 import { Container } from 'typedi'
 
+import validate from '../validate'
+import {
+	createReviewSchema,
+	updateReviewSchema,
+	deleteReviewSchema,
+} from '../../../validateSchemas'
 import ReviewService from '../../../../services/Review'
 import { MutationResolvers } from '../../generated/types'
 
@@ -8,6 +14,8 @@ export const createReview: MutationResolvers['createReview'] = async (
 	{ book, content, rating },
 	{ user, loaders: { bookByIds } },
 ) => {
+	await validate(createReviewSchema, { book, content, rating })
+
 	const reviewServiceInstance = Container.get(ReviewService)
 	const result = await reviewServiceInstance.createReview({
 		book,
@@ -25,6 +33,8 @@ export const updateReview: MutationResolvers['updateReview'] = async (
 	{ id, content, rating },
 	{ user, loaders: { bookByIds } },
 ) => {
+	await validate(updateReviewSchema, { id, content, rating })
+
 	const reviewServiceInstance = Container.get(ReviewService)
 	const result = await reviewServiceInstance.updateReview({
 		id,
@@ -42,6 +52,8 @@ export const deleteReview: MutationResolvers['deleteReview'] = async (
 	{ id },
 	{ user, loaders: { bookByIds } },
 ) => {
+	await validate(deleteReviewSchema, { id })
+
 	const reviewServiceInstance = Container.get(ReviewService)
 	const result = await reviewServiceInstance.deleteReview({
 		id,

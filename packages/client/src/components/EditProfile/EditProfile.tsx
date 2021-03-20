@@ -24,6 +24,7 @@ type Props = {
 
 const EditProfile: React.FC<Props> = ({ user, setCurrentUser }) => {
 	const [name, setName] = React.useState<string>(user.name)
+	const [bio, setBio] = React.useState<string | null | undefined>(user.bio)
 	const [file, setFile] = React.useState<File | null>(null)
 	const [progress, setProgress] = React.useState<number>(0)
 	const [preview, setPreview] = React.useState<string>('')
@@ -32,6 +33,7 @@ const EditProfile: React.FC<Props> = ({ user, setCurrentUser }) => {
 
 	const reset = () => {
 		setName(user.name)
+		setBio(user.bio)
 		setPreview('')
 		setFile(null)
 		setProgress(0)
@@ -46,6 +48,7 @@ const EditProfile: React.FC<Props> = ({ user, setCurrentUser }) => {
 				return {
 					...initVal,
 					name: result.updateMe.name,
+					bio: result.updateMe.bio,
 					avatar: result.updateMe.avatar,
 				}
 			})
@@ -61,12 +64,12 @@ const EditProfile: React.FC<Props> = ({ user, setCurrentUser }) => {
 
 	const onSubmit = (e: FormSubmit) => {
 		e.preventDefault()
-		if (!name || loading) return
+		if ((!name && !bio) || loading) return
 
 		let abort: any
 
 		mutate({
-			variables: { file, name },
+			variables: { file, name, bio },
 			context: {
 				fetchOptions: {
 					useUpload: true,
@@ -87,6 +90,7 @@ const EditProfile: React.FC<Props> = ({ user, setCurrentUser }) => {
 	}
 
 	const onNameChange = (e: InputChange) => setName(e.currentTarget.value)
+	const onBioChange = (e: InputChange) => setBio(e.currentTarget.value)
 	const onFileChange = async ({ currentTarget: { files } }: FileChange) => {
 		if (!files?.length) return
 
@@ -144,6 +148,15 @@ const EditProfile: React.FC<Props> = ({ user, setCurrentUser }) => {
 										variant="outlined"
 										value={name}
 										onChange={onNameChange}
+										className={classes.input}
+									/>
+									<TextField
+										fullWidth
+										label="Bio data"
+										variant="outlined"
+										value={bio}
+										onChange={onBioChange}
+										multiline
 										className={classes.input}
 									/>
 									<Button

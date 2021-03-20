@@ -7,6 +7,7 @@ export interface IUser extends Document {
 	email?: string
 	joined: Date
 	password?: string
+	bio?: string
 	avatar: string
 }
 
@@ -33,6 +34,10 @@ const userSchema = new Schema<IUser>({
 	},
 	password: {
 		type: String,
+	},
+	bio: {
+		type: String,
+		maxlength: 256,
 	},
 	joined: {
 		type: Date,

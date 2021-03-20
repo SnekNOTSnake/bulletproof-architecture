@@ -42,16 +42,17 @@ export const signin: MutationResolvers['signin'] = async (
 
 export const updateMe: MutationResolvers['updateMe'] = async (
 	parent,
-	{ file, name },
+	{ file, name, bio },
 	{ user, loaders: { userByIds } },
 ) => {
-	await validate(updateMeSchema, { name })
+	await validate(updateMeSchema, { name, bio })
 
 	const authServiceInstance = Container.get(AuthService)
 	const result = await authServiceInstance.updateMe({
 		newName: name,
 		file,
 		user,
+		bio,
 	})
 	userByIds.clear(user.id)
 

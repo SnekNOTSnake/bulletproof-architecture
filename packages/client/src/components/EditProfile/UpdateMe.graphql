@@ -1,7 +1,8 @@
-mutation UpdateMe($file: Upload, $name: String!) {
-	updateMe(file: $file, name: $name) {
+mutation UpdateMe($file: Upload, $name: String!, $bio: String) {
+	updateMe(file: $file, name: $name, bio: $bio) {
 		id
 		avatar
 		name
+		bio
 	}
 }

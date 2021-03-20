@@ -196,15 +196,21 @@ describe('Auth Service', function () {
 	describe('updateMe', () => {
 		it('Should be able to update name without updating PFP', async () => {
 			const user = await authServiceInstance.getUser(loginUserID)
+			const newBio = 'bio '.repeat(15)
 			const newName = 'Glass'
 
 			if (!user) throw new Error('User is undefined')
 
 			const oldAvatar = user.avatar
-			const result = await authServiceInstance.updateMe({ newName, user })
+			const result = await authServiceInstance.updateMe({
+				newName,
+				user,
+				bio: newBio,
+			})
 
 			expect(result.name).toBe(newName)
 			expect(result.avatar).toBe(oldAvatar)
+			expect(result.bio).toBe(newBio)
 		})
 
 		it('Should be able to update name as well as updating PFP', async () => {

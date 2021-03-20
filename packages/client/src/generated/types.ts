@@ -32,6 +32,7 @@ export type User = {
   email?: Maybe<Scalars['String']>;
   joined: Scalars['DateTime'];
   avatar: Scalars['String'];
+  bio?: Maybe<Scalars['String']>;
 };
 
 export type Mutation = {
@@ -96,6 +97,7 @@ export type MutationUpdateBookArgs = {
 export type MutationUpdateMeArgs = {
   file?: Maybe<Scalars['Upload']>;
   name: Scalars['String'];
+  bio?: Maybe<Scalars['String']>;
 };
 
 
@@ -272,6 +274,7 @@ export type UpdateBookMutation = (
 export type UpdateMeMutationVariables = Exact<{
   file?: Maybe<Scalars['Upload']>;
   name: Scalars['String'];
+  bio?: Maybe<Scalars['String']>;
 }>;
 
 
@@ -279,7 +282,7 @@ export type UpdateMeMutation = (
   { __typename?: 'Mutation' }
   & { updateMe: (
     { __typename?: 'User' }
-    & Pick<User, 'id' | 'avatar' | 'name'>
+    & Pick<User, 'id' | 'avatar' | 'name' | 'bio'>
   ) }
 );
 
@@ -427,7 +430,7 @@ export type UserQuery = (
   { __typename?: 'Query' }
   & { user?: Maybe<(
     { __typename?: 'User' }
-    & Pick<User, 'id' | 'name' | 'email' | 'joined' | 'avatar'>
+    & Pick<User, 'id' | 'name' | 'email' | 'joined' | 'avatar' | 'bio'>
   )> }
 );
 
@@ -543,11 +546,12 @@ export type UpdateBookMutationHookResult = ReturnType<typeof useUpdateBookMutati
 export type UpdateBookMutationResult = Apollo.MutationResult<UpdateBookMutation>;
 export type UpdateBookMutationOptions = Apollo.BaseMutationOptions<UpdateBookMutation, UpdateBookMutationVariables>;
 export const UpdateMeDocument = gql`
-    mutation UpdateMe($file: Upload, $name: String!) {
-  updateMe(file: $file, name: $name) {
+    mutation UpdateMe($file: Upload, $name: String!, $bio: String) {
+  updateMe(file: $file, name: $name, bio: $bio) {
     id
     avatar
     name
+    bio
   }
 }
     `;
@@ -568,6 +572,7 @@ export type UpdateMeMutationFn = Apollo.MutationFunction<UpdateMeMutation, Updat
  *   variables: {
  *      file: // value for 'file'
  *      name: // value for 'name'
+ *      bio: // value for 'bio'
  *   },
  * });
  */
@@ -892,6 +897,7 @@ export const UserDocument = gql`
     email
     joined
     avatar
+    bio
   }
 }
     `;

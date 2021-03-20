@@ -14,6 +14,7 @@ type User {
   email: String
   joined: DateTime!
   avatar: String!
+  bio: String
 }
 type Mutation {
   createBook(title: String!, summary: String!, content: String!): Book @isAuthenticated
@@ -23,7 +24,7 @@ type Mutation {
   signin(email: String!, password: String!): AuthData
   signup(name: String!, email: String!, password: String!): User
   updateBook(id: ID!, title: String!, summary: String!, content: String!): Book @isAuthenticated
-  updateMe(file: Upload, name: String!): User! @isAuthenticated
+  updateMe(file: Upload, name: String!, bio: String): User! @isAuthenticated
   updateReview(id: ID!, content: String!, rating: Int!): Review @isAuthenticated
 }
 type Query {

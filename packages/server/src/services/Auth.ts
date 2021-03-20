@@ -153,12 +153,15 @@ class AuthService {
 		newName,
 		file,
 		user,
+		bio,
 	}: {
 		newName: string
 		file?: Promise<GraphQLFileUpload> | null
 		user: IUser
+		bio?: string | null
 	}) {
 		user.name = xss(trim(newName))
+		user.bio = xss(trim(bio ? bio : ''))
 
 		if (file) {
 			const uploadResult = await AuthService._upload(file)

@@ -17,6 +17,7 @@ import ListItemIcon from '@material-ui/core/ListItemIcon'
 import ListItemText from '@material-ui/core/ListItemText'
 import EmailIcon from '@material-ui/icons/Email'
 import IdentityIcon from '@material-ui/icons/PermIdentity'
+import FingerprintIcon from '@material-ui/icons/Fingerprint'
 import { SvgIconComponent } from '@material-ui/icons'
 
 import { useUserQuery } from '../../generated/types'
@@ -25,14 +26,18 @@ import EditProfile from '../../components/EditProfile'
 
 type MyListProps = { icon: SvgIconComponent; text: string | Date }
 
-const MyList: React.FC<MyListProps> = ({ icon: Icon, text }) => (
-	<ListItem>
-		<ListItemIcon>
-			<Icon />
-		</ListItemIcon>
-		<ListItemText>{text}</ListItemText>
-	</ListItem>
-)
+const MyList: React.FC<MyListProps> = ({ icon: Icon, text }) => {
+	const classes = useStyles()
+
+	return (
+		<ListItem>
+			<ListItemIcon>
+				<Icon />
+			</ListItemIcon>
+			<ListItemText className={classes.listItem}>{text}</ListItemText>
+		</ListItem>
+	)
+}
 
 type Props = RouteComponentProps<{ id: string }> & {
 	user?: IUser | null
@@ -47,8 +52,6 @@ const Profile: React.FC<Props> = ({ setCurrentUser, user, match }) => {
 	const { data, loading, error } = useUserQuery({
 		variables: { id: match.params.id },
 	})
-
-	const classes = useStyles()
 
 	if (loading) return <Typography variant="h6">Loading data...</Typography>
 	if (error) return <Typography variant="h6">{error.message}</Typography>
@@ -75,12 +78,20 @@ const Profile: React.FC<Props> = ({ setCurrentUser, user, match }) => {
 						/>
 						<CardContent>
 							<List>
-								<MyList icon={IdentityIcon} text={data.user.id} />
+								<MyList icon={FingerprintIcon} text={data.user.id} />
 								{data.user.email ? (
 									<MyList icon={EmailIcon} text={data.user.email} />
 								) : (
 									''
 								)}
+								<MyList
+									icon={IdentityIcon}
+									text={
+										data.user.bio
+											? data.user.bio
+											: 'This person has no bio of himself. Spooky!'
+									}
+								/>
 							</List>
 						</CardContent>
 

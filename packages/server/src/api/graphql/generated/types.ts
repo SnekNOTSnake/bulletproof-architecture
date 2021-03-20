@@ -37,6 +37,7 @@ export type User = {
   email?: Maybe<Scalars['String']>;
   joined: Scalars['DateTime'];
   avatar: Scalars['String'];
+  bio?: Maybe<Scalars['String']>;
 };
 
 export type Mutation = {
@@ -101,6 +102,7 @@ export type MutationUpdateBookArgs = {
 export type MutationUpdateMeArgs = {
   file?: Maybe<Scalars['Upload']>;
   name: Scalars['String'];
+  bio?: Maybe<Scalars['String']>;
 };
 
 
@@ -384,6 +386,7 @@ export type UserResolvers<ContextType = MyContext, ParentType extends ResolversP
   email?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   joined?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   avatar?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  bio?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 

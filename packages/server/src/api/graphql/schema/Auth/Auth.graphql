@@ -10,4 +10,5 @@ type User {
 	email: String
 	joined: DateTime!
 	avatar: String!
+	bio: String
 }
