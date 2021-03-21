@@ -1,10 +1,8 @@
 import React from 'react'
-
-import Alert from '@material-ui/lab/Alert'
-import Box from '@material-ui/core/Box'
-import TextField from '@material-ui/core/TextField'
-import Button from '@material-ui/core/Button'
+import { useSnackbar } from 'notistack'
 import { useHistory } from 'react-router-dom'
+
+import { TextField, Button } from '@material-ui/core'
 
 import AuthService from '../../services/Auth'
 import useStyles from './EditPassword.style'
@@ -18,8 +16,8 @@ type Props = {
 const EditPassword: React.FC<Props> = ({ setCurrentUser }) => {
 	const [password, setPassword] = React.useState<string>('')
 	const [newPassword, setNewPassword] = React.useState<string>('')
-	const [error, setError] = React.useState<string | null>(null)
 
+	const { enqueueSnackbar } = useSnackbar()
 	const history = useHistory()
 
 	const onPasswordChange = (e: InputChange) =>
@@ -34,7 +32,13 @@ const EditPassword: React.FC<Props> = ({ setCurrentUser }) => {
 			setCurrentUser(null)
 			history.push('/')
 		} catch (err) {
-			setError(err.response.data.message)
+			if (err.response) {
+				// Normal error (like validations, wrong password, etc.)
+				enqueueSnackbar(err.response.data.message, { variant: 'error' })
+			} else {
+				// Network error
+				enqueueSnackbar(err.message, { variant: 'error' })
+			}
 			setPassword('')
 			setNewPassword('')
 		}
@@ -44,19 +48,6 @@ const EditPassword: React.FC<Props> = ({ setCurrentUser }) => {
 
 	return (
 		<form onSubmit={onSubmit}>
-			<Box>
-				{error ? (
-					<Alert
-						onClose={() => setError('')}
-						severity="error"
-						className={classes.alert}
-					>
-						{error}
-					</Alert>
-				) : (
-					''
-				)}
-			</Box>
 			<TextField
 				fullWidth
 				label="Password"

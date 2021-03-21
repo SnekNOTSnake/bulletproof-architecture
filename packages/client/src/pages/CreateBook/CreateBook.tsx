@@ -1,15 +1,18 @@
 import React from 'react'
 import { gql, Reference } from '@apollo/client'
+import { useSnackbar } from 'notistack'
 
-import Alert from '@material-ui/lab/Alert'
-import Box from '@material-ui/core/Box'
-import Grid from '@material-ui/core/Grid'
-import Card from '@material-ui/core/Card'
-import CardHeader from '@material-ui/core/CardHeader'
-import CardContent from '@material-ui/core/CardContent'
-import CardActions from '@material-ui/core/CardActions'
-import Button from '@material-ui/core/Button'
-import TextField from '@material-ui/core/TextField'
+import {
+	Box,
+	Button,
+	Grid,
+	Card,
+	CardHeader,
+	CardContent,
+	CardActions,
+	TextField,
+	Typography,
+} from '@material-ui/core'
 
 import { useCreateBookMutation } from '../../generated/types'
 import useStyles from './CreateBook.style'
@@ -23,7 +26,19 @@ const CreateBook: React.FC<Props> = ({ user }) => {
 	const [summary, setSummary] = React.useState<string>('')
 	const [content, setContent] = React.useState<string>('')
 
-	const [createBook, { loading, data, error }] = useCreateBookMutation({
+	const { enqueueSnackbar } = useSnackbar()
+
+	const [createBook, { loading }] = useCreateBookMutation({
+		onError: (err) => {
+			enqueueSnackbar(err.message, { variant: 'error' })
+		},
+		onCompleted: (data) => {
+			if (!data.createBook) return
+			enqueueSnackbar(
+				`Created ${data.createBook.id} at ${data.createBook.created}`,
+				{ variant: 'success' },
+			)
+		},
 		update: (cache, { data }) => {
 			cache.modify({
 				fields: {
@@ -66,17 +81,14 @@ const CreateBook: React.FC<Props> = ({ user }) => {
 	const onContentChange = (e: InputChange) => setContent(e.currentTarget.value)
 
 	const onSubmit = async (e: SubmitEvent) => {
-		try {
-			e.preventDefault()
-			if (loading) return
-			await createBook({ variables: { title, summary, content } })
-		} catch (err) {
-			console.error(err)
-		}
+		e.preventDefault()
+		if (loading) return
+		await createBook({ variables: { title, summary, content } })
 	}
 	const classes = useStyles()
 
-	if (!user) return <div>You have to be logged in first</div>
+	if (!user)
+		return <Typography variant="h5">You have to be logged in first</Typography>
 
 	return (
 		<Box>
@@ -86,22 +98,6 @@ const CreateBook: React.FC<Props> = ({ user }) => {
 						<Card variant="outlined">
 							<CardHeader title="Create a book" />
 							<CardContent>
-								<Box>
-									{error ? (
-										<Alert className={classes.alert} severity="error">
-											{error.message}
-										</Alert>
-									) : (
-										''
-									)}
-									{data?.createBook ? (
-										<Alert className={classes.alert}>
-											Created {data.createBook.id} at {data.createBook.created}
-										</Alert>
-									) : (
-										''
-									)}
-								</Box>
 								<TextField
 									fullWidth
 									variant="outlined"

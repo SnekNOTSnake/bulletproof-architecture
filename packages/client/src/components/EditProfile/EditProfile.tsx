@@ -1,14 +1,16 @@
 import React from 'react'
+import { useSnackbar } from 'notistack'
 
-import Alert from '@material-ui/lab/Alert'
-import Box from '@material-ui/core/Box'
-import Button from '@material-ui/core/Button'
-import Card from '@material-ui/core/Card'
-import CardHeader from '@material-ui/core/CardHeader'
-import CardContent from '@material-ui/core/CardContent'
-import Grid from '@material-ui/core/Grid'
-import TextField from '@material-ui/core/TextField'
-import Typography from '@material-ui/core/Typography'
+import {
+	Box,
+	Button,
+	Card,
+	CardHeader,
+	CardContent,
+	Grid,
+	TextField,
+	Typography,
+} from '@material-ui/core'
 
 import EditPassword from '../EditPassword'
 import { useUpdateMeMutation } from '../../generated/types'
@@ -31,6 +33,8 @@ const EditProfile: React.FC<Props> = ({ user, setCurrentUser }) => {
 
 	const fileInput = React.useRef<HTMLInputElement>(null)
 
+	const { enqueueSnackbar } = useSnackbar()
+
 	const reset = () => {
 		setName(user.name)
 		setBio(user.bio)
@@ -41,7 +45,7 @@ const EditProfile: React.FC<Props> = ({ user, setCurrentUser }) => {
 		if (fileInput.current) fileInput.current.value = ''
 	}
 
-	const [mutate, { loading, data, error }] = useUpdateMeMutation({
+	const [mutate, { loading, data }] = useUpdateMeMutation({
 		onCompleted: (result) => {
 			setCurrentUser((initVal) => {
 				if (!initVal) return null
@@ -53,13 +57,14 @@ const EditProfile: React.FC<Props> = ({ user, setCurrentUser }) => {
 				}
 			})
 
+			enqueueSnackbar('Profile updated', { variant: 'success' })
 			setPreview('')
 			setFile(null)
 			setProgress(0)
 
 			if (fileInput.current) fileInput.current.value = ''
 		},
-		onError: () => {},
+		onError: (err) => enqueueSnackbar(err.message, { variant: 'error' }),
 	})
 
 	const onSubmit = (e: FormSubmit) => {
@@ -92,19 +97,23 @@ const EditProfile: React.FC<Props> = ({ user, setCurrentUser }) => {
 	const onNameChange = (e: InputChange) => setName(e.currentTarget.value)
 	const onBioChange = (e: InputChange) => setBio(e.currentTarget.value)
 	const onFileChange = async ({ currentTarget: { files } }: FileChange) => {
-		if (!files?.length) return
+		try {
+			if (!files?.length) return
 
-		const file = files[0]
-		const reader = new FileReader()
+			const file = files[0]
+			const reader = new FileReader()
 
-		const result = await new Promise<any>((resolve, reject) => {
-			reader.readAsDataURL(new Blob([file]))
-			reader.onload = () => resolve(reader.result)
-			reader.onerror = () => reject(reader.error)
-		})
+			const result = await new Promise<any>((resolve, reject) => {
+				reader.readAsDataURL(new Blob([file]))
+				reader.onload = () => resolve(reader.result)
+				reader.onerror = () => reject(reader.error)
+			})
 
-		setPreview(result)
-		setFile(file)
+			setPreview(result)
+			setFile(file)
+		} catch (err) {
+			enqueueSnackbar(err, { variant: 'error' })
+		}
 	}
 
 	const classes = useStyles()
@@ -128,20 +137,6 @@ const EditProfile: React.FC<Props> = ({ user, setCurrentUser }) => {
 									/>
 								</Grid>
 								<Grid item xs={9}>
-									<Box>
-										{error ? (
-											<Alert className={classes.alert} severity="error">
-												{error.message}
-											</Alert>
-										) : (
-											''
-										)}
-										{data?.updateMe ? (
-											<Alert className={classes.alert}>Changes saved</Alert>
-										) : (
-											''
-										)}
-									</Box>
 									<TextField
 										fullWidth
 										label="Name"

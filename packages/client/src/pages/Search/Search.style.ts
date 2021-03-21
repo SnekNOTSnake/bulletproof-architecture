@@ -15,7 +15,4 @@ export default makeStyles((theme) => ({
 	more: {
 		marginTop: theme.spacing(2),
 	},
-	alert: {
-		marginTop: theme.spacing(2),
-	},
 }))

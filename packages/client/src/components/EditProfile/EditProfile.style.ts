@@ -7,9 +7,6 @@ export default makeStyles((theme) => ({
 			marginRight: theme.spacing(1),
 		},
 	},
-	alert: {
-		marginBottom: theme.spacing(2),
-	},
 	input: {
 		marginBottom: theme.spacing(2),
 	},

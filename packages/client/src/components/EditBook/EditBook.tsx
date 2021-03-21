@@ -1,13 +1,15 @@
 import React from 'react'
+import { useSnackbar } from 'notistack'
 
-import Alert from '@material-ui/lab/Alert'
-import Box from '@material-ui/core/Box'
-import Card from '@material-ui/core/Card'
-import CardHeader from '@material-ui/core/CardHeader'
-import CardContent from '@material-ui/core/CardContent'
-import CardActions from '@material-ui/core/CardActions'
-import Button from '@material-ui/core/Button'
-import TextField from '@material-ui/core/TextField'
+import {
+	Box,
+	Button,
+	Card,
+	CardHeader,
+	CardContent,
+	CardActions,
+	TextField,
+} from '@material-ui/core'
 
 import { useUpdateBookMutation } from '../../generated/types'
 import useStyles from './EditBook.style'
@@ -23,10 +25,11 @@ const EditBook: React.FC<Props> = ({ id, book }) => {
 	const [title, setTitle] = React.useState(book.title)
 	const [summary, setSummary] = React.useState(book.summary)
 	const [content, setContent] = React.useState(book.content)
-	const [error, setError] = React.useState('')
+
+	const { enqueueSnackbar } = useSnackbar()
 
 	const [updateBook, { loading }] = useUpdateBookMutation({
-		onError: (err) => setError(err.message),
+		onError: (err) => enqueueSnackbar(err.message, { variant: 'error' }),
 	})
 
 	const onReset = () => {
@@ -51,17 +54,6 @@ const EditBook: React.FC<Props> = ({ id, book }) => {
 				<form onSubmit={onSubmit}>
 					<CardHeader title="Edit book" />
 					<CardContent>
-						{error ? (
-							<Alert
-								onClose={() => setError('')}
-								className={classes.alert}
-								severity="error"
-							>
-								{error}
-							</Alert>
-						) : (
-							''
-						)}
 						<TextField
 							fullWidth
 							label="Title"

@@ -1,24 +1,29 @@
 import React from 'react'
 import { formatDistance } from 'date-fns'
 import { RouteComponentProps } from 'react-router-dom'
+import { useSnackbar } from 'notistack'
 
-import Avatar from '@material-ui/core/Avatar'
-import Button from '@material-ui/core/Button'
-import Box from '@material-ui/core/Box'
-import Grid from '@material-ui/core/Grid'
-import Card from '@material-ui/core/Card'
-import CardHeader from '@material-ui/core/CardHeader'
-import CardContent from '@material-ui/core/CardContent'
-import CardActions from '@material-ui/core/CardActions'
-import Typography from '@material-ui/core/Typography'
-import List from '@material-ui/core/List'
-import ListItem from '@material-ui/core/ListItem'
-import ListItemIcon from '@material-ui/core/ListItemIcon'
-import ListItemText from '@material-ui/core/ListItemText'
-import EmailIcon from '@material-ui/icons/Email'
-import IdentityIcon from '@material-ui/icons/PermIdentity'
-import FingerprintIcon from '@material-ui/icons/Fingerprint'
-import { SvgIconComponent } from '@material-ui/icons'
+import {
+	Avatar,
+	Box,
+	Button,
+	Card,
+	CardHeader,
+	CardContent,
+	CardActions,
+	Grid,
+	Typography,
+	List,
+	ListItem,
+	ListItemIcon,
+	ListItemText,
+} from '@material-ui/core'
+import {
+	Email as EmailIcon,
+	PermIdentity as IdentityIcon,
+	Fingerprint as FingerprintIcon,
+	SvgIconComponent,
+} from '@material-ui/icons'
 
 import { useUserQuery } from '../../generated/types'
 import useStyles from './Profile.style'
@@ -49,14 +54,16 @@ const Profile: React.FC<Props> = ({ setCurrentUser, user, match }) => {
 
 	const toggleEditting = () => setIsEditing((initVal) => !initVal)
 
-	const { data, loading, error } = useUserQuery({
+	const { enqueueSnackbar } = useSnackbar()
+
+	const { data, loading } = useUserQuery({
 		variables: { id: match.params.id },
+		onError: (err) => enqueueSnackbar(err.message, { variant: 'error' }),
 	})
 
 	if (loading) return <Typography variant="h6">Loading data...</Typography>
-	if (error) return <Typography variant="h6">{error.message}</Typography>
 	if (!data?.user)
-		return <Typography variant="h5">No book with that ID</Typography>
+		return <Typography variant="h5">No data to display</Typography>
 
 	return (
 		<Box>

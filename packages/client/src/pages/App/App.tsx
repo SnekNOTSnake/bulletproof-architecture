@@ -1,14 +1,19 @@
 import React from 'react'
 import { Switch, Route, Redirect } from 'react-router-dom'
+import { SnackbarProvider } from 'notistack'
 
 import {
 	ThemeProvider as MuiThemeProvider,
 	createMuiTheme,
 } from '@material-ui/core/styles'
-import CssBaseline from '@material-ui/core/CssBaseline'
-import Box from '@material-ui/core/Box'
-import Container from '@material-ui/core/Container'
-import Typography from '@material-ui/core/Typography'
+import {
+	CssBaseline,
+	Box,
+	IconButton,
+	Container,
+	Typography,
+} from '@material-ui/core'
+import { Close as CloseIcon } from '@material-ui/icons'
 
 import { ThemeProvider, useThemeState } from '../../context/theme'
 import AuthService from '../../services/Auth'
@@ -36,6 +41,11 @@ const Layout: React.FC<LayoutProps> = ({
 	currentUser,
 }) => {
 	const { theme } = useThemeState()
+
+	const notistackRef = React.createRef<SnackbarProvider>()
+	const onDismiss = (key: React.ReactText) => {
+		if (notistackRef.current) notistackRef.current.closeSnackbar(key)
+	}
 
 	const muiTheme = React.useMemo(() => {
 		return createMuiTheme({
@@ -66,10 +76,25 @@ const Layout: React.FC<LayoutProps> = ({
 
 	return (
 		<MuiThemeProvider theme={muiTheme}>
-			<CssBaseline />
-			<Container fixed className={classes.container}>
-				{renderContent}
-			</Container>
+			<SnackbarProvider
+				ref={notistackRef}
+				action={(key) => (
+					<IconButton
+						type="button"
+						color="inherit"
+						size="small"
+						onClick={() => onDismiss(key)}
+					>
+						<CloseIcon />
+					</IconButton>
+				)}
+				maxSnack={3}
+			>
+				<CssBaseline />
+				<Container fixed className={classes.container}>
+					{renderContent}
+				</Container>
+			</SnackbarProvider>
 		</MuiThemeProvider>
 	)
 }

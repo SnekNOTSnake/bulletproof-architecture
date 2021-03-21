@@ -2,18 +2,20 @@ import React from 'react'
 import { RouteComponentProps, Link } from 'react-router-dom'
 import { Reference } from '@apollo/client'
 import { formatDistance } from 'date-fns'
+import { useSnackbar } from 'notistack'
 
-import Alert from '@material-ui/lab/Alert'
-import Box from '@material-ui/core/Box'
-import Grid from '@material-ui/core/Grid'
-import Card from '@material-ui/core/Card'
-import CardHeader from '@material-ui/core/CardHeader'
-import CardContent from '@material-ui/core/CardContent'
-import CardActions from '@material-ui/core/CardActions'
-import Button from '@material-ui/core/Button'
-import LinkComponent from '@material-ui/core/Link'
-import Typography from '@material-ui/core/Typography'
-import Rating from '@material-ui/lab/Rating'
+import {
+	Box,
+	Button,
+	Grid,
+	Card,
+	CardHeader,
+	CardContent,
+	CardActions,
+	Link as LinkComponent,
+	Typography,
+} from '@material-ui/core'
+import { Rating } from '@material-ui/lab'
 
 import { useBookQuery, useDeleteBookMutation } from '../../generated/types'
 import Reviews from '../../components/Reviews'
@@ -25,10 +27,14 @@ type Props = RouteComponentProps<{ id: string }>
 const Book: React.FC<Props> = ({ match, history }) => {
 	const id = match.params.id
 
+	const { enqueueSnackbar } = useSnackbar()
+
 	const [showReviews, setShowReviews] = React.useState<boolean>(false)
 	const [isEditing, setIsEditing] = React.useState(false)
-	const [mutationError, setMutationError] = React.useState<string>('')
-	const { loading, data, error } = useBookQuery({ variables: { id } })
+	const { loading, data } = useBookQuery({
+		variables: { id },
+		onError: (err) => enqueueSnackbar(err.message, { variant: 'error' }),
+	})
 
 	const toggleEditing = () => setIsEditing((initVal) => !initVal)
 
@@ -50,16 +56,18 @@ const Book: React.FC<Props> = ({ match, history }) => {
 				},
 			})
 		},
-		onCompleted: () => history.push('/'),
-		onError: (error) => setMutationError(error.message),
+		onCompleted: () => {
+			enqueueSnackbar(`Deleted book ${id}`, { variant: 'success' })
+			history.push('/')
+		},
+		onError: (error) => enqueueSnackbar(error.message, { variant: 'error' }),
 	})
 
 	const classes = useStyles()
 
-	if (error) return <Typography variant="h5">{error.message}</Typography>
 	if (loading) return <Typography variant="h6">Loading data...</Typography>
 	if (!data?.book)
-		return <Typography variant="h5">No book with that ID</Typography>
+		return <Typography variant="h5">No book to display</Typography>
 
 	const cardSubheader = (
 		<Typography variant="body2" color="textSecondary">
@@ -79,17 +87,6 @@ const Book: React.FC<Props> = ({ match, history }) => {
 						<CardHeader title={data.book.title} subheader={cardSubheader} />
 
 						<CardContent>
-							{mutationError ? (
-								<Alert
-									className={classes.alert}
-									onClose={() => setMutationError('')}
-									severity="error"
-								>
-									{mutationError}
-								</Alert>
-							) : (
-								''
-							)}
 							<Typography variant="body1" className={classes.summary}>
 								{data.book.summary}
 							</Typography>

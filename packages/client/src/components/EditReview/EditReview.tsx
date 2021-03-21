@@ -1,12 +1,13 @@
 import React from 'react'
-import { ApolloError } from '@apollo/client'
+import { useSnackbar } from 'notistack'
 
-import Alert from '@material-ui/lab/Alert'
-import Button from '@material-ui/core/Button'
-import Card from '@material-ui/core/Card'
-import CardContent from '@material-ui/core/CardContent'
-import CardActions from '@material-ui/core/CardActions'
-import TextField from '@material-ui/core/TextField'
+import {
+	Button,
+	Card,
+	CardContent,
+	CardActions,
+	TextField,
+} from '@material-ui/core'
 
 import { useUpdateReviewMutation, ReviewsQuery } from '../../generated/types'
 import useStyles from './EditReview.style'
@@ -19,18 +20,19 @@ type Props = {
 }
 
 const EditReview: React.FC<Props> = ({ closeEdit, review }) => {
-	const [error, setError] = React.useState<ApolloError | null>(null)
 	const [rating, setRating] = React.useState<number>(review.rating)
 	const [content, setContent] = React.useState<string>(review.content)
+
+	const { enqueueSnackbar } = useSnackbar()
 
 	const ratingChange = (e: InputChange) =>
 		setRating(Number(e.currentTarget.value))
 	const contentChange = (e: InputChange) => setContent(e.currentTarget.value)
 
 	const [update, { loading }] = useUpdateReviewMutation({
-		onError: (err) => setError(err),
+		onError: (err) => enqueueSnackbar(err.message, { variant: 'error' }),
 		onCompleted: () => {
-			setError(null)
+			enqueueSnackbar('Review updated', { variant: 'success' })
 			closeEdit()
 		},
 	})
@@ -48,18 +50,6 @@ const EditReview: React.FC<Props> = ({ closeEdit, review }) => {
 		<Card className={classes.review} variant="outlined">
 			<form onSubmit={onSubmit}>
 				<CardContent>
-					{error ? (
-						<Alert
-							onClose={() => setError(null)}
-							className={classes.alert}
-							severity="error"
-						>
-							{error.message}
-						</Alert>
-					) : (
-						''
-					)}
-
 					<TextField
 						fullWidth
 						variant="outlined"

@@ -1,13 +1,15 @@
 import React from 'react'
-import { ApolloError, Reference, gql } from '@apollo/client'
+import { Reference, gql } from '@apollo/client'
+import { useSnackbar } from 'notistack'
 
-import Alert from '@material-ui/lab/Alert'
-import Button from '@material-ui/core/Button'
-import Card from '@material-ui/core/Card'
-import CardHeader from '@material-ui/core/CardHeader'
-import CardContent from '@material-ui/core/CardContent'
-import CardActions from '@material-ui/core/CardActions'
-import TextField from '@material-ui/core/TextField'
+import {
+	Button,
+	Card,
+	CardHeader,
+	CardContent,
+	CardActions,
+	TextField,
+} from '@material-ui/core'
 
 import { useCreateReviewMutation } from '../../generated/types'
 import useStyles from './CreateReview.style'
@@ -19,7 +21,8 @@ type FormSubmit = React.FormEvent<HTMLFormElement>
 const AddReview: React.FC<Props> = ({ onClose, bookId }) => {
 	const [rating, setRating] = React.useState<number>(5)
 	const [content, setContent] = React.useState<string>('')
-	const [error, setError] = React.useState<ApolloError | null>(null)
+
+	const { enqueueSnackbar } = useSnackbar()
 
 	const [create, { loading }] = useCreateReviewMutation({
 		update: (cache, { data }) => {
@@ -53,7 +56,7 @@ const AddReview: React.FC<Props> = ({ onClose, bookId }) => {
 				},
 			})
 		},
-		onError: (err) => setError(err),
+		onError: (err) => enqueueSnackbar(err.message, { variant: 'error' }),
 		onCompleted: () => {
 			onClose()
 		},
@@ -76,18 +79,6 @@ const AddReview: React.FC<Props> = ({ onClose, bookId }) => {
 			<form onSubmit={onSubmit}>
 				<CardHeader title="Add review" />
 				<CardContent>
-					{error ? (
-						<Alert
-							onClose={() => setError(null)}
-							className={classes.alert}
-							severity="error"
-						>
-							{error.message}
-						</Alert>
-					) : (
-						''
-					)}
-
 					<TextField
 						fullWidth
 						variant="outlined"

@@ -1,17 +1,19 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-import { ApolloError, Reference } from '@apollo/client'
+import { Reference } from '@apollo/client'
 import { formatDistance } from 'date-fns'
+import { useSnackbar } from 'notistack'
 
-import Alert from '@material-ui/lab/Alert'
-import Button from '@material-ui/core/Button'
-import Card from '@material-ui/core/Card'
-import CardHeader from '@material-ui/core/CardHeader'
-import CardContent from '@material-ui/core/CardContent'
-import CardActions from '@material-ui/core/CardActions'
-import LinkComponent from '@material-ui/core/Link'
-import Typography from '@material-ui/core/Typography'
-import Rating from '@material-ui/lab/Rating'
+import {
+	Button,
+	Card,
+	CardHeader,
+	CardContent,
+	CardActions,
+	Link as LinkComponent,
+	Typography,
+} from '@material-ui/core'
+import { Rating } from '@material-ui/lab'
 
 import EditReview from '../EditReview'
 import { ReviewsQuery, useDeleteReviewMutation } from '../../generated/types'
@@ -31,7 +33,8 @@ const CardSubheader: React.FC<Props> = ({ review }) => (
 
 const Review: React.FC<Props> = ({ review }) => {
 	const [isEditing, setIsEditing] = React.useState<boolean>(false)
-	const [error, setError] = React.useState<ApolloError | null>(null)
+
+	const { enqueueSnackbar } = useSnackbar()
 
 	const [remove, { loading }] = useDeleteReviewMutation({
 		update: (cache) => {
@@ -51,8 +54,9 @@ const Review: React.FC<Props> = ({ review }) => {
 				},
 			})
 		},
-		onError: (err) => setError(err),
-		onCompleted: () => setError(null),
+		onError: (err) => enqueueSnackbar(err.message, { variant: 'error' }),
+		onCompleted: () =>
+			enqueueSnackbar('Review deleted', { variant: 'success' }),
 	})
 
 	const openEdit = () => setIsEditing(true)
@@ -69,18 +73,6 @@ const Review: React.FC<Props> = ({ review }) => {
 				subheader={<CardSubheader review={review} />}
 			/>
 			<CardContent>
-				{error ? (
-					<Alert
-						onClose={() => setError(null)}
-						className={classes.alert}
-						severity="error"
-					>
-						{error.message}
-					</Alert>
-				) : (
-					''
-				)}
-
 				<Typography className={classes.content}>{review.content}</Typography>
 				<Rating readOnly value={review.rating} precision={0.5} />
 			</CardContent>

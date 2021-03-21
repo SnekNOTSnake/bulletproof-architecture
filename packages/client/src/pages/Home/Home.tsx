@@ -1,18 +1,21 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import { formatDistance } from 'date-fns'
+import { useSnackbar } from 'notistack'
 
-import Avatar from '@material-ui/core/Avatar'
-import Box from '@material-ui/core/Box'
-import Grid from '@material-ui/core/Grid'
-import Card from '@material-ui/core/Card'
-import CardHeader from '@material-ui/core/CardHeader'
-import CardContent from '@material-ui/core/CardContent'
-import CardActions from '@material-ui/core/CardActions'
-import Button from '@material-ui/core/Button'
-import LinkComponent from '@material-ui/core/Link'
-import Typography from '@material-ui/core/Typography'
-import Rating from '@material-ui/lab/Rating'
+import {
+	Avatar,
+	Box,
+	Button,
+	Card,
+	CardHeader,
+	CardContent,
+	CardActions,
+	Grid,
+	Link as LinkComponent,
+	Typography,
+} from '@material-ui/core'
+import { Rating } from '@material-ui/lab'
 
 import useStyles from './Home.style'
 import { useBooksQuery, BooksQuery } from '../../generated/types'
@@ -29,14 +32,19 @@ const CardSubheader: React.FC<CardSubheaderProps> = ({ book }) => (
 	</Typography>
 )
 
-const options = { variables: { first: 2 } }
 const Home: React.FC = () => {
-	const { data, loading, error, fetchMore } = useBooksQuery(options)
+	const { enqueueSnackbar } = useSnackbar()
+
+	const { data, loading, fetchMore } = useBooksQuery({
+		variables: { first: 2 },
+		onError: (err) => enqueueSnackbar(err.message, { variant: 'error' }),
+	})
 
 	const classes = useStyles()
 
-	if (error) return <Typography variant="h5">{error.message}</Typography>
-	if (loading) return <Typography variant="h6">Loading data...</Typography>
+	if (loading) return <Typography variant="h5">Loading data...</Typography>
+	if (!data?.books.nodes.length)
+		return <Typography variant="h5">No data to display</Typography>
 
 	return (
 		<Box>

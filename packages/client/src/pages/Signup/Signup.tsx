@@ -1,17 +1,19 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
+import { useSnackbar } from 'notistack'
 
-import Alert from '@material-ui/lab/Alert'
-import Box from '@material-ui/core/Box'
-import Grid from '@material-ui/core/Grid'
-import Card from '@material-ui/core/Card'
-import CardHeader from '@material-ui/core/CardHeader'
-import CardContent from '@material-ui/core/CardContent'
-import CardActions from '@material-ui/core/CardActions'
-import Button from '@material-ui/core/Button'
-import LinkComponent from '@material-ui/core/Link'
-import TextField from '@material-ui/core/TextField'
-import Typography from '@material-ui/core/Typography'
+import {
+	Box,
+	Button,
+	Card,
+	CardHeader,
+	CardContent,
+	CardActions,
+	Grid,
+	Link as LinkComponent,
+	TextField,
+	Typography,
+} from '@material-ui/core'
 
 import useStyles from './Signup.style'
 import AuthService from '../../services/Auth'
@@ -23,13 +25,13 @@ const Signup: React.FC = () => {
 	const [name, setName] = React.useState('')
 	const [email, setEmail] = React.useState('')
 	const [password, setPassword] = React.useState('')
+
 	const onNameChange = (e: InputChange) => setName(e.currentTarget.value)
 	const onEmailChange = (e: InputChange) => setEmail(e.currentTarget.value)
 	const onPasswordChange = (e: InputChange) =>
 		setPassword(e.currentTarget.value)
 
-	const [error, setError] = React.useState('')
-	const [success, setSuccess] = React.useState('')
+	const { enqueueSnackbar } = useSnackbar()
 
 	const onSubmit = async (e: FormSubmit) => {
 		try {
@@ -42,13 +44,19 @@ const Signup: React.FC = () => {
 			})
 
 			if (user.id) {
-				setSuccess(
+				enqueueSnackbar(
 					`Success registered with ID: ${user.id}. You can now log in with your new account`,
+					{ variant: 'success' },
 				)
-				setError('')
 			}
 		} catch (err) {
-			setError(err.response.data.message)
+			if (err.response) {
+				// Normal error (like validations, wrong password, etc.)
+				enqueueSnackbar(err.response.data.message, { variant: 'error' })
+			} else {
+				// Network error
+				enqueueSnackbar(err.message, { variant: 'error' })
+			}
 			setPassword('')
 		}
 	}
@@ -63,20 +71,6 @@ const Signup: React.FC = () => {
 						<form onSubmit={onSubmit}>
 							<CardHeader title="Sign up" />
 							<CardContent>
-								<Box>
-									{error ? (
-										<Alert className={classes.alert} severity="error">
-											{error}
-										</Alert>
-									) : (
-										''
-									)}
-									{success ? (
-										<Alert className={classes.alert}>{success}</Alert>
-									) : (
-										''
-									)}
-								</Box>
 								<TextField
 									className={classes.input}
 									fullWidth

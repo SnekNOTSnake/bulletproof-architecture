@@ -1,18 +1,20 @@
 import React from 'react'
 import { formatDistance } from 'date-fns'
 import { Link } from 'react-router-dom'
+import { useSnackbar } from 'notistack'
 
-import Alert from '@material-ui/lab/Alert'
-import Box from '@material-ui/core/Box'
-import Button from '@material-ui/core/Button'
-import Card from '@material-ui/core/Card'
-import CardHeader from '@material-ui/core/CardHeader'
-import CardContent from '@material-ui/core/CardContent'
-import CardActions from '@material-ui/core/CardActions'
-import Grid from '@material-ui/core/Grid'
-import LinkComponent from '@material-ui/core/Link'
-import Typography from '@material-ui/core/Typography'
-import TextField from '@material-ui/core/TextField'
+import {
+	Box,
+	Button,
+	Card,
+	CardHeader,
+	CardContent,
+	CardActions,
+	Grid,
+	Link as LinkComponent,
+	Typography,
+	TextField,
+} from '@material-ui/core'
 
 import { useSearchLazyQuery, SearchQuery } from '../../generated/types'
 import useStyles from './Search.style'
@@ -24,8 +26,11 @@ const Search: React.FC = () => {
 	const [search, setSearch] = React.useState<string>('')
 	const [data, setData] = React.useState<SearchQuery | null>(null)
 
-	const [doSearch, { loading, error }] = useSearchLazyQuery({
+	const { enqueueSnackbar } = useSnackbar()
+
+	const [doSearch, { loading }] = useSearchLazyQuery({
 		fetchPolicy: 'no-cache',
+		onError: (err) => enqueueSnackbar(err.message, { variant: 'error' }),
 		onCompleted: (result) =>
 			setData((initVal) => {
 				if (!initVal) return result
@@ -70,14 +75,6 @@ const Search: React.FC = () => {
 								label="Search..."
 								fullWidth
 							/>
-
-							{error ? (
-								<Alert className={classes.alert} severity="error">
-									{error.message}
-								</Alert>
-							) : (
-								''
-							)}
 
 							<Box className={classes.results}>
 								{data?.books.nodes.map((book) => (

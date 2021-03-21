@@ -1,17 +1,19 @@
 import React from 'react'
 import { Link, RouteComponentProps } from 'react-router-dom'
+import { useSnackbar } from 'notistack'
 
-import Alert from '@material-ui/lab/Alert'
-import Box from '@material-ui/core/Box'
-import Grid from '@material-ui/core/Grid'
-import Card from '@material-ui/core/Card'
-import CardHeader from '@material-ui/core/CardHeader'
-import CardContent from '@material-ui/core/CardContent'
-import CardActions from '@material-ui/core/CardActions'
-import Button from '@material-ui/core/Button'
-import LinkComponent from '@material-ui/core/Link'
-import TextField from '@material-ui/core/TextField'
-import Typography from '@material-ui/core/Typography'
+import {
+	Box,
+	Button,
+	Card,
+	CardHeader,
+	CardContent,
+	CardActions,
+	Grid,
+	Link as LinkComponent,
+	TextField,
+	Typography,
+} from '@material-ui/core'
 
 import GoogleIcon from '../../assets/images/google.svg'
 import GitHubIcon from '../../assets/images/github.svg'
@@ -26,7 +28,8 @@ type Props = RouteComponentProps & { setCurrentUser: Function }
 const Login: React.FC<Props> = ({ history, setCurrentUser }) => {
 	const [email, setEmail] = React.useState<string>('')
 	const [pass, setPass] = React.useState<string>('')
-	const [error, setError] = React.useState<string | undefined>()
+
+	const { enqueueSnackbar } = useSnackbar()
 
 	const onEmailChange = (e: InputChange) => setEmail(e.currentTarget.value)
 	const onPassChange = (e: InputChange) => setPass(e.currentTarget.value)
@@ -44,7 +47,13 @@ const Login: React.FC<Props> = ({ history, setCurrentUser }) => {
 			setCurrentUser(result)
 			history.push('/')
 		} catch (err) {
-			setError(err.response.data.message)
+			if (err.response) {
+				// Normal error (like validations, wrong password, etc.)
+				enqueueSnackbar(err.response.data.message, { variant: 'error' })
+			} else {
+				// Network error
+				enqueueSnackbar(err.message, { variant: 'error' })
+			}
 			setPass('')
 		}
 	}
@@ -59,17 +68,6 @@ const Login: React.FC<Props> = ({ history, setCurrentUser }) => {
 						<form onSubmit={onSubmit}>
 							<CardHeader title="Login" />
 							<CardContent>
-								{error ? (
-									<Alert
-										onClose={() => setError('')}
-										className={classes.alert}
-										severity="error"
-									>
-										{error}
-									</Alert>
-								) : (
-									''
-								)}
 								<Box className={classes.oAuthBox}>
 									<Button
 										disableElevation

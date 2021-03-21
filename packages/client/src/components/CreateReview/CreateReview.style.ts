@@ -7,7 +7,4 @@ export default makeStyles((theme) => ({
 	input: {
 		marginBottom: theme.spacing(2),
 	},
-	alert: {
-		marginBottom: theme.spacing(2),
-	},
 }))

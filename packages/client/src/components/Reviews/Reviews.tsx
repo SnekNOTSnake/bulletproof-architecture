@@ -1,6 +1,6 @@
 import React from 'react'
+import { useSnackbar } from 'notistack'
 
-import Alert from '@material-ui/lab/Alert'
 import Box from '@material-ui/core/Box'
 import Button from '@material-ui/core/Button'
 import Typography from '@material-ui/core/Typography'
@@ -17,8 +17,12 @@ type Props = { bookId: string }
 
 const Reviews: React.FC<Props> = ({ bookId }) => {
 	const [addReview, setAddReview] = React.useState<boolean>(false)
-	const { data, loading, error, fetchMore } = useReviewsQuery({
+
+	const { enqueueSnackbar } = useSnackbar()
+
+	const { data, loading, fetchMore } = useReviewsQuery({
 		variables: { first: 1, where: { book: bookId } },
+		onError: (err) => enqueueSnackbar(err.message, { variant: 'error' }),
 		// fetchPolicy: 'no-cache',
 	})
 
@@ -27,8 +31,7 @@ const Reviews: React.FC<Props> = ({ bookId }) => {
 
 	const classes = useStyles()
 
-	if (loading) return <Typography variant="h6">Loading...</Typography>
-	if (error) return <Alert severity="error">{error.message}</Alert>
+	if (loading) return <Typography variant="h5">Loading reviews...</Typography>
 
 	return (
 		<Box className={classes.root}>
