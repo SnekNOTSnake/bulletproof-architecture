@@ -5,7 +5,10 @@ import Box from '@material-ui/core/Box'
 import LinkComponent from '@material-ui/core/Link'
 import Button from '@material-ui/core/Button'
 import SearchIcon from '@material-ui/icons/Search'
+import NightStayIcon from '@material-ui/icons/NightsStay'
+import WbSunnyIcon from '@material-ui/icons/WbSunny'
 
+import { useThemeDispatch, useThemeState } from '../../context/theme'
 import AuthService from '../../services/Auth'
 import useStyles from './Navbar.style'
 
@@ -20,6 +23,11 @@ const LinkButton: React.FC<LinkButtonProps> = ({ to, text }) => (
 
 const Navbar: React.FC<NavbarProps> = ({ currentUser, setCurrentUser }) => {
 	const history = useHistory()
+
+	const { theme } = useThemeState()
+	const dispatchTheme = useThemeDispatch()
+
+	const toggleTheme = () => dispatchTheme({ type: 'TOGGLE_THEME' })
 
 	const logout = async () => {
 		await AuthService.logout()
@@ -48,6 +56,9 @@ const Navbar: React.FC<NavbarProps> = ({ currentUser, setCurrentUser }) => {
 		<Box className={classes.root}>
 			<LinkButton to="/" text="Home" />
 			{RenderLogin}
+			<Button color="inherit" type="button" onClick={toggleTheme}>
+				{theme === 'light' ? <WbSunnyIcon /> : <NightStayIcon />}
+			</Button>
 			<Box className={classes.grow} />
 			<LinkComponent underline="none" component={Link} to="/search">
 				<Button type="button" color="inherit">

@@ -12,7 +12,6 @@ import App from './pages/App'
 import { errorLink, authLink, uploadLink } from './utils/links'
 import cache from './utils/cache'
 import './assets/fonts/roboto/stylesheet.css'
-import './index.css'
 
 const client: ApolloClient<NormalizedCacheObject> = new ApolloClient({
 	cache: cache,

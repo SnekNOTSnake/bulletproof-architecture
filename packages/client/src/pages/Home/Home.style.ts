@@ -19,4 +19,7 @@ export default makeStyles((theme) => ({
 	stars: {
 		marginRight: theme.spacing(1),
 	},
+	moreButton: {
+		marginRight: theme.spacing(1),
+	},
 }))

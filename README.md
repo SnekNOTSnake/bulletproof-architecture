@@ -84,6 +84,7 @@ NODE_ENV=production yarn workspace @bulletproof/server node dist/server.js
 
 Repositories on GitHub that helped me build this project:
 
+- [React State Management](https://github.com/sanderdebr/react-usereducer-context-tutorial)
 - [JWT Refresh Token](https://github.com/Console45/jwt-refresh-token-implementation)
 - [GraphQL Architecture](https://github.com/tonyfromundefined/boiler)
 - [REST Architecture](https://github.com/SnekNOTSnake/Natours)

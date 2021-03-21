@@ -99,6 +99,7 @@ const Home: React.FC = () => {
 					variant="contained"
 					disableElevation
 					type="button"
+					className={classes.moreButton}
 					onClick={() =>
 						fetchMore({
 							variables: { first: 2, after: data.books.pageInfo.endCursor },
