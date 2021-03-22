@@ -14,19 +14,20 @@ import {
 	Typography,
 } from '@material-ui/core'
 
+import { useUserState } from '../../context/user'
 import { useCreateBookMutation } from '../../generated/types'
 import useStyles from './CreateBook.style'
 
-type Props = { user: IUser | null }
 type InputChange = React.ChangeEvent<HTMLInputElement>
 type SubmitEvent = React.FormEvent<HTMLFormElement>
 
-const CreateBook: React.FC<Props> = ({ user }) => {
+const CreateBook: React.FC = () => {
 	const [title, setTitle] = React.useState<string>('')
 	const [summary, setSummary] = React.useState<string>('')
 	const [content, setContent] = React.useState<string>('')
 
 	const { enqueueSnackbar } = useSnackbar()
+	const { user } = useUserState()
 
 	const [createBook, { loading }] = useCreateBookMutation({
 		onError: (err) => {

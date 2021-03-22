@@ -8,11 +8,10 @@ import SearchIcon from '@material-ui/icons/Search'
 import NightStayIcon from '@material-ui/icons/NightsStay'
 import WbSunnyIcon from '@material-ui/icons/WbSunny'
 
+import { useUserState, logoutUser, useUserDispatch } from '../../context/user'
 import { useThemeDispatch, useThemeState } from '../../context/theme'
-import AuthService from '../../services/Auth'
 import useStyles from './Navbar.style'
 
-type NavbarProps = { currentUser: IUser | null; setCurrentUser: Function }
 type LinkButtonProps = { to: string; text: string }
 
 const LinkButton: React.FC<LinkButtonProps> = ({ to, text }) => (
@@ -21,25 +20,26 @@ const LinkButton: React.FC<LinkButtonProps> = ({ to, text }) => (
 	</LinkComponent>
 )
 
-const Navbar: React.FC<NavbarProps> = ({ currentUser, setCurrentUser }) => {
+const Navbar: React.FC = () => {
 	const history = useHistory()
 
 	const { theme } = useThemeState()
 	const dispatchTheme = useThemeDispatch()
+	const { user } = useUserState()
+	const dispatchUser = useUserDispatch()
 
 	const toggleTheme = () => dispatchTheme({ type: 'TOGGLE_THEME' })
 
 	const logout = async () => {
-		await AuthService.logout()
-		setCurrentUser(null)
+		await logoutUser(dispatchUser)
 		history.push('/')
 	}
 
 	const classes = useStyles()
 
-	const RenderLogin = currentUser ? (
+	const RenderLogin = user ? (
 		<React.Fragment>
-			<LinkButton to={`/user/${currentUser.id}`} text={currentUser.name} />
+			<LinkButton to={`/user/${user.id}`} text={user.name} />
 			<LinkButton to="/create-book" text="Create Book" />
 			<Button color="inherit" type="button" onClick={logout}>
 				Logout

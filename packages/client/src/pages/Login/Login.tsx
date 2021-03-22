@@ -15,6 +15,7 @@ import {
 	Typography,
 } from '@material-ui/core'
 
+import { useUserDispatch } from '../../context/user'
 import GoogleIcon from '../../assets/images/google.svg'
 import GitHubIcon from '../../assets/images/github.svg'
 import AuthService from '../../services/Auth'
@@ -23,20 +24,21 @@ import useStyles from './Login.style'
 type InputChange = React.ChangeEvent<HTMLInputElement>
 type FormSubmit = React.FormEvent<HTMLFormElement>
 
-type Props = RouteComponentProps & { setCurrentUser: Function }
+type Props = RouteComponentProps
 
-const Login: React.FC<Props> = ({ history, setCurrentUser }) => {
+const Login: React.FC<Props> = ({ history }) => {
 	const [email, setEmail] = React.useState<string>('')
 	const [pass, setPass] = React.useState<string>('')
 
 	const { enqueueSnackbar } = useSnackbar()
+	const userDispatch = useUserDispatch()
 
 	const onEmailChange = (e: InputChange) => setEmail(e.currentTarget.value)
 	const onPassChange = (e: InputChange) => setPass(e.currentTarget.value)
 
 	const onOAuthLogin = async (strategy: 'google' | 'github') => {
 		const user = await AuthService.oAuthLogin(strategy)
-		setCurrentUser(user)
+		userDispatch({ type: 'SET_USER', payload: user })
 		history.push('/')
 	}
 
@@ -44,7 +46,7 @@ const Login: React.FC<Props> = ({ history, setCurrentUser }) => {
 		try {
 			e.preventDefault()
 			const result = await AuthService.login({ email, password: pass })
-			setCurrentUser(result)
+			userDispatch({ type: 'SET_USER', payload: result })
 			history.push('/')
 		} catch (err) {
 			if (err.response) {

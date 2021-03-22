@@ -1,5 +1,5 @@
 import React from 'react'
-import { Switch, Route, Redirect } from 'react-router-dom'
+import { Switch, Route } from 'react-router-dom'
 import { SnackbarProvider } from 'notistack'
 
 import {
@@ -16,7 +16,12 @@ import {
 import { Close as CloseIcon } from '@material-ui/icons'
 
 import { ThemeProvider, useThemeState } from '../../context/theme'
-import AuthService from '../../services/Auth'
+import {
+	useUserState,
+	useUserDispatch,
+	refreshToken,
+	UserProvider,
+} from '../../context/user'
 import useStyles from './App.style'
 import Navbar from '../../components/Navbar'
 
@@ -28,19 +33,14 @@ const CreateBook = React.lazy(() => import('../CreateBook'))
 const Signup = React.lazy(() => import('../Signup'))
 const Search = React.lazy(() => import('../Search'))
 
-type LayoutProps = {
-	loading: boolean
-	setCurrentUser: Function
-	currentUser: IUser | null
-}
-
-const Layout: React.FC<LayoutProps> = ({
-	children,
-	loading,
-	setCurrentUser,
-	currentUser,
-}) => {
+const Layout: React.FC = ({ children }) => {
 	const { theme } = useThemeState()
+	const userDispatch = useUserDispatch()
+	const { loading } = useUserState()
+
+	React.useEffect(() => {
+		refreshToken(userDispatch)
+	}, [])
 
 	const notistackRef = React.createRef<SnackbarProvider>()
 	const onDismiss = (key: React.ReactText) => {
@@ -69,7 +69,7 @@ const Layout: React.FC<LayoutProps> = ({
 		<Typography variant="h6">Loading user</Typography>
 	) : (
 		<Box>
-			<Navbar setCurrentUser={setCurrentUser} currentUser={currentUser} />
+			<Navbar />
 			{children}
 		</Box>
 	)
@@ -100,66 +100,37 @@ const Layout: React.FC<LayoutProps> = ({
 }
 
 const App: React.FC = () => {
-	const [loading, setLoading] = React.useState<boolean>(true)
-	const [currentUser, setCurrentUser] = React.useState<IUser | null>(null)
-
-	React.useEffect(() => {
-		const refreshToken = async () => {
-			try {
-				const data = await AuthService.refreshToken()
-				setCurrentUser(data.user)
-			} catch {}
-			setLoading(false)
-		}
-		refreshToken()
-	}, [])
-
 	return (
 		<ThemeProvider>
-			<Layout
-				loading={loading}
-				setCurrentUser={setCurrentUser}
-				currentUser={currentUser}
-			>
-				<React.Suspense
-					fallback={<Typography variant="h6">Loading page</Typography>}
-				>
-					<Switch>
-						<Route exact path="/" render={() => <Home />} />
-						<Route
-							exact
-							path="/book/:id"
-							render={(args) => <Book {...args} />}
-						/>
-						<Route
-							exact
-							path="/login"
-							render={(args) => {
-								if (currentUser?.id) return <Redirect to="/" />
-								return <Login setCurrentUser={setCurrentUser} {...args} />
-							}}
-						/>
-						<Route
-							exact
-							path="/user/:id"
-							render={(params) => (
-								<Profile
-									{...params}
-									setCurrentUser={setCurrentUser}
-									user={currentUser}
-								/>
-							)}
-						/>
-						<Route
-							exact
-							path="/create-book"
-							render={() => <CreateBook user={currentUser} />}
-						/>
-						<Route exact path="/signup" render={() => <Signup />} />
-						<Route exact path="/search" render={() => <Search />} />
-					</Switch>
-				</React.Suspense>
-			</Layout>
+			<UserProvider>
+				<Layout>
+					<React.Suspense
+						fallback={<Typography variant="h6">Loading page</Typography>}
+					>
+						<Switch>
+							<Route exact path="/" render={() => <Home />} />
+							<Route
+								exact
+								path="/book/:id"
+								render={(args) => <Book {...args} />}
+							/>
+							<Route
+								exact
+								path="/login"
+								render={(args) => <Login {...args} />}
+							/>
+							<Route
+								exact
+								path="/user/:id"
+								render={(params) => <Profile {...params} />}
+							/>
+							<Route exact path="/create-book" render={() => <CreateBook />} />
+							<Route exact path="/signup" render={() => <Signup />} />
+							<Route exact path="/search" render={() => <Search />} />
+						</Switch>
+					</React.Suspense>
+				</Layout>
+			</UserProvider>
 		</ThemeProvider>
 	)
 }

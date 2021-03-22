@@ -25,6 +25,7 @@ import {
 	SvgIconComponent,
 } from '@material-ui/icons'
 
+import { useUserState } from '../../context/user'
 import { useUserQuery } from '../../generated/types'
 import useStyles from './Profile.style'
 import EditProfile from '../../components/EditProfile'
@@ -44,17 +45,15 @@ const MyList: React.FC<MyListProps> = ({ icon: Icon, text }) => {
 	)
 }
 
-type Props = RouteComponentProps<{ id: string }> & {
-	user?: IUser | null
-	setCurrentUser: React.Dispatch<React.SetStateAction<IUser | null>>
-}
+type Props = RouteComponentProps<{ id: string }>
 
-const Profile: React.FC<Props> = ({ setCurrentUser, user, match }) => {
+const Profile: React.FC<Props> = ({ match }) => {
 	const [isEditing, setIsEditing] = React.useState<boolean>(false)
 
 	const toggleEditting = () => setIsEditing((initVal) => !initVal)
 
 	const { enqueueSnackbar } = useSnackbar()
+	const { user } = useUserState()
 
 	const { data, loading } = useUserQuery({
 		variables: { id: match.params.id },
@@ -117,11 +116,7 @@ const Profile: React.FC<Props> = ({ setCurrentUser, user, match }) => {
 						)}
 					</Card>
 
-					{isEditing && user?.id === match.params.id ? (
-						<EditProfile setCurrentUser={setCurrentUser} user={user} />
-					) : (
-						''
-					)}
+					{isEditing && user?.id === match.params.id ? <EditProfile /> : ''}
 				</Grid>
 			</Grid>
 		</Box>

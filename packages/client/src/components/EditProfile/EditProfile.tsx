@@ -1,5 +1,6 @@
 import React from 'react'
 import { useSnackbar } from 'notistack'
+import { Redirect } from 'react-router-dom'
 
 import {
 	Box,
@@ -12,6 +13,7 @@ import {
 	Typography,
 } from '@material-ui/core'
 
+import { useUserState, useUserDispatch } from '../../context/user'
 import EditPassword from '../EditPassword'
 import { useUpdateMeMutation } from '../../generated/types'
 import useStyles from './EditProfile.style'
@@ -19,12 +21,13 @@ import useStyles from './EditProfile.style'
 type FormSubmit = React.FormEvent<HTMLFormElement>
 type FileChange = React.ChangeEvent<HTMLInputElement>
 type InputChange = React.ChangeEvent<HTMLInputElement>
-type Props = {
-	user: IUser
-	setCurrentUser: React.Dispatch<React.SetStateAction<IUser | null>>
-}
 
-const EditProfile: React.FC<Props> = ({ user, setCurrentUser }) => {
+const EditProfile: React.FC = () => {
+	const { user } = useUserState()
+	const userDispatch = useUserDispatch()
+
+	if (!user) return <Redirect to="/login" />
+
 	const [name, setName] = React.useState<string>(user.name)
 	const [bio, setBio] = React.useState<string | null | undefined>(user.bio)
 	const [file, setFile] = React.useState<File | null>(null)
@@ -47,16 +50,15 @@ const EditProfile: React.FC<Props> = ({ user, setCurrentUser }) => {
 
 	const [mutate, { loading, data }] = useUpdateMeMutation({
 		onCompleted: (result) => {
-			setCurrentUser((initVal) => {
-				if (!initVal) return null
-				return {
-					...initVal,
+			userDispatch({
+				type: 'SET_USER',
+				payload: {
+					...user,
+					avatar: result.updateMe.avatar,
 					name: result.updateMe.name,
 					bio: result.updateMe.bio,
-					avatar: result.updateMe.avatar,
-				}
+				},
 			})
-
 			enqueueSnackbar('Profile updated', { variant: 'success' })
 			setPreview('')
 			setFile(null)
@@ -117,7 +119,7 @@ const EditProfile: React.FC<Props> = ({ user, setCurrentUser }) => {
 	}
 
 	const classes = useStyles()
-	const avatar = `http://localhost:4200/img/${user.avatar}`
+	const avatar = `http://localhost:4200/img/${user?.avatar || 'default.jpg'}`
 
 	return (
 		<Box className={classes.root}>
@@ -185,7 +187,7 @@ const EditProfile: React.FC<Props> = ({ user, setCurrentUser }) => {
 						</form>
 					</Box>
 					<Box>
-						<EditPassword setCurrentUser={setCurrentUser} />
+						<EditPassword />
 					</Box>
 				</CardContent>
 			</Card>

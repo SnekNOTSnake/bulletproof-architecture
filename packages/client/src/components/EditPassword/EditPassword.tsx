@@ -4,19 +4,18 @@ import { useHistory } from 'react-router-dom'
 
 import { TextField, Button } from '@material-ui/core'
 
+import { useUserDispatch } from '../../context/user'
 import AuthService from '../../services/Auth'
 import useStyles from './EditPassword.style'
 
 type FormSubmit = React.FormEvent<HTMLFormElement>
 type InputChange = React.ChangeEvent<HTMLInputElement>
-type Props = {
-	setCurrentUser: React.Dispatch<React.SetStateAction<IUser | null>>
-}
 
-const EditPassword: React.FC<Props> = ({ setCurrentUser }) => {
+const EditPassword: React.FC = () => {
 	const [password, setPassword] = React.useState<string>('')
 	const [newPassword, setNewPassword] = React.useState<string>('')
 
+	const userDispatch = useUserDispatch()
 	const { enqueueSnackbar } = useSnackbar()
 	const history = useHistory()
 
@@ -29,7 +28,7 @@ const EditPassword: React.FC<Props> = ({ setCurrentUser }) => {
 		try {
 			e.preventDefault()
 			await AuthService.editPassword({ password, newPassword })
-			setCurrentUser(null)
+			userDispatch({ type: 'REMOVE_USER' })
 			history.push('/')
 		} catch (err) {
 			if (err.response) {
