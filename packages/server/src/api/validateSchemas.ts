@@ -90,6 +90,25 @@ export const getReviewSchema = Joi.object({
 	id: requiredMongoID,
 })
 
+// Follow
+export const followUserSchema = Joi.object({
+	following: requiredMongoID,
+})
+
+export const unfollowUserSchema = Joi.object({
+	following: requiredMongoID,
+})
+
+export const getFollowsSchema = Joi.object({
+	first: paginationLength.required(),
+	after: opaqueCursor,
+	where: Joi.object({
+		follower: mongoID,
+		following: mongoID,
+	}),
+	orderBy: Joi.string().valid('created_ASC', 'created_DESC'),
+})
+
 export const getReviewsSchema = Joi.object({
 	first: paginationLength.required(),
 	after: opaqueCursor,

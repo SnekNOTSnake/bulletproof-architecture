@@ -1,0 +1,17 @@
+type Follow {
+	id: String!
+	follower: User!
+	following: User!
+	created: DateTime!
+}
+
+type FollowConnection {
+	edges: [FollowEdge!]!
+	nodes: [Follow!]!
+	pageInfo: PageInfo!
+}
+
+type FollowEdge {
+	node: Follow!
+	cursor: String!
+}

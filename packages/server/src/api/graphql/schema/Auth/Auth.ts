@@ -1,5 +1,16 @@
-import { Resolvers } from '../../generated/types'
+import { UserResolvers } from '../../generated/types'
 
-export const Auth: Resolvers['User'] = {}
+export const isFollowing: UserResolvers['isFollowing'] = async (
+	parent,
+	args,
+	{ loaders: { batchFollows }, getterId },
+) => {
+	if (!getterId) return false
 
-export const AuthData: Resolvers['AuthData'] = {}
+	const result = await batchFollows.load({
+		follower: getterId,
+		following: parent.id,
+	})
+
+	return result
+}

@@ -11,4 +11,7 @@ type User {
 	joined: DateTime!
 	avatar: String!
 	bio: String
+	followers: Int!
+	followings: Int!
+	isFollowing: Boolean!
 }

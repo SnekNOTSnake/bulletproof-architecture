@@ -35,6 +35,7 @@ generates:
         User: ../../../models/User#IUser
         Book: ../../../models/Book#IBook
         Review: ../../../models/Review#IReview
+        Follow: ../../../models/Follow#IFollow
       contextType: ../../../utils/context#MyContext
   ./packages/client/src/generated/types.ts:
     plugins:

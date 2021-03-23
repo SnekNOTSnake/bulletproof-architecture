@@ -9,6 +9,8 @@ export interface IUser extends Document {
 	password?: string
 	bio?: string
 	avatar: string
+	followers: number
+	followings: number
 }
 
 const userSchema = new Schema<IUser>({
@@ -38,6 +40,16 @@ const userSchema = new Schema<IUser>({
 	bio: {
 		type: String,
 		maxlength: 256,
+	},
+	followers: {
+		type: Number,
+		required: true,
+		default: 0,
+	},
+	followings: {
+		type: Number,
+		required: true,
+		default: 0,
 	},
 	joined: {
 		type: Date,

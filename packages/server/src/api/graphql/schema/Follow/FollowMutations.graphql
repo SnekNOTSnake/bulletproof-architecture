@@ -1,0 +1,4 @@
+extend type Mutation {
+	followUser(following: ID!): Follow @isAuthenticated
+	unfollowUser(following: ID!): Follow @isAuthenticated
+}

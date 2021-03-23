@@ -33,6 +33,9 @@ export type User = {
   joined: Scalars['DateTime'];
   avatar: Scalars['String'];
   bio?: Maybe<Scalars['String']>;
+  followers: Scalars['Int'];
+  followings: Scalars['Int'];
+  isFollowing: Scalars['Boolean'];
 };
 
 export type Mutation = {
@@ -41,8 +44,10 @@ export type Mutation = {
   createReview?: Maybe<Review>;
   deleteBook?: Maybe<Scalars['ID']>;
   deleteReview?: Maybe<Review>;
+  followUser?: Maybe<Follow>;
   signin?: Maybe<AuthData>;
   signup?: Maybe<User>;
+  unfollowUser?: Maybe<Follow>;
   updateBook?: Maybe<Book>;
   updateMe: User;
   updateReview?: Maybe<Review>;
@@ -73,6 +78,11 @@ export type MutationDeleteReviewArgs = {
 };
 
 
+export type MutationFollowUserArgs = {
+  following: Scalars['ID'];
+};
+
+
 export type MutationSigninArgs = {
   email: Scalars['String'];
   password: Scalars['String'];
@@ -83,6 +93,11 @@ export type MutationSignupArgs = {
   name: Scalars['String'];
   email: Scalars['String'];
   password: Scalars['String'];
+};
+
+
+export type MutationUnfollowUserArgs = {
+  following: Scalars['ID'];
 };
 
 
@@ -111,6 +126,7 @@ export type Query = {
   __typename?: 'Query';
   book?: Maybe<Book>;
   books: BookConnection;
+  getFollows: FollowConnection;
   me?: Maybe<User>;
   review?: Maybe<Review>;
   reviews: ReviewConnection;
@@ -129,6 +145,14 @@ export type QueryBooksArgs = {
   last?: Maybe<Scalars['Int']>;
   before?: Maybe<Scalars['String']>;
   search?: Maybe<Scalars['String']>;
+};
+
+
+export type QueryGetFollowsArgs = {
+  first: Scalars['Int'];
+  after?: Maybe<Scalars['String']>;
+  where?: Maybe<FollowsWhereInput>;
+  orderBy?: Maybe<FollowOrder>;
 };
 
 
@@ -177,6 +201,36 @@ export type BookEdge = {
 
 export type BooksWhereInput = {
   _id?: Maybe<Scalars['String']>;
+};
+
+export type Follow = {
+  __typename?: 'Follow';
+  id: Scalars['String'];
+  follower: User;
+  following: User;
+  created: Scalars['DateTime'];
+};
+
+export type FollowConnection = {
+  __typename?: 'FollowConnection';
+  edges: Array<FollowEdge>;
+  nodes: Array<Follow>;
+  pageInfo: PageInfo;
+};
+
+export type FollowEdge = {
+  __typename?: 'FollowEdge';
+  node: Follow;
+  cursor: Scalars['String'];
+};
+
+export type FollowOrder =
+  | 'created_ASC'
+  | 'created_DESC';
+
+export type FollowsWhereInput = {
+  follower?: Maybe<Scalars['ID']>;
+  following?: Maybe<Scalars['ID']>;
 };
 
 export type Review = {

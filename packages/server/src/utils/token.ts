@@ -14,6 +14,15 @@ import {
 
 type ITokenPayload = { userId: string }
 
+/**
+ * Decode, REGARDLESS of expiration and authenticity
+ */
+export const dangerouslyDecodeToken = (token: string) => {
+	const decoded: any = jwt.decode(token)
+	if (decoded) return decoded
+	return null
+}
+
 export const decodeToken = (token: string) =>
 	new Promise<ITokenPayload>((resolve, reject) => {
 		jwt.verify(token, JWT_SECRET, (err, decoded: any) => {

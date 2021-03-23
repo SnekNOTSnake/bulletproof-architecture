@@ -2,6 +2,7 @@ import { GraphQLResolveInfo, GraphQLScalarType, GraphQLScalarTypeConfig } from '
 import { IUser } from '../../../models/User';
 import { IBook } from '../../../models/Book';
 import { IReview } from '../../../models/Review';
+import { IFollow } from '../../../models/Follow';
 import { MyContext } from '../../../utils/context';
 export type Maybe<T> = T | null;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -38,6 +39,9 @@ export type User = {
   joined: Scalars['DateTime'];
   avatar: Scalars['String'];
   bio?: Maybe<Scalars['String']>;
+  followers: Scalars['Int'];
+  followings: Scalars['Int'];
+  isFollowing: Scalars['Boolean'];
 };
 
 export type Mutation = {
@@ -46,8 +50,10 @@ export type Mutation = {
   createReview?: Maybe<Review>;
   deleteBook?: Maybe<Scalars['ID']>;
   deleteReview?: Maybe<Review>;
+  followUser?: Maybe<Follow>;
   signin?: Maybe<AuthData>;
   signup?: Maybe<User>;
+  unfollowUser?: Maybe<Follow>;
   updateBook?: Maybe<Book>;
   updateMe: User;
   updateReview?: Maybe<Review>;
@@ -78,6 +84,11 @@ export type MutationDeleteReviewArgs = {
 };
 
 
+export type MutationFollowUserArgs = {
+  following: Scalars['ID'];
+};
+
+
 export type MutationSigninArgs = {
   email: Scalars['String'];
   password: Scalars['String'];
@@ -88,6 +99,11 @@ export type MutationSignupArgs = {
   name: Scalars['String'];
   email: Scalars['String'];
   password: Scalars['String'];
+};
+
+
+export type MutationUnfollowUserArgs = {
+  following: Scalars['ID'];
 };
 
 
@@ -116,6 +132,7 @@ export type Query = {
   __typename?: 'Query';
   book?: Maybe<Book>;
   books: BookConnection;
+  getFollows: FollowConnection;
   me?: Maybe<User>;
   review?: Maybe<Review>;
   reviews: ReviewConnection;
@@ -134,6 +151,14 @@ export type QueryBooksArgs = {
   last?: Maybe<Scalars['Int']>;
   before?: Maybe<Scalars['String']>;
   search?: Maybe<Scalars['String']>;
+};
+
+
+export type QueryGetFollowsArgs = {
+  first: Scalars['Int'];
+  after?: Maybe<Scalars['String']>;
+  where?: Maybe<FollowsWhereInput>;
+  orderBy?: Maybe<FollowOrder>;
 };
 
 
@@ -182,6 +207,36 @@ export type BookEdge = {
 
 export type BooksWhereInput = {
   _id?: Maybe<Scalars['String']>;
+};
+
+export type Follow = {
+  __typename?: 'Follow';
+  id: Scalars['String'];
+  follower: User;
+  following: User;
+  created: Scalars['DateTime'];
+};
+
+export type FollowConnection = {
+  __typename?: 'FollowConnection';
+  edges: Array<FollowEdge>;
+  nodes: Array<Follow>;
+  pageInfo: PageInfo;
+};
+
+export type FollowEdge = {
+  __typename?: 'FollowEdge';
+  node: Follow;
+  cursor: Scalars['String'];
+};
+
+export type FollowOrder =
+  | 'created_ASC'
+  | 'created_DESC';
+
+export type FollowsWhereInput = {
+  follower?: Maybe<Scalars['ID']>;
+  following?: Maybe<Scalars['ID']>;
 };
 
 export type Review = {
@@ -320,14 +375,20 @@ export type ResolversTypes = {
   String: ResolverTypeWrapper<Scalars['String']>;
   User: ResolverTypeWrapper<IUser>;
   ID: ResolverTypeWrapper<Scalars['ID']>;
-  Mutation: ResolverTypeWrapper<{}>;
   Int: ResolverTypeWrapper<Scalars['Int']>;
+  Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
+  Mutation: ResolverTypeWrapper<{}>;
   Query: ResolverTypeWrapper<{}>;
   Book: ResolverTypeWrapper<IBook>;
   Float: ResolverTypeWrapper<Scalars['Float']>;
   BookConnection: ResolverTypeWrapper<Omit<BookConnection, 'edges' | 'nodes'> & { edges: Array<ResolversTypes['BookEdge']>, nodes: Array<ResolversTypes['Book']> }>;
   BookEdge: ResolverTypeWrapper<Omit<BookEdge, 'node'> & { node: ResolversTypes['Book'] }>;
   BooksWhereInput: BooksWhereInput;
+  Follow: ResolverTypeWrapper<IFollow>;
+  FollowConnection: ResolverTypeWrapper<Omit<FollowConnection, 'edges' | 'nodes'> & { edges: Array<ResolversTypes['FollowEdge']>, nodes: Array<ResolversTypes['Follow']> }>;
+  FollowEdge: ResolverTypeWrapper<Omit<FollowEdge, 'node'> & { node: ResolversTypes['Follow'] }>;
+  FollowOrder: FollowOrder;
+  FollowsWhereInput: FollowsWhereInput;
   Review: ResolverTypeWrapper<IReview>;
   ReviewConnection: ResolverTypeWrapper<Omit<ReviewConnection, 'edges' | 'nodes'> & { edges: Array<ResolversTypes['ReviewEdge']>, nodes: Array<ResolversTypes['Review']> }>;
   ReviewEdge: ResolverTypeWrapper<Omit<ReviewEdge, 'node'> & { node: ResolversTypes['Review'] }>;
@@ -338,7 +399,6 @@ export type ResolversTypes = {
   Time: ResolverTypeWrapper<Scalars['Time']>;
   Upload: ResolverTypeWrapper<Scalars['Upload']>;
   PageInfo: ResolverTypeWrapper<PageInfo>;
-  Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
   File: ResolverTypeWrapper<File>;
 };
 
@@ -348,14 +408,19 @@ export type ResolversParentTypes = {
   String: Scalars['String'];
   User: IUser;
   ID: Scalars['ID'];
-  Mutation: {};
   Int: Scalars['Int'];
+  Boolean: Scalars['Boolean'];
+  Mutation: {};
   Query: {};
   Book: IBook;
   Float: Scalars['Float'];
   BookConnection: Omit<BookConnection, 'edges' | 'nodes'> & { edges: Array<ResolversParentTypes['BookEdge']>, nodes: Array<ResolversParentTypes['Book']> };
   BookEdge: Omit<BookEdge, 'node'> & { node: ResolversParentTypes['Book'] };
   BooksWhereInput: BooksWhereInput;
+  Follow: IFollow;
+  FollowConnection: Omit<FollowConnection, 'edges' | 'nodes'> & { edges: Array<ResolversParentTypes['FollowEdge']>, nodes: Array<ResolversParentTypes['Follow']> };
+  FollowEdge: Omit<FollowEdge, 'node'> & { node: ResolversParentTypes['Follow'] };
+  FollowsWhereInput: FollowsWhereInput;
   Review: IReview;
   ReviewConnection: Omit<ReviewConnection, 'edges' | 'nodes'> & { edges: Array<ResolversParentTypes['ReviewEdge']>, nodes: Array<ResolversParentTypes['Review']> };
   ReviewEdge: Omit<ReviewEdge, 'node'> & { node: ResolversParentTypes['Review'] };
@@ -365,7 +430,6 @@ export type ResolversParentTypes = {
   Time: Scalars['Time'];
   Upload: Scalars['Upload'];
   PageInfo: PageInfo;
-  Boolean: Scalars['Boolean'];
   File: File;
 };
 
@@ -387,6 +451,9 @@ export type UserResolvers<ContextType = MyContext, ParentType extends ResolversP
   joined?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   avatar?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   bio?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  followers?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  followings?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  isFollowing?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -395,8 +462,10 @@ export type MutationResolvers<ContextType = MyContext, ParentType extends Resolv
   createReview?: Resolver<Maybe<ResolversTypes['Review']>, ParentType, ContextType, RequireFields<MutationCreateReviewArgs, 'book' | 'content' | 'rating'>>;
   deleteBook?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType, RequireFields<MutationDeleteBookArgs, 'id'>>;
   deleteReview?: Resolver<Maybe<ResolversTypes['Review']>, ParentType, ContextType, RequireFields<MutationDeleteReviewArgs, 'id'>>;
+  followUser?: Resolver<Maybe<ResolversTypes['Follow']>, ParentType, ContextType, RequireFields<MutationFollowUserArgs, 'following'>>;
   signin?: Resolver<Maybe<ResolversTypes['AuthData']>, ParentType, ContextType, RequireFields<MutationSigninArgs, 'email' | 'password'>>;
   signup?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<MutationSignupArgs, 'name' | 'email' | 'password'>>;
+  unfollowUser?: Resolver<Maybe<ResolversTypes['Follow']>, ParentType, ContextType, RequireFields<MutationUnfollowUserArgs, 'following'>>;
   updateBook?: Resolver<Maybe<ResolversTypes['Book']>, ParentType, ContextType, RequireFields<MutationUpdateBookArgs, 'id' | 'title' | 'summary' | 'content'>>;
   updateMe?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationUpdateMeArgs, 'name'>>;
   updateReview?: Resolver<Maybe<ResolversTypes['Review']>, ParentType, ContextType, RequireFields<MutationUpdateReviewArgs, 'id' | 'content' | 'rating'>>;
@@ -405,6 +474,7 @@ export type MutationResolvers<ContextType = MyContext, ParentType extends Resolv
 export type QueryResolvers<ContextType = MyContext, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
   book?: Resolver<Maybe<ResolversTypes['Book']>, ParentType, ContextType, RequireFields<QueryBookArgs, 'id'>>;
   books?: Resolver<ResolversTypes['BookConnection'], ParentType, ContextType, RequireFields<QueryBooksArgs, never>>;
+  getFollows?: Resolver<ResolversTypes['FollowConnection'], ParentType, ContextType, RequireFields<QueryGetFollowsArgs, 'first' | 'orderBy'>>;
   me?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
   review?: Resolver<Maybe<ResolversTypes['Review']>, ParentType, ContextType, RequireFields<QueryReviewArgs, 'id'>>;
   reviews?: Resolver<ResolversTypes['ReviewConnection'], ParentType, ContextType, RequireFields<QueryReviewsArgs, 'first' | 'orderBy'>>;
@@ -433,6 +503,27 @@ export type BookConnectionResolvers<ContextType = MyContext, ParentType extends 
 
 export type BookEdgeResolvers<ContextType = MyContext, ParentType extends ResolversParentTypes['BookEdge'] = ResolversParentTypes['BookEdge']> = {
   node?: Resolver<ResolversTypes['Book'], ParentType, ContextType>;
+  cursor?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type FollowResolvers<ContextType = MyContext, ParentType extends ResolversParentTypes['Follow'] = ResolversParentTypes['Follow']> = {
+  id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  follower?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
+  following?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
+  created?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type FollowConnectionResolvers<ContextType = MyContext, ParentType extends ResolversParentTypes['FollowConnection'] = ResolversParentTypes['FollowConnection']> = {
+  edges?: Resolver<Array<ResolversTypes['FollowEdge']>, ParentType, ContextType>;
+  nodes?: Resolver<Array<ResolversTypes['Follow']>, ParentType, ContextType>;
+  pageInfo?: Resolver<ResolversTypes['PageInfo'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type FollowEdgeResolvers<ContextType = MyContext, ParentType extends ResolversParentTypes['FollowEdge'] = ResolversParentTypes['FollowEdge']> = {
+  node?: Resolver<ResolversTypes['Follow'], ParentType, ContextType>;
   cursor?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
@@ -500,6 +591,9 @@ export type Resolvers<ContextType = MyContext> = {
   Book?: BookResolvers<ContextType>;
   BookConnection?: BookConnectionResolvers<ContextType>;
   BookEdge?: BookEdgeResolvers<ContextType>;
+  Follow?: FollowResolvers<ContextType>;
+  FollowConnection?: FollowConnectionResolvers<ContextType>;
+  FollowEdge?: FollowEdgeResolvers<ContextType>;
   Review?: ReviewResolvers<ContextType>;
   ReviewConnection?: ReviewConnectionResolvers<ContextType>;
   ReviewEdge?: ReviewEdgeResolvers<ContextType>;
