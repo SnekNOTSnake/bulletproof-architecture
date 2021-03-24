@@ -21,7 +21,7 @@ const getUser = async (req: Request) => {
 export interface MyContext {
 	user: IUser
 	loaders: ILoaders
-	getterId: String // Special ID ONLY for determining the `following` state
+	getterId: string // Special ID ONLY for determining the `following` state
 }
 
 // Special User ID
