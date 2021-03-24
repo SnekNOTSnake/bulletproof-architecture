@@ -35,11 +35,12 @@ type Mutation {
 }
 type Query {
   book(id: ID!): Book
-  books(first: Int, after: String, last: Int, before: String, search: String): BookConnection!
+  books(first: Int!, after: String, where: BooksWhereInput, orderBy: BooksOrder = created_DESC, byFollowings: Boolean = false): BookConnection!
   getFollows(first: Int!, after: String, where: FollowsWhereInput, orderBy: FollowOrder = created_DESC): FollowConnection!
   me: User @isAuthenticated
   review(id: ID!): Review
   reviews(first: Int!, after: String, where: ReviewsWhereInput, orderBy: ReviewOrder = created_DESC): ReviewConnection!
+  searchBooks(first: Int!, after: String, query: String!): BookConnection!
   user(id: ID!): User
 }
 type Book {
@@ -62,8 +63,14 @@ type BookEdge {
   node: Book!
   cursor: String!
 }
+enum BooksOrder {
+  created_ASC
+  created_DESC
+  ratingsQuantity_ASC
+  ratingsQuantity_DESC
+}
 input BooksWhereInput {
-  _id: String
+  author: ID
 }
 type Follow {
   id: String!

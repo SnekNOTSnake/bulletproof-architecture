@@ -130,6 +130,7 @@ export type Query = {
   me?: Maybe<User>;
   review?: Maybe<Review>;
   reviews: ReviewConnection;
+  searchBooks: BookConnection;
   user?: Maybe<User>;
 };
 
@@ -140,11 +141,11 @@ export type QueryBookArgs = {
 
 
 export type QueryBooksArgs = {
-  first?: Maybe<Scalars['Int']>;
+  first: Scalars['Int'];
   after?: Maybe<Scalars['String']>;
-  last?: Maybe<Scalars['Int']>;
-  before?: Maybe<Scalars['String']>;
-  search?: Maybe<Scalars['String']>;
+  where?: Maybe<BooksWhereInput>;
+  orderBy?: Maybe<BooksOrder>;
+  byFollowings?: Maybe<Scalars['Boolean']>;
 };
 
 
@@ -166,6 +167,13 @@ export type QueryReviewsArgs = {
   after?: Maybe<Scalars['String']>;
   where?: Maybe<ReviewsWhereInput>;
   orderBy?: Maybe<ReviewOrder>;
+};
+
+
+export type QuerySearchBooksArgs = {
+  first: Scalars['Int'];
+  after?: Maybe<Scalars['String']>;
+  query: Scalars['String'];
 };
 
 
@@ -199,8 +207,14 @@ export type BookEdge = {
   cursor: Scalars['String'];
 };
 
+export type BooksOrder =
+  | 'created_ASC'
+  | 'created_DESC'
+  | 'ratingsQuantity_ASC'
+  | 'ratingsQuantity_DESC';
+
 export type BooksWhereInput = {
-  _id?: Maybe<Scalars['String']>;
+  author?: Maybe<Scalars['ID']>;
 };
 
 export type Follow = {
@@ -449,11 +463,11 @@ export type CreateBookMutation = (
 );
 
 export type BooksQueryVariables = Exact<{
-  first?: Maybe<Scalars['Int']>;
+  first: Scalars['Int'];
   after?: Maybe<Scalars['String']>;
-  last?: Maybe<Scalars['Int']>;
-  before?: Maybe<Scalars['String']>;
-  search?: Maybe<Scalars['String']>;
+  where?: Maybe<BooksWhereInput>;
+  orderBy?: Maybe<BooksOrder>;
+  byFollowings?: Maybe<Scalars['Boolean']>;
 }>;
 
 
@@ -490,14 +504,14 @@ export type UserQuery = (
 
 export type SearchQueryVariables = Exact<{
   first: Scalars['Int'];
-  search: Scalars['String'];
+  query: Scalars['String'];
   after?: Maybe<Scalars['String']>;
 }>;
 
 
 export type SearchQuery = (
   { __typename?: 'Query' }
-  & { books: (
+  & { searchBooks: (
     { __typename?: 'BookConnection' }
     & { nodes: Array<(
       { __typename?: 'Book' }
@@ -884,13 +898,13 @@ export type CreateBookMutationHookResult = ReturnType<typeof useCreateBookMutati
 export type CreateBookMutationResult = Apollo.MutationResult<CreateBookMutation>;
 export type CreateBookMutationOptions = Apollo.BaseMutationOptions<CreateBookMutation, CreateBookMutationVariables>;
 export const BooksDocument = gql`
-    query Books($first: Int, $after: String, $last: Int, $before: String, $search: String) {
+    query Books($first: Int!, $after: String, $where: BooksWhereInput, $orderBy: BooksOrder, $byFollowings: Boolean) {
   books(
     first: $first
     after: $after
-    last: $last
-    before: $before
-    search: $search
+    where: $where
+    orderBy: $orderBy
+    byFollowings: $byFollowings
   ) {
     nodes {
       id
@@ -928,13 +942,13 @@ export const BooksDocument = gql`
  *   variables: {
  *      first: // value for 'first'
  *      after: // value for 'after'
- *      last: // value for 'last'
- *      before: // value for 'before'
- *      search: // value for 'search'
+ *      where: // value for 'where'
+ *      orderBy: // value for 'orderBy'
+ *      byFollowings: // value for 'byFollowings'
  *   },
  * });
  */
-export function useBooksQuery(baseOptions?: Apollo.QueryHookOptions<BooksQuery, BooksQueryVariables>) {
+export function useBooksQuery(baseOptions: Apollo.QueryHookOptions<BooksQuery, BooksQueryVariables>) {
         return Apollo.useQuery<BooksQuery, BooksQueryVariables>(BooksDocument, baseOptions);
       }
 export function useBooksLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<BooksQuery, BooksQueryVariables>) {
@@ -982,8 +996,8 @@ export type UserQueryHookResult = ReturnType<typeof useUserQuery>;
 export type UserLazyQueryHookResult = ReturnType<typeof useUserLazyQuery>;
 export type UserQueryResult = Apollo.QueryResult<UserQuery, UserQueryVariables>;
 export const SearchDocument = gql`
-    query Search($first: Int!, $search: String!, $after: String) {
-  books(first: $first, search: $search, after: $after) {
+    query Search($first: Int!, $query: String!, $after: String) {
+  searchBooks(first: $first, query: $query, after: $after) {
     nodes {
       id
       title
@@ -1015,7 +1029,7 @@ export const SearchDocument = gql`
  * const { data, loading, error } = useSearchQuery({
  *   variables: {
  *      first: // value for 'first'
- *      search: // value for 'search'
+ *      query: // value for 'query'
  *      after: // value for 'after'
  *   },
  * });

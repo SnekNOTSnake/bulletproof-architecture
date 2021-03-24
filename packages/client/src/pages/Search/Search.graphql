@@ -1,5 +1,5 @@
-query Search($first: Int!, $search: String!, $after: String) {
-	books(first: $first, search: $search, after: $after) {
+query Search($first: Int!, $query: String!, $after: String) {
+	searchBooks(first: $first, query: $query, after: $after) {
 		nodes {
 			id
 			title

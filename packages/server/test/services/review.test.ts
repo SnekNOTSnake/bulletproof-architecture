@@ -1,5 +1,6 @@
 import expect from 'expect'
 import { Types } from 'mongoose'
+import { ObjectId } from 'mongodb'
 
 import BookModel, { IBook } from '../../src/models/Book'
 import BookService from '../../src/services/Book'
@@ -223,11 +224,11 @@ describe('ReviewService', () => {
 		it('Should be able to give certain search criteria', async () => {
 			const result = await Review.getReviews({
 				first: 2,
-				where: { book: firstBookID },
+				where: { book: new ObjectId(firstBookID) },
 			})
 			const result2 = await Review.getReviews({
 				first: 5,
-				where: { author: userID },
+				where: { author: new ObjectId(userID) },
 			})
 
 			expect(result).toHaveLength(2)

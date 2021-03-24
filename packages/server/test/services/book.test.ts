@@ -160,18 +160,20 @@ describe('Book Service', async () => {
 			expect(reqBooks2).toBeTruthy()
 			expect(reqBooks2).toHaveLength(5)
 		})
+	})
 
+	describe('searchBooks', () => {
 		it('Should be able to search for a certain books', async () => {
 			const title1 = 'Test'
 			const title2 = '"Unique book to search for"'
 
-			const result1 = await bookServiceInstance.getBooks({
+			const result1 = await bookServiceInstance.searchBooks({
 				first: 5,
-				search: title1,
+				query: title1,
 			})
-			const result2 = await bookServiceInstance.getBooks({
+			const result2 = await bookServiceInstance.searchBooks({
 				first: 5,
-				search: title2,
+				query: title2,
 			})
 
 			expect(result1).toHaveLength(2)
@@ -184,13 +186,13 @@ describe('Book Service', async () => {
 			const roughSummary = 'This is different summary'
 			const roughContent = 'gibberish engine'
 
-			const result1 = await bookServiceInstance.getBooks({
+			const result1 = await bookServiceInstance.searchBooks({
 				first: 5,
-				search: roughSummary,
+				query: roughSummary,
 			})
-			const result2 = await bookServiceInstance.getBooks({
+			const result2 = await bookServiceInstance.searchBooks({
 				first: 5,
-				search: roughContent,
+				query: roughContent,
 			})
 
 			expect(result1).toHaveLength(1)
@@ -200,9 +202,9 @@ describe('Book Service', async () => {
 		})
 
 		it('Should prioritize title more than summary', async () => {
-			const result = await bookServiceInstance.getBooks({
+			const result = await bookServiceInstance.searchBooks({
 				first: 5,
-				search: 'search',
+				query: 'search',
 			})
 
 			expect(result).toHaveLength(2)
@@ -210,9 +212,9 @@ describe('Book Service', async () => {
 		})
 
 		it('Should return empty array when no book matches', async () => {
-			const result = await bookServiceInstance.getBooks({
+			const result = await bookServiceInstance.searchBooks({
 				first: 5,
-				search: 'i8923hr823m7',
+				query: 'i8923hr823m7',
 			})
 
 			expect(result).toHaveLength(0)
@@ -221,24 +223,24 @@ describe('Book Service', async () => {
 		it('Should be able to paginate search results', async () => {
 			const query = 'test'
 
-			const result1 = await bookServiceInstance.getBooks({
+			const result1 = await bookServiceInstance.searchBooks({
 				first: 1,
-				search: query,
+				query: query,
 			})
 
 			expect(result1[0].id).toBeTruthy()
 
-			const result2 = await bookServiceInstance.getBooks({
+			const result2 = await bookServiceInstance.searchBooks({
 				first: 1,
-				search: query,
+				query: query,
 				after: result1[0].created,
 			})
 
 			expect(result2[0].id).toBeTruthy()
 
-			const result3 = await bookServiceInstance.getBooks({
+			const result3 = await bookServiceInstance.searchBooks({
 				first: 1,
-				search: query,
+				query: query,
 				after: result2[0].created,
 			})
 

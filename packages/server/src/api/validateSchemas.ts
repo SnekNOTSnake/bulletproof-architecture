@@ -55,16 +55,26 @@ export const deleteBookSchema = Joi.object({
 	id: requiredMongoID,
 })
 
-export const getBooksSchema = Joi.object()
-	.keys({
-		first: paginationLength,
-		after: opaqueCursor,
-		last: paginationLength,
-		before: opaqueCursor,
-		search: Joi.string().max(50),
-	})
-	.xor('first', 'last')
-	.oxor('after', 'before')
+export const getBooksSchema = Joi.object({
+	first: paginationLength.required(),
+	after: opaqueCursor,
+	where: Joi.object({
+		author: mongoID,
+	}),
+	orderBy: Joi.string().valid(
+		'created_ASC',
+		'created_DESC',
+		'ratingsQuantity_ASC',
+		'ratingsQuantity_DESC',
+	),
+	byFollowings: Joi.boolean(),
+})
+
+export const searchBooksSchema = Joi.object().keys({
+	first: paginationLength,
+	after: opaqueCursor,
+	query: Joi.string().max(50),
+})
 
 // Review
 const reviewContent = Joi.string().min(16).max(512).required()

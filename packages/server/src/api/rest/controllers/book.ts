@@ -59,14 +59,12 @@ export const deleteBook = catchAsync(async (req, res, next) => {
 })
 
 export const getBooks = catchAsync(async (req, res, next) => {
-	const { first, after, last, before } = req.query as any
+	const { first, after } = req.query as any
 
 	const bookServiceInstance = Container.get(BookService)
 	const books = await bookServiceInstance.getBooks({
 		first: Number(first),
 		after: after && decodeCursor(after),
-		last: Number(last),
-		before: before && decodeCursor(before),
 	})
 
 	envelope(res, {

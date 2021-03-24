@@ -1,8 +1,9 @@
-import { Model, ObjectId } from 'mongoose'
+import { Model } from 'mongoose'
+import { ObjectId } from 'mongodb'
 import { Service, Inject } from 'typedi'
 import xss from 'xss'
 
-import { trim } from '../utils/helpers'
+import { trim, getFilterings, compactMap } from '../utils/helpers'
 import AppError from '../utils/AppError'
 import { IBook } from '../models/Book'
 import { IReview } from '../models/Review'
@@ -88,74 +89,94 @@ class BookService {
 		return book
 	}
 
+	async searchBooks({
+		first,
+		after,
+		query,
+	}: {
+		first: number
+		after?: string | null
+		query: string
+	}) {
+		let score = null
+		if (after) {
+			const date = new Date(after)
+			const result: any = await this.BooksModel.findOne(
+				{
+					created: date,
+					$text: { $search: query },
+				},
+				{ score: { $meta: 'textScore' } },
+			)
+			score = result._doc.score
+		}
+
+		const filter = { score: { $lt: score } }
+		const limit = first
+
+		const books = await this.BooksModel.aggregate([
+			{ $match: { $text: { $search: query } } },
+			{ $addFields: { score: { $meta: 'textScore' }, id: '$_id' } },
+			...(score ? [{ $match: filter }] : []),
+			{ $sort: { score: { $meta: 'textScore' } } },
+			{ $limit: limit },
+		])
+
+		return books
+	}
+
 	async getBooks({
 		first,
 		after,
-		last,
-		before,
-		search,
+		orderBy = 'created',
+		orderType = 'DESC',
+		where,
+		byFollowings = null,
 	}: {
-		first?: number | null
-		after?: string | null
-		last?: number | null
-		before?: string | null
-		search?: string | null
+		first: number
+		after?: string | Date | null
+		orderBy?: 'created' | 'ratingsQuantity'
+		orderType?: 'ASC' | 'DESC'
+		where?: {
+			author?: any
+		} | null
+		byFollowings?: string | null
 	}) {
-		if (first && last)
-			throw new AppError(
-				'`first` and `last` cannot be used at the same time',
-				400,
-			)
-		if (!first && !last)
-			throw new AppError('Either `first` or `last` is required', 400)
-		if (after && before)
-			throw new AppError(
-				'`after` and `before` cannot be used at the same time',
-				400,
-			)
-		if (search && last)
-			throw new AppError('`search` and `last` is not allowed', 400)
+		const { filter, limit, sort } = await getFilterings(this.BooksModel, {
+			first,
+			after,
+			orderBy,
+			orderType,
+		})
 
-		if (search) {
-			let score = null
-			if (after) {
-				const date = new Date(after)
-				const result: any = await this.BooksModel.findOne(
-					{
-						created: date,
-						$text: { $search: search },
-					},
-					{ score: { $meta: 'textScore' } },
-				)
-				score = result._doc.score
-			}
+		const pipeline: any[] = [
+			...(filter ? [{ $match: filter }] : []),
+			{ $sort: sort },
+			{ $limit: limit },
+			{ $addFields: { id: '$_id' } },
+		]
 
-			const filter = { score: { $lt: score } }
-			const limit = first ? first : last!
-
-			const books = await this.BooksModel.aggregate([
-				{ $match: { $text: { $search: search } } },
-				{ $addFields: { score: { $meta: 'textScore' }, id: '$_id' } },
-				...(score ? [{ $match: filter }] : []),
-				{ $sort: { score: { $meta: 'textScore' } } },
-				{ $limit: limit },
-			])
-
-			return books
-		} else {
-			const sort = { created: first ? -1 : 1 }
-			const limit = first ? first : last!
-
-			const books = await this.BooksModel.find({
-				...(after ? { created: { $lt: new Date(after) } } : null),
-				...(before ? { created: { $gt: new Date(before) } } : null),
-			})
-				.sort(sort)
-				.limit(limit)
-				.exec()
-
-			return books
+		if (where?.author) {
+			pipeline.unshift({ $match: { author: new ObjectId(where.author) } })
 		}
+		if (byFollowings) {
+			pipeline.unshift(
+				{
+					$lookup: {
+						from: 'follows',
+						localField: 'author',
+						foreignField: 'following',
+						as: 'relation',
+					},
+				},
+				{
+					$match: { 'relation.follower': new ObjectId(byFollowings) },
+				},
+			)
+		}
+
+		const books = await this.BooksModel.aggregate(pipeline)
+		return books
 	}
 }
 

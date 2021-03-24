@@ -136,6 +136,7 @@ export type Query = {
   me?: Maybe<User>;
   review?: Maybe<Review>;
   reviews: ReviewConnection;
+  searchBooks: BookConnection;
   user?: Maybe<User>;
 };
 
@@ -146,11 +147,11 @@ export type QueryBookArgs = {
 
 
 export type QueryBooksArgs = {
-  first?: Maybe<Scalars['Int']>;
+  first: Scalars['Int'];
   after?: Maybe<Scalars['String']>;
-  last?: Maybe<Scalars['Int']>;
-  before?: Maybe<Scalars['String']>;
-  search?: Maybe<Scalars['String']>;
+  where?: Maybe<BooksWhereInput>;
+  orderBy?: Maybe<BooksOrder>;
+  byFollowings?: Maybe<Scalars['Boolean']>;
 };
 
 
@@ -172,6 +173,13 @@ export type QueryReviewsArgs = {
   after?: Maybe<Scalars['String']>;
   where?: Maybe<ReviewsWhereInput>;
   orderBy?: Maybe<ReviewOrder>;
+};
+
+
+export type QuerySearchBooksArgs = {
+  first: Scalars['Int'];
+  after?: Maybe<Scalars['String']>;
+  query: Scalars['String'];
 };
 
 
@@ -205,8 +213,14 @@ export type BookEdge = {
   cursor: Scalars['String'];
 };
 
+export type BooksOrder =
+  | 'created_ASC'
+  | 'created_DESC'
+  | 'ratingsQuantity_ASC'
+  | 'ratingsQuantity_DESC';
+
 export type BooksWhereInput = {
-  _id?: Maybe<Scalars['String']>;
+  author?: Maybe<Scalars['ID']>;
 };
 
 export type Follow = {
@@ -383,6 +397,7 @@ export type ResolversTypes = {
   Float: ResolverTypeWrapper<Scalars['Float']>;
   BookConnection: ResolverTypeWrapper<Omit<BookConnection, 'edges' | 'nodes'> & { edges: Array<ResolversTypes['BookEdge']>, nodes: Array<ResolversTypes['Book']> }>;
   BookEdge: ResolverTypeWrapper<Omit<BookEdge, 'node'> & { node: ResolversTypes['Book'] }>;
+  BooksOrder: BooksOrder;
   BooksWhereInput: BooksWhereInput;
   Follow: ResolverTypeWrapper<IFollow>;
   FollowConnection: ResolverTypeWrapper<Omit<FollowConnection, 'edges' | 'nodes'> & { edges: Array<ResolversTypes['FollowEdge']>, nodes: Array<ResolversTypes['Follow']> }>;
@@ -473,11 +488,12 @@ export type MutationResolvers<ContextType = MyContext, ParentType extends Resolv
 
 export type QueryResolvers<ContextType = MyContext, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
   book?: Resolver<Maybe<ResolversTypes['Book']>, ParentType, ContextType, RequireFields<QueryBookArgs, 'id'>>;
-  books?: Resolver<ResolversTypes['BookConnection'], ParentType, ContextType, RequireFields<QueryBooksArgs, never>>;
+  books?: Resolver<ResolversTypes['BookConnection'], ParentType, ContextType, RequireFields<QueryBooksArgs, 'first' | 'orderBy' | 'byFollowings'>>;
   getFollows?: Resolver<ResolversTypes['FollowConnection'], ParentType, ContextType, RequireFields<QueryGetFollowsArgs, 'first' | 'orderBy'>>;
   me?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
   review?: Resolver<Maybe<ResolversTypes['Review']>, ParentType, ContextType, RequireFields<QueryReviewArgs, 'id'>>;
   reviews?: Resolver<ResolversTypes['ReviewConnection'], ParentType, ContextType, RequireFields<QueryReviewsArgs, 'first' | 'orderBy'>>;
+  searchBooks?: Resolver<ResolversTypes['BookConnection'], ParentType, ContextType, RequireFields<QuerySearchBooksArgs, 'first' | 'query'>>;
   user?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<QueryUserArgs, 'id'>>;
 };
 

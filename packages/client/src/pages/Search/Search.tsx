@@ -23,7 +23,7 @@ type InputChange = React.ChangeEvent<HTMLInputElement>
 const searchDelay = 150
 
 const Search: React.FC = () => {
-	const [search, setSearch] = React.useState<string>('')
+	const [query, setQuery] = React.useState<string>('')
 	const [data, setData] = React.useState<SearchQuery | null>(null)
 
 	const { enqueueSnackbar } = useSnackbar()
@@ -36,9 +36,9 @@ const Search: React.FC = () => {
 				if (!initVal) return result
 				return {
 					...initVal,
-					books: {
-						nodes: [...initVal.books.nodes, ...result.books.nodes],
-						pageInfo: result.books.pageInfo,
+					searchBooks: {
+						nodes: [...initVal.searchBooks.nodes, ...result.searchBooks.nodes],
+						pageInfo: result.searchBooks.pageInfo,
 					},
 				}
 			}),
@@ -48,16 +48,16 @@ const Search: React.FC = () => {
 		let bounce: any = null
 		setData(null)
 
-		if (search) {
+		if (query) {
 			bounce = setTimeout(() => {
-				doSearch({ variables: { first: 2, search } })
+				doSearch({ variables: { first: 2, query } })
 			}, searchDelay)
 		}
 
 		return () => clearTimeout(bounce)
-	}, [search])
+	}, [query])
 
-	const onChange = (e: InputChange) => setSearch(e.currentTarget.value)
+	const onChange = (e: InputChange) => setQuery(e.currentTarget.value)
 
 	const classes = useStyles()
 
@@ -69,7 +69,7 @@ const Search: React.FC = () => {
 						<CardContent>
 							<TextField
 								size="medium"
-								value={search}
+								value={query}
 								onChange={onChange}
 								variant="outlined"
 								label="Search..."
@@ -77,7 +77,7 @@ const Search: React.FC = () => {
 							/>
 
 							<Box className={classes.results}>
-								{data?.books.nodes.map((book) => (
+								{data?.searchBooks.nodes.map((book) => (
 									<Card
 										key={book.id}
 										className={classes.result}
@@ -108,7 +108,7 @@ const Search: React.FC = () => {
 								))}
 							</Box>
 
-							{data?.books.pageInfo.hasNextPage ? (
+							{data?.searchBooks.pageInfo.hasNextPage ? (
 								<Button
 									className={classes.more}
 									color="primary"
@@ -118,8 +118,8 @@ const Search: React.FC = () => {
 										doSearch({
 											variables: {
 												first: 2,
-												search,
-												after: data.books.pageInfo.endCursor,
+												query,
+												after: data.searchBooks.pageInfo.endCursor,
 											},
 										})
 									}

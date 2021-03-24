@@ -1,17 +1,17 @@
 # useInfiniteQuery
 query Books(
-	$first: Int
+	$first: Int!
 	$after: String
-	$last: Int
-	$before: String
-	$search: String
+	$where: BooksWhereInput
+	$orderBy: BooksOrder
+	$byFollowings: Boolean
 ) {
 	books(
 		first: $first
 		after: $after
-		last: $last
-		before: $before
-		search: $search
+		where: $where
+		orderBy: $orderBy
+		byFollowings: $byFollowings
 	) {
 		nodes {
 			id
@@ -32,4 +32,15 @@ query Books(
 			hasNextPage
 		}
 	}
+}
+
+enum BooksOrder {
+	created_ASC
+	created_DESC
+	ratingsQuantity_ASC
+	ratingsQuantity_DESC
+}
+
+input BooksWhereInput {
+	_id: String
 }

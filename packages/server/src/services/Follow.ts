@@ -4,7 +4,7 @@ import { Model } from 'mongoose'
 import AppError from '../utils/AppError'
 import { IFollow } from '../models/Follow'
 import { IUser } from '../models/User'
-import { compactMap } from '../utils/helpers'
+import { compactMap, getFilterings } from '../utils/helpers'
 
 @Service()
 class FollowService {
@@ -111,12 +111,16 @@ class FollowService {
 			following?: any
 		} | null
 	}) {
-		const sort = { [orderBy]: orderType === 'ASC' ? 1 : -1 }
-		const limit = first
+		const { limit, sort, filter } = await getFilterings(this.FollowsModel, {
+			first,
+			after,
+			orderBy,
+			orderType,
+		})
 
 		const follows = await this.FollowsModel.find({
 			...compactMap(where || {}),
-			...(after ? { created: { $lt: new Date(after) } } : null),
+			...(filter || {}),
 		})
 			.sort(sort)
 			.limit(limit)

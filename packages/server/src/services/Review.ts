@@ -2,7 +2,7 @@ import { Model, Types } from 'mongoose'
 import { Service, Inject } from 'typedi'
 import xss from 'xss'
 
-import { trim, compactMap } from '../utils/helpers'
+import { trim, compactMap, getFilterings } from '../utils/helpers'
 import AppError from '../utils/AppError'
 import { IBook } from '../models/Book'
 import { IReview } from '../models/Review'
@@ -131,12 +131,16 @@ class ReviewService {
 			author?: any
 		} | null
 	}) {
-		const sort = { [orderBy]: orderType === 'ASC' ? 1 : -1 }
-		const limit = first
+		const { limit, sort, filter } = await getFilterings(this.ReviewsModel, {
+			first,
+			after,
+			orderBy,
+			orderType,
+		})
 
 		const reviews = await this.ReviewsModel.find({
 			...compactMap(where || {}),
-			...(after ? { created: { $lt: new Date(after) } } : null),
+			...(filter || {}),
 		})
 			.sort(sort)
 			.limit(limit)
