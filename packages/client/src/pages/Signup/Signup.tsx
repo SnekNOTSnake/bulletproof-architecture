@@ -26,6 +26,8 @@ const Signup: React.FC = () => {
 	const [email, setEmail] = React.useState('')
 	const [password, setPassword] = React.useState('')
 
+	const [loading, setLoading] = React.useState(false)
+
 	const onNameChange = (e: InputChange) => setName(e.currentTarget.value)
 	const onEmailChange = (e: InputChange) => setEmail(e.currentTarget.value)
 	const onPasswordChange = (e: InputChange) =>
@@ -36,6 +38,8 @@ const Signup: React.FC = () => {
 	const onSubmit = async (e: FormSubmit) => {
 		try {
 			e.preventDefault()
+			if (loading) return
+			setLoading(true)
 
 			const user = await AuthService.signup({
 				name,
@@ -58,6 +62,8 @@ const Signup: React.FC = () => {
 				enqueueSnackbar(err.message, { variant: 'error' })
 			}
 			setPassword('')
+		} finally {
+			setLoading(false)
 		}
 	}
 
@@ -98,6 +104,7 @@ const Signup: React.FC = () => {
 							</CardContent>
 							<CardActions>
 								<Button
+									disabled={loading}
 									disableElevation
 									variant="contained"
 									color="primary"

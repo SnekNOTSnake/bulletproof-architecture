@@ -15,6 +15,8 @@ const EditPassword: React.FC = () => {
 	const [password, setPassword] = React.useState<string>('')
 	const [newPassword, setNewPassword] = React.useState<string>('')
 
+	const [loading, setLoading] = React.useState(false)
+
 	const userDispatch = useUserDispatch()
 	const { enqueueSnackbar } = useSnackbar()
 	const history = useHistory()
@@ -27,6 +29,7 @@ const EditPassword: React.FC = () => {
 	const onSubmit = async (e: FormSubmit) => {
 		try {
 			e.preventDefault()
+			setLoading(true)
 			await AuthService.editPassword({ password, newPassword })
 			userDispatch({ type: 'REMOVE_USER' })
 			history.push('/')
@@ -40,6 +43,8 @@ const EditPassword: React.FC = () => {
 			}
 			setPassword('')
 			setNewPassword('')
+		} finally {
+			setLoading(false)
 		}
 	}
 
@@ -67,6 +72,7 @@ const EditPassword: React.FC = () => {
 				color="primary"
 				variant="contained"
 				disableElevation
+				disabled={loading}
 				type="submit"
 			>
 				Save

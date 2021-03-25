@@ -6,5 +6,8 @@ query User($id: ID!) {
 		joined
 		avatar
 		bio
+		followers
+		followings
+		isFollowing
 	}
 }

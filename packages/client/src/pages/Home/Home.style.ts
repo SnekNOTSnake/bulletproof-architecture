@@ -22,4 +22,8 @@ export default makeStyles((theme) => ({
 	moreButton: {
 		marginRight: theme.spacing(1),
 	},
+	formControl: {
+		marginBottom: theme.spacing(2),
+		minWidth: 180,
+	},
 }))

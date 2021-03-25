@@ -173,10 +173,15 @@ const EditProfile: React.FC = () => {
 									</Button>
 								</Grid>
 							</Grid>
-							<Button color="primary" type="submit">
+							<Button disabled={loading} color="primary" type="submit">
 								Save
 							</Button>
-							<Button onClick={reset} color="primary" type="button">
+							<Button
+								disabled={loading}
+								onClick={reset}
+								color="primary"
+								type="button"
+							>
 								Reset
 							</Button>
 							{loading && file ? (

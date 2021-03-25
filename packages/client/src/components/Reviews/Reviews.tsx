@@ -75,6 +75,7 @@ const Reviews: React.FC<Props> = ({ bookId }) => {
 										},
 									})
 								}
+								disableElevation
 								variant="contained"
 								color="primary"
 							>

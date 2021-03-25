@@ -30,6 +30,8 @@ const Login: React.FC<Props> = ({ history }) => {
 	const [email, setEmail] = React.useState<string>('')
 	const [pass, setPass] = React.useState<string>('')
 
+	const [loading, setLoading] = React.useState(false)
+
 	const { enqueueSnackbar } = useSnackbar()
 	const userDispatch = useUserDispatch()
 
@@ -45,6 +47,9 @@ const Login: React.FC<Props> = ({ history }) => {
 	const onSubmit = async (e: FormSubmit) => {
 		try {
 			e.preventDefault()
+			if (loading) return
+
+			setLoading(true)
 			const result = await AuthService.login({ email, password: pass })
 			userDispatch({ type: 'SET_USER', payload: result })
 			history.push('/')
@@ -57,6 +62,8 @@ const Login: React.FC<Props> = ({ history }) => {
 				enqueueSnackbar(err.message, { variant: 'error' })
 			}
 			setPass('')
+		} finally {
+			setLoading(false)
 		}
 	}
 
@@ -72,6 +79,7 @@ const Login: React.FC<Props> = ({ history }) => {
 							<CardContent>
 								<Box className={classes.oAuthBox}>
 									<Button
+										disabled={loading}
 										disableElevation
 										onClick={() => onOAuthLogin('google')}
 										className={classes.oAuthButton}
@@ -84,6 +92,7 @@ const Login: React.FC<Props> = ({ history }) => {
 										Google
 									</Button>
 									<Button
+										disabled={loading}
 										disableElevation
 										onClick={() => onOAuthLogin('github')}
 										className={classes.oAuthButton}
@@ -115,6 +124,7 @@ const Login: React.FC<Props> = ({ history }) => {
 							</CardContent>
 							<CardActions>
 								<Button
+									disabled={loading}
 									disableElevation
 									variant="contained"
 									color="primary"

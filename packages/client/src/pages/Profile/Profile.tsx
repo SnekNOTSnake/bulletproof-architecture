@@ -23,12 +23,15 @@ import {
 	PermIdentity as IdentityIcon,
 	Fingerprint as FingerprintIcon,
 	SvgIconComponent,
+	Group as GroupIcon,
+	AccessibleForward as AccessibleForwardIcon,
 } from '@material-ui/icons'
 
 import { useUserState } from '../../context/user'
 import { useUserQuery } from '../../generated/types'
 import useStyles from './Profile.style'
 import EditProfile from '../../components/EditProfile'
+import FollowUser from '../../components/FollowUser'
 
 type MyListProps = { icon: SvgIconComponent; text: string | Date }
 
@@ -70,6 +73,7 @@ const Profile: React.FC<Props> = ({ match }) => {
 				<Grid item md={6} xs={12}>
 					<Card variant="outlined">
 						<CardHeader
+							action={<FollowUser user={data.user} />}
 							avatar={
 								<Avatar
 									alt={data.user.name}
@@ -97,6 +101,14 @@ const Profile: React.FC<Props> = ({ match }) => {
 											? data.user.bio
 											: 'This person has no bio of himself. Spooky!'
 									}
+								/>
+								<MyList
+									icon={GroupIcon}
+									text={`${data.user.followers} followers`}
+								/>
+								<MyList
+									icon={AccessibleForwardIcon}
+									text={`${data.user.followings} followings`}
 								/>
 							</List>
 						</CardContent>

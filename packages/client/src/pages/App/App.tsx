@@ -52,7 +52,7 @@ const Layout: React.FC = ({ children }) => {
 			palette: {
 				type: theme === 'light' ? 'light' : 'dark',
 				background: {
-					default: theme === 'light' ? '#fefefe' : '#202122',
+					default: theme === 'light' ? '#eee' : '#202122',
 					paper: theme === 'light' ? '#fff' : '#2c2f33',
 				},
 				primary: {

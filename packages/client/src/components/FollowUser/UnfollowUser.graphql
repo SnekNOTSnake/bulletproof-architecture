@@ -1,0 +1,16 @@
+mutation UnfollowUser($following: ID!) {
+	unfollowUser(following: $following) {
+		follower {
+			id
+			followers
+			followings
+			isFollowing
+		}
+		following {
+			id
+			followers
+			followings
+			isFollowing
+		}
+	}
+}

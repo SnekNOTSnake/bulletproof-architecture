@@ -2,6 +2,7 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 import { formatDistance } from 'date-fns'
 import { useSnackbar } from 'notistack'
+import { useApolloClient } from '@apollo/client'
 
 import {
 	Avatar,
@@ -11,8 +12,12 @@ import {
 	CardHeader,
 	CardContent,
 	CardActions,
+	FormControl,
 	Grid,
+	InputLabel,
 	Link as LinkComponent,
+	MenuItem,
+	Select,
 	Typography,
 } from '@material-ui/core'
 import { Rating } from '@material-ui/lab'
@@ -32,22 +37,71 @@ const CardSubheader: React.FC<CardSubheaderProps> = ({ book }) => (
 	</Typography>
 )
 
+type InputChange = React.ChangeEvent<any>
+type FetchMode = 'by-anyone' | 'by-followed-users'
+
 const Home: React.FC = () => {
+	const [fetchMode, setFetchMode] = React.useState<FetchMode>(() => {
+		const stored: any = localStorage.getItem('fetch-mode')
+		return stored || 'by-anyone'
+	})
+
+	React.useEffect(() => {
+		localStorage.setItem('fetch-mode', fetchMode)
+	}, [fetchMode])
+
+	const [loadingMore, setLoadingMore] = React.useState(false)
+
 	const { enqueueSnackbar } = useSnackbar()
+	const apolloClient = useApolloClient()
 
 	const { data, loading, fetchMore } = useBooksQuery({
-		variables: { first: 2 },
+		variables: { first: 1, byFollowings: fetchMode === 'by-followed-users' },
 		onError: (err) => enqueueSnackbar(err.message, { variant: 'error' }),
 	})
 
 	const classes = useStyles()
 
+	const fetchModeChange = (e: InputChange) => {
+		setFetchMode(e.target.value as any)
+		apolloClient.cache.modify({
+			broadcast: false,
+			fields: { books: (existing) => ({}) },
+		})
+	}
+
 	if (loading) return <Typography variant="h5">Loading data...</Typography>
 	if (!data?.books.nodes.length)
 		return <Typography variant="h5">No data to display</Typography>
 
+	const onFetchMore = async () => {
+		setLoadingMore(true)
+		await fetchMore({
+			variables: { first: 1, after: data.books.pageInfo.endCursor },
+		})
+		setLoadingMore(false)
+	}
+
 	return (
 		<Box>
+			<Box>
+				<FormControl
+					size="small"
+					variant="outlined"
+					className={classes.formControl}
+				>
+					<InputLabel id="get-books">Get books</InputLabel>
+					<Select
+						labelId="get-books"
+						value={fetchMode}
+						label="Get books"
+						onChange={fetchModeChange}
+					>
+						<MenuItem value="by-anyone">By anyone</MenuItem>
+						<MenuItem value="by-followed-users">By followed users</MenuItem>
+					</Select>
+				</FormControl>
+			</Box>
 			<Grid container spacing={3}>
 				{data?.books.nodes.map((book) => (
 					<Grid
@@ -107,12 +161,9 @@ const Home: React.FC = () => {
 					variant="contained"
 					disableElevation
 					type="button"
+					disabled={loadingMore}
 					className={classes.moreButton}
-					onClick={() =>
-						fetchMore({
-							variables: { first: 2, after: data.books.pageInfo.endCursor },
-						})
-					}
+					onClick={onFetchMore}
 				>
 					More
 				</Button>
