@@ -8,7 +8,7 @@ import FollowService from '../../../../services/Follow'
 export const followUser: MutationResolvers['followUser'] = async (
 	parent,
 	{ following },
-	{ user },
+	{ user, loaders: { userByIds } },
 ) => {
 	await validate(followUserSchema, { following })
 
@@ -17,6 +17,8 @@ export const followUser: MutationResolvers['followUser'] = async (
 		follower: user.id,
 		following,
 	})
+	userByIds.clear(following)
+	userByIds.clear(user.id)
 
 	return follow
 }
@@ -24,7 +26,7 @@ export const followUser: MutationResolvers['followUser'] = async (
 export const unfollowUser: MutationResolvers['unfollowUser'] = async (
 	parent,
 	{ following },
-	{ user },
+	{ user, loaders: { userByIds } },
 ) => {
 	await validate(unfollowUserSchema, { following })
 
@@ -33,6 +35,8 @@ export const unfollowUser: MutationResolvers['unfollowUser'] = async (
 		follower: user.id,
 		following,
 	})
+	userByIds.clear(following)
+	userByIds.clear(user.id)
 
 	return follow
 }
