@@ -1,5 +1,6 @@
 import { Service, Inject } from 'typedi'
 import { Model } from 'mongoose'
+import { ObjectId } from 'mongodb'
 
 import AppError from '../utils/AppError'
 import { IFollow } from '../models/Follow'
@@ -26,29 +27,20 @@ class FollowService {
 
 		const follow = await this.FollowsModel.create({ follower, following })
 
-		await this.UsersModel.updateOne(
-			{ _id: follower },
-			{ $inc: { followings: 1 } },
-		)
-		await this.UsersModel.updateOne(
-			{ _id: following },
-			{ $inc: { followers: 1 } },
-		)
-
-		/* await this.UsersModel.bulkWrite([
+		await this.UsersModel.bulkWrite([
 			{
 				updateOne: {
 					filter: { _id: new ObjectId(follower) },
-					update: { $set: { $inc: { following: 1 } } },
+					update: { $inc: { followings: 1 } },
 				},
 			},
 			{
 				updateOne: {
 					filter: { _id: new ObjectId(following) },
-					update: { $set: { $inc: { follower: 1 } } },
+					update: { $inc: { followers: 1 } },
 				},
 			},
-		]) */
+		])
 
 		return follow
 	}
@@ -68,14 +60,20 @@ class FollowService {
 		// Prevent unfollow abuse
 		if (!follow) return follow
 
-		await this.UsersModel.updateOne(
-			{ _id: follower },
-			{ $inc: { followings: -1 } },
-		)
-		await this.UsersModel.updateOne(
-			{ _id: following },
-			{ $inc: { followers: -1 } },
-		)
+		await this.UsersModel.bulkWrite([
+			{
+				updateOne: {
+					filter: { _id: new ObjectId(follower) },
+					update: { $inc: { followings: -1 } },
+				},
+			},
+			{
+				updateOne: {
+					filter: { _id: new ObjectId(following) },
+					update: { $inc: { followers: -1 } },
+				},
+			},
+		])
 
 		return follow
 	}
