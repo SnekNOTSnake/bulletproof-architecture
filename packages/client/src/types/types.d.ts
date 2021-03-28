@@ -12,6 +12,7 @@ interface IUser {
 interface IAuthData {
 	accessToken: string
 	user: IUser
+	newNotifs: number
 }
 
 declare module '*.svg' {

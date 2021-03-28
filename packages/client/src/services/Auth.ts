@@ -12,7 +12,7 @@ class AuthService {
 	}: {
 		email: string
 		password: string
-	}): Promise<IUser> {
+	}): Promise<IAuthData> {
 		const res = await axios.post(
 			AUTH_URI + '/signin',
 			{ email, password },
@@ -21,7 +21,7 @@ class AuthService {
 
 		setAccessToken(res.data.data.accessToken)
 
-		return res.data.data.user
+		return res.data.data
 	}
 
 	static async signup({
@@ -42,7 +42,7 @@ class AuthService {
 		return res.data.data.user
 	}
 
-	static oAuthLogin(strategy: 'google' | 'github'): Promise<IUser> {
+	static oAuthLogin(strategy: 'google' | 'github'): Promise<IAuthData> {
 		return new Promise((resolve, reject) => {
 			openOAuthWindow(
 				`http://localhost:4200/api/auth/${strategy}`,
@@ -57,7 +57,7 @@ class AuthService {
 						source === 'oauth-login'
 					) {
 						setAccessToken(payload.accessToken)
-						return resolve(payload.user)
+						return resolve(payload)
 					}
 				},
 			)
@@ -69,10 +69,22 @@ class AuthService {
 		setAccessToken('')
 	}
 
+	static async getAuthData(): Promise<IAuthData> {
+		const res = await axios.post(
+			AUTH_URI + '/auth-data',
+			{},
+			{ withCredentials: true },
+		)
+		const data = res.data.data
+
+		setAccessToken(data.accessToken)
+		return data
+	}
+
 	/**
 	 * Despite the name `refreshToken`, it returns `accessToken`
 	 */
-	static async refreshToken(): Promise<IAuthData> {
+	static async refreshToken(): Promise<string> {
 		const res = await axios.post(
 			AUTH_URI + '/refresh-token',
 			{},

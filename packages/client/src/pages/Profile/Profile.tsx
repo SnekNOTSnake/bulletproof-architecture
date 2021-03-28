@@ -56,7 +56,8 @@ const Profile: React.FC<Props> = ({ match }) => {
 	const toggleEditting = () => setIsEditing((initVal) => !initVal)
 
 	const { enqueueSnackbar } = useSnackbar()
-	const { user } = useUserState()
+	const state = useUserState()
+	const user = state.data?.user
 
 	const { data, loading } = useUserQuery({
 		variables: { id: match.params.id },

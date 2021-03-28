@@ -23,10 +23,11 @@ type FileChange = React.ChangeEvent<HTMLInputElement>
 type InputChange = React.ChangeEvent<HTMLInputElement>
 
 const EditProfile: React.FC = () => {
-	const { user } = useUserState()
+	const state = useUserState()
 	const userDispatch = useUserDispatch()
 
-	if (!user) return <Redirect to="/login" />
+	if (!state.data) return <Redirect to="/login" />
+	const user = state.data.user
 
 	const [name, setName] = React.useState<string>(user.name)
 	const [bio, setBio] = React.useState<string | null | undefined>(user.bio)
@@ -53,10 +54,13 @@ const EditProfile: React.FC = () => {
 			userDispatch({
 				type: 'SET_USER',
 				payload: {
-					...user,
-					avatar: result.updateMe.avatar,
-					name: result.updateMe.name,
-					bio: result.updateMe.bio,
+					...state.data!,
+					user: {
+						...state.data!.user,
+						avatar: result.updateMe.avatar,
+						name: result.updateMe.name,
+						bio: result.updateMe.bio,
+					},
 				},
 			})
 			enqueueSnackbar('Profile updated', { variant: 'success' })

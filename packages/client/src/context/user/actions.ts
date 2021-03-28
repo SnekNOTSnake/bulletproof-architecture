@@ -13,16 +13,18 @@ export const logoutUser = async (dispatch: React.Dispatch<Action>) => {
 	}
 }
 
-export const refreshToken = async (dispatch: React.Dispatch<Action>) => {
+export const getAuthData = async (dispatch: React.Dispatch<Action>) => {
 	dispatch({ type: 'REQUEST_USER' })
 
 	try {
-		const result = await AuthService.refreshToken()
-		const user = result.user
+		const result = await AuthService.getAuthData()
 
-		dispatch({ type: 'USER_SUCCESS', payload: user })
+		dispatch({
+			type: 'USER_SUCCESS',
+			payload: { user: result.user, newNotifs: result.newNotifs },
+		})
 
-		return user
+		return result
 	} catch (error) {
 		dispatch({ type: 'USER_ERROR', error })
 	}

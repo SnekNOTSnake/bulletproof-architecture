@@ -39,8 +39,8 @@ const Login: React.FC<Props> = ({ history }) => {
 	const onPassChange = (e: InputChange) => setPass(e.currentTarget.value)
 
 	const onOAuthLogin = async (strategy: 'google' | 'github') => {
-		const user = await AuthService.oAuthLogin(strategy)
-		userDispatch({ type: 'SET_USER', payload: user })
+		const result = await AuthService.oAuthLogin(strategy)
+		userDispatch({ type: 'SET_USER', payload: result })
 		history.push('/')
 	}
 

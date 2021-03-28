@@ -1,17 +1,20 @@
 import React from 'react'
 import { Link, useHistory } from 'react-router-dom'
 
-import Box from '@material-ui/core/Box'
-import LinkComponent from '@material-ui/core/Link'
-import Button from '@material-ui/core/Button'
-import SearchIcon from '@material-ui/icons/Search'
-import NightStayIcon from '@material-ui/icons/NightsStay'
-import WbSunnyIcon from '@material-ui/icons/WbSunny'
+import { Box, Badge, Link as LinkComponent, Button } from '@material-ui/core'
+import {
+	Search as SearchIcon,
+	NightsStay as NightStayIcon,
+	WbSunny as WbSunnyIcon,
+	Notifications as NotificationsIcon,
+} from '@material-ui/icons'
 
+import Notifications from '../Notifications'
 import { useUserState, logoutUser, useUserDispatch } from '../../context/user'
 import { useThemeDispatch, useThemeState } from '../../context/theme'
 import useStyles from './Navbar.style'
 
+type ClickEvent = React.MouseEvent<HTMLButtonElement, MouseEvent>
 type LinkButtonProps = { to: string; text: string }
 
 const LinkButton: React.FC<LinkButtonProps> = ({ to, text }) => (
@@ -21,11 +24,18 @@ const LinkButton: React.FC<LinkButtonProps> = ({ to, text }) => (
 )
 
 const Navbar: React.FC = () => {
+	const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)
+
+	const close = () => setAnchorEl(null)
+	const open = (e: ClickEvent) => {
+		setAnchorEl(e.currentTarget)
+	}
+
 	const history = useHistory()
 
 	const { theme } = useThemeState()
 	const dispatchTheme = useThemeDispatch()
-	const { user } = useUserState()
+	const { data } = useUserState()
 	const dispatchUser = useUserDispatch()
 
 	const toggleTheme = () => dispatchTheme({ type: 'TOGGLE_THEME' })
@@ -37,9 +47,9 @@ const Navbar: React.FC = () => {
 
 	const classes = useStyles()
 
-	const RenderLogin = user ? (
+	const renderUser = data ? (
 		<React.Fragment>
-			<LinkButton to={`/user/${user.id}`} text={user.name} />
+			<LinkButton to={`/user/${data.user.id}`} text={data.user.name} />
 			<LinkButton to="/create-book" text="Create Book" />
 			<Button color="inherit" type="button" onClick={logout}>
 				Logout
@@ -54,12 +64,28 @@ const Navbar: React.FC = () => {
 
 	return (
 		<Box className={classes.root}>
+			{anchorEl && data ? (
+				<Notifications anchorEl={anchorEl} onClose={close} />
+			) : (
+				''
+			)}
+
 			<LinkButton to="/" text="Home" />
-			{RenderLogin}
+			{renderUser}
 			<Button color="inherit" type="button" onClick={toggleTheme}>
 				{theme === 'light' ? <WbSunnyIcon /> : <NightStayIcon />}
 			</Button>
 			<Box className={classes.grow} />
+
+			{data ? (
+				<Button onClick={open}>
+					<Badge badgeContent={data.newNotifs} color="secondary">
+						<NotificationsIcon />
+					</Badge>
+				</Button>
+			) : (
+				''
+			)}
 			<LinkComponent underline="none" component={Link} to="/search">
 				<Button type="button" color="inherit">
 					<SearchIcon className={classes.searchIcon} />

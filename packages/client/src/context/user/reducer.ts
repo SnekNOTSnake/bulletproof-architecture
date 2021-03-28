@@ -1,6 +1,10 @@
 import React from 'react'
 
-export type State = { loading: boolean; user: IUser | null; error: any }
+export type State = {
+	loading: boolean
+	data: { user: IUser; newNotifs: number } | null
+	error: any
+}
 export type Action = {
 	type:
 		| 'REQUEST_USER'
@@ -9,7 +13,7 @@ export type Action = {
 		| 'REMOVE_USER'
 		| 'SET_USER'
 	error?: any
-	payload?: IUser
+	payload?: { user: IUser; newNotifs: number }
 }
 
 export const userReducer: React.Reducer<State, Action> = (
@@ -27,7 +31,7 @@ export const userReducer: React.Reducer<State, Action> = (
 			return {
 				...state,
 				loading: false,
-				user: payload,
+				data: payload,
 			}
 		case 'USER_ERROR':
 			return {
@@ -40,12 +44,12 @@ export const userReducer: React.Reducer<State, Action> = (
 		case 'REMOVE_USER':
 			return {
 				...state,
-				user: null,
+				data: null,
 			}
 		case 'SET_USER':
 			return {
 				...state,
-				user: payload,
+				data: payload,
 			}
 
 		default:

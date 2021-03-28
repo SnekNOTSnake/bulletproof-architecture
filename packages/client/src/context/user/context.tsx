@@ -4,7 +4,7 @@ import { userReducer, State, Action } from './reducer'
 const initialState: State = {
 	loading: true,
 	error: [],
-	user: null,
+	data: null,
 }
 
 const UserStateContext = React.createContext(initialState)

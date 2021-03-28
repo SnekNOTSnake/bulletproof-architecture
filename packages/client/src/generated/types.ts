@@ -43,8 +43,10 @@ export type Mutation = {
   createBook?: Maybe<Book>;
   createReview?: Maybe<Review>;
   deleteBook?: Maybe<Scalars['ID']>;
+  deleteNotif: Scalars['Boolean'];
   deleteReview?: Maybe<Review>;
   followUser?: Maybe<Follow>;
+  readNotifs: Scalars['Boolean'];
   signin?: Maybe<AuthData>;
   signup?: Maybe<User>;
   unfollowUser?: Maybe<Follow>;
@@ -69,6 +71,11 @@ export type MutationCreateReviewArgs = {
 
 
 export type MutationDeleteBookArgs = {
+  id: Scalars['ID'];
+};
+
+
+export type MutationDeleteNotifArgs = {
   id: Scalars['ID'];
 };
 
@@ -127,6 +134,7 @@ export type Query = {
   book?: Maybe<Book>;
   books: BookConnection;
   getFollows: FollowConnection;
+  getNotifs: NotifConnection;
   me?: Maybe<User>;
   review?: Maybe<Review>;
   reviews: ReviewConnection;
@@ -154,6 +162,14 @@ export type QueryGetFollowsArgs = {
   after?: Maybe<Scalars['String']>;
   where?: Maybe<FollowsWhereInput>;
   orderBy?: Maybe<FollowOrder>;
+};
+
+
+export type QueryGetNotifsArgs = {
+  first: Scalars['Int'];
+  after?: Maybe<Scalars['String']>;
+  where?: Maybe<NotifWhereInput>;
+  orderBy?: Maybe<NotifOrder>;
 };
 
 
@@ -245,6 +261,39 @@ export type FollowOrder =
 export type FollowsWhereInput = {
   follower?: Maybe<Scalars['ID']>;
   following?: Maybe<Scalars['ID']>;
+};
+
+export type Notif = {
+  __typename?: 'Notif';
+  id: Scalars['String'];
+  userSender: User;
+  userTarget: User;
+  book?: Maybe<Book>;
+  review?: Maybe<Review>;
+  follow?: Maybe<Follow>;
+  created: Scalars['DateTime'];
+  read: Scalars['Boolean'];
+};
+
+export type NotifConnection = {
+  __typename?: 'NotifConnection';
+  edges: Array<NotifEdge>;
+  nodes: Array<Notif>;
+  pageInfo: PageInfo;
+};
+
+export type NotifEdge = {
+  __typename?: 'NotifEdge';
+  node: Notif;
+  cursor: Scalars['String'];
+};
+
+export type NotifOrder =
+  | 'created_ASC'
+  | 'created_DESC';
+
+export type NotifWhereInput = {
+  read?: Maybe<Scalars['Boolean']>;
 };
 
 export type Review = {
@@ -409,6 +458,49 @@ export type UnfollowUserMutation = (
       & Pick<User, 'id' | 'followers' | 'followings' | 'isFollowing'>
     ) }
   )> }
+);
+
+export type GetNotifsQueryVariables = Exact<{
+  first: Scalars['Int'];
+  after?: Maybe<Scalars['String']>;
+  orderBy?: Maybe<NotifOrder>;
+  where?: Maybe<NotifWhereInput>;
+}>;
+
+
+export type GetNotifsQuery = (
+  { __typename?: 'Query' }
+  & { getNotifs: (
+    { __typename?: 'NotifConnection' }
+    & { nodes: Array<(
+      { __typename?: 'Notif' }
+      & Pick<Notif, 'id' | 'created' | 'read'>
+      & { userSender: (
+        { __typename?: 'User' }
+        & Pick<User, 'id' | 'name'>
+      ), book?: Maybe<(
+        { __typename?: 'Book' }
+        & Pick<Book, 'id' | 'title'>
+      )>, follow?: Maybe<(
+        { __typename?: 'Follow' }
+        & Pick<Follow, 'id'>
+      )>, review?: Maybe<(
+        { __typename?: 'Review' }
+        & Pick<Review, 'id' | 'rating' | 'content'>
+      )> }
+    )>, pageInfo: (
+      { __typename?: 'PageInfo' }
+      & Pick<PageInfo, 'hasNextPage'>
+    ) }
+  ) }
+);
+
+export type ReadNotifsMutationVariables = Exact<{ [key: string]: never; }>;
+
+
+export type ReadNotifsMutation = (
+  { __typename?: 'Mutation' }
+  & Pick<Mutation, 'readNotifs'>
 );
 
 export type DeleteReviewMutationVariables = Exact<{
@@ -815,6 +907,94 @@ export function useUnfollowUserMutation(baseOptions?: Apollo.MutationHookOptions
 export type UnfollowUserMutationHookResult = ReturnType<typeof useUnfollowUserMutation>;
 export type UnfollowUserMutationResult = Apollo.MutationResult<UnfollowUserMutation>;
 export type UnfollowUserMutationOptions = Apollo.BaseMutationOptions<UnfollowUserMutation, UnfollowUserMutationVariables>;
+export const GetNotifsDocument = gql`
+    query GetNotifs($first: Int!, $after: String, $orderBy: NotifOrder, $where: NotifWhereInput) {
+  getNotifs(first: $first, after: $after, orderBy: $orderBy, where: $where) {
+    nodes {
+      id
+      userSender {
+        id
+        name
+      }
+      book {
+        id
+        title
+      }
+      follow {
+        id
+      }
+      review {
+        id
+        rating
+        content
+      }
+      created
+      read
+    }
+    pageInfo {
+      hasNextPage
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetNotifsQuery__
+ *
+ * To run a query within a React component, call `useGetNotifsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetNotifsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetNotifsQuery({
+ *   variables: {
+ *      first: // value for 'first'
+ *      after: // value for 'after'
+ *      orderBy: // value for 'orderBy'
+ *      where: // value for 'where'
+ *   },
+ * });
+ */
+export function useGetNotifsQuery(baseOptions: Apollo.QueryHookOptions<GetNotifsQuery, GetNotifsQueryVariables>) {
+        return Apollo.useQuery<GetNotifsQuery, GetNotifsQueryVariables>(GetNotifsDocument, baseOptions);
+      }
+export function useGetNotifsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetNotifsQuery, GetNotifsQueryVariables>) {
+          return Apollo.useLazyQuery<GetNotifsQuery, GetNotifsQueryVariables>(GetNotifsDocument, baseOptions);
+        }
+export type GetNotifsQueryHookResult = ReturnType<typeof useGetNotifsQuery>;
+export type GetNotifsLazyQueryHookResult = ReturnType<typeof useGetNotifsLazyQuery>;
+export type GetNotifsQueryResult = Apollo.QueryResult<GetNotifsQuery, GetNotifsQueryVariables>;
+export const ReadNotifsDocument = gql`
+    mutation ReadNotifs {
+  readNotifs
+}
+    `;
+export type ReadNotifsMutationFn = Apollo.MutationFunction<ReadNotifsMutation, ReadNotifsMutationVariables>;
+
+/**
+ * __useReadNotifsMutation__
+ *
+ * To run a mutation, you first call `useReadNotifsMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useReadNotifsMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [readNotifsMutation, { data, loading, error }] = useReadNotifsMutation({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useReadNotifsMutation(baseOptions?: Apollo.MutationHookOptions<ReadNotifsMutation, ReadNotifsMutationVariables>) {
+        return Apollo.useMutation<ReadNotifsMutation, ReadNotifsMutationVariables>(ReadNotifsDocument, baseOptions);
+      }
+export type ReadNotifsMutationHookResult = ReturnType<typeof useReadNotifsMutation>;
+export type ReadNotifsMutationResult = Apollo.MutationResult<ReadNotifsMutation>;
+export type ReadNotifsMutationOptions = Apollo.BaseMutationOptions<ReadNotifsMutation, ReadNotifsMutationVariables>;
 export const DeleteReviewDocument = gql`
     mutation DeleteReview($id: ID!) {
   deleteReview(id: $id) {

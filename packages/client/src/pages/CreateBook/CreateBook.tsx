@@ -27,7 +27,8 @@ const CreateBook: React.FC = () => {
 	const [content, setContent] = React.useState<string>('')
 
 	const { enqueueSnackbar } = useSnackbar()
-	const { user } = useUserState()
+	const { data } = useUserState()
+	const user = data?.user
 
 	const [createBook, { loading }] = useCreateBookMutation({
 		onError: (err) => {

@@ -1,0 +1,42 @@
+query GetNotifs(
+	$first: Int!
+	$after: String
+	$orderBy: NotifOrder
+	$where: NotifWhereInput
+) {
+	getNotifs(first: $first, after: $after, orderBy: $orderBy, where: $where) {
+		nodes {
+			id
+			userSender {
+				id
+				name
+			}
+			book {
+				id
+				title
+			}
+			follow {
+				id
+			}
+			review {
+				id
+				rating
+				content
+			}
+			created
+			read
+		}
+		pageInfo {
+			hasNextPage
+		}
+	}
+}
+
+enum NotifOrder {
+	created_ASC
+	created_DESC
+}
+
+input NotifWhereInput {
+	read: Boolean
+}

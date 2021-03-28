@@ -19,7 +19,7 @@ import { ThemeProvider, useThemeState } from '../../context/theme'
 import {
 	useUserState,
 	useUserDispatch,
-	refreshToken,
+	getAuthData,
 	UserProvider,
 } from '../../context/user'
 import useStyles from './App.style'
@@ -36,10 +36,10 @@ const Search = React.lazy(() => import('../Search'))
 const Layout: React.FC = ({ children }) => {
 	const { theme } = useThemeState()
 	const userDispatch = useUserDispatch()
-	const { loading } = useUserState()
+	const { loading, data } = useUserState()
 
 	React.useEffect(() => {
-		refreshToken(userDispatch)
+		getAuthData(userDispatch)
 	}, [])
 
 	const notistackRef = React.createRef<SnackbarProvider>()
