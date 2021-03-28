@@ -1,0 +1,4 @@
+extend type Mutation {
+	readNotifs: Boolean! @isAuthenticated
+	deleteNotif(id: ID!): Boolean! @isAuthenticated
+}

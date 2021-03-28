@@ -14,13 +14,47 @@ import {
 	decodeToken,
 } from '../utils/token'
 import { SALT_ROUND } from '../config'
+import { INotif } from '../models/Notif'
 import { IUser } from '../models/User'
 
 const UPLOAD_DIR = 'public/img/'
 
 @Service()
 class AuthService {
-	constructor(@Inject('usersModel') private UsersModel: Model<IUser>) {}
+	constructor(
+		@Inject('usersModel') private UsersModel: Model<IUser>,
+		@Inject('notifsModel') private NotifModel: Model<INotif>,
+	) {}
+
+	async getUserStats(id: string) {
+		const unreadNotifs = await this.NotifModel.countDocuments({
+			userTarget: id as any,
+			read: false,
+		})
+
+		return {
+			newNotifs: unreadNotifs,
+		}
+	}
+
+	async getAuthData(refreshToken: string) {
+		const decoded = await decodeToken(refreshToken)
+		const user = await this.UsersModel.findById(decoded.userId)
+
+		if (!user) throw new AppError('No user with that ID', 404)
+
+		const { newNotifs } = await this.getUserStats(user.id)
+
+		const newRefreshToken = createRefreshToken(user)
+		const accessToken = createAccessToken(user)
+
+		return {
+			user,
+			accessToken,
+			refreshToken: newRefreshToken,
+			newNotifs,
+		}
+	}
 
 	async getUser(id: string) {
 		const user = await this.UsersModel.findById(id)
@@ -39,7 +73,6 @@ class AuthService {
 		return {
 			refreshToken: newRefreshToken,
 			accessToken,
-			user,
 		}
 	}
 
@@ -91,12 +124,15 @@ class AuthService {
 			throw new AppError('Incorrect password', 400)
 		}
 
+		const { newNotifs } = await this.getUserStats(user.id)
+
 		const refreshToken = createRefreshToken(user)
 		const accessToken = createAccessToken(user)
 
 		return {
 			refreshToken,
 			accessToken,
+			newNotifs,
 			user,
 		}
 	}

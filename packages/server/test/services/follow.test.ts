@@ -3,9 +3,10 @@ import expect from 'expect'
 import UserModel, { IUser } from '../../src/models/User'
 import AuthService from '../../src/services/Auth'
 import FollowModel from '../../src/models/Follow'
+import NotifModel from '../../src/models/Notif'
 import FollowService from '../../src/services/Follow'
 
-const Auth = new AuthService(UserModel)
+const Auth = new AuthService(UserModel, NotifModel)
 const Follow = new FollowService(FollowModel, UserModel)
 
 let userID1 = ''

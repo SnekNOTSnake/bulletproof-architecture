@@ -1,0 +1,17 @@
+extend type Query {
+	getNotifs(
+		first: Int!
+		after: String
+		where: NotifWhereInput
+		orderBy: NotifOrder = created_DESC
+	): NotifConnection! @isAuthenticated
+}
+
+enum NotifOrder {
+	created_ASC
+	created_DESC
+}
+
+input NotifWhereInput {
+	read: Boolean
+}

@@ -2,7 +2,8 @@ import DataLoader from 'dataloader'
 
 import UserModel, { IUser } from '../models/User'
 import BookModel, { IBook } from '../models/Book'
-import FollowModel from '../models/Follow'
+import FollowModel, { IFollow } from '../models/Follow'
+import ReviewModel, { IReview } from '../models/Review'
 
 /**
  * A function to ensure Dataloader returns the same order as requested.
@@ -33,6 +34,8 @@ const ensureOrder = ({
 export interface ILoaders {
 	userByIds: DataLoader<string, IUser>
 	bookByIds: DataLoader<string, IBook>
+	followByIds: DataLoader<string, IFollow>
+	reviewByIds: DataLoader<string, IReview>
 	batchFollows: DataLoader<FollowKey, boolean>
 }
 
@@ -44,6 +47,16 @@ async function batchUserIds(keys: readonly string[]) {
 async function batchBookIds(keys: readonly string[]) {
 	const books = await BookModel.find({ _id: { $in: keys } })
 	return ensureOrder({ docs: books, keys, prop: '_id' })
+}
+
+async function batchFollowIds(keys: readonly string[]) {
+	const follows = await FollowModel.find({ _id: { $in: keys } })
+	return ensureOrder({ docs: follows, keys, prop: '_id' })
+}
+
+async function batchReviewIds(keys: readonly string[]) {
+	const reviews = await ReviewModel.find({ _id: { $in: keys } })
+	return ensureOrder({ docs: reviews, keys, prop: '_id' })
 }
 
 type FollowKey = { follower: any; following: any }
@@ -80,6 +93,8 @@ const loaders: ILoaders = {
 		return users
 	}),
 	bookByIds: new DataLoader<string, IBook>((keys) => batchBookIds(keys)),
+	followByIds: new DataLoader<string, IFollow>((keys) => batchFollowIds(keys)),
+	reviewByIds: new DataLoader<string, IReview>((keys) => batchReviewIds(keys)),
 	batchFollows: new DataLoader<FollowKey, boolean>((kys) => batchFollows(kys)),
 }
 

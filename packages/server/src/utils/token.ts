@@ -53,7 +53,7 @@ export const sendRefreshToken = (
 ) => {
 	const options: CookieOptions = {
 		httpOnly: true,
-		path: '/api/auth/refresh-token',
+		path: '/api/auth',
 		expires: new Date(
 			Date.now() + Number(JWT_COOKIE_EXPIRES) * 24 * 60 * 60 * 1000,
 		),
@@ -66,7 +66,7 @@ export const sendRefreshToken = (
 export const removeRefreshToken = (req: Request, res: Response) => {
 	const options: CookieOptions = {
 		httpOnly: true,
-		path: '/api/auth/refresh-token',
+		path: '/api/auth',
 		secure: req.secure || req.headers['x-forward-proto'] === 'https',
 		sameSite: NODE_ENV === 'production',
 	}

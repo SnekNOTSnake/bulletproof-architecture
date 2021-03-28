@@ -33,6 +33,22 @@ const sendOAuthResponse = (res: Response, authData: string) => {
 	`)
 }
 
+export const authData = catchAsync(async (req, res, next) => {
+	const refreshToken = req.cookies[AUTH_KEY]
+	if (!refreshToken)
+		return next(new AppError('Empty refresh token cookie', 401))
+
+	const authServiceInstance = Container.get(AuthService)
+	const result = await authServiceInstance.getAuthData(refreshToken)
+
+	sendRefreshToken(req, res, result.refreshToken)
+	envelope(res, {
+		accessToken: result.accessToken,
+		user: result.user,
+		newNotifs: result.newNotifs,
+	})
+})
+
 export const refreshToken = catchAsync(async (req, res, next) => {
 	const refreshToken = req.cookies[AUTH_KEY]
 	if (!refreshToken)
@@ -44,7 +60,6 @@ export const refreshToken = catchAsync(async (req, res, next) => {
 	sendRefreshToken(req, res, result.refreshToken)
 	envelope(res, {
 		accessToken: result.accessToken,
-		user: result.user,
 	})
 })
 
@@ -68,6 +83,7 @@ export const signin = catchAsync(async (req, res, next) => {
 	sendRefreshToken(req, res, result.refreshToken)
 	envelope(res, {
 		accessToken: result.accessToken,
+		newNotifs: result.newNotifs,
 		user: result.user,
 	})
 })
@@ -84,6 +100,9 @@ export const googleCallback = catchAsync(async (req, res, next) => {
 				"Something is wrong here, are you trying to access this page without asking for Google's permission?",
 		})
 
+	const authServiceInstance = Container.get(AuthService)
+	const { newNotifs } = await authServiceInstance.getUserStats(req.user.id)
+
 	const refreshToken = createRefreshToken(req.user)
 	const accessToken = createAccessToken(req.user)
 	sendRefreshToken(req, res, refreshToken)
@@ -93,6 +112,7 @@ export const googleCallback = catchAsync(async (req, res, next) => {
 		payload: {
 			accessToken,
 			user: req.user,
+			newNotifs,
 		},
 	})
 
@@ -106,6 +126,9 @@ export const gitHubCallback = catchAsync(async (req, res, next) => {
 				"Something is wrong here, are you trying to access this page without asking for GitHub's permission?",
 		})
 
+	const authServiceInstance = Container.get(AuthService)
+	const { newNotifs } = await authServiceInstance.getUserStats(req.user.id)
+
 	const refreshToken = createRefreshToken(req.user)
 	const accessToken = createAccessToken(req.user)
 	sendRefreshToken(req, res, refreshToken)
@@ -115,6 +138,7 @@ export const gitHubCallback = catchAsync(async (req, res, next) => {
 		payload: {
 			accessToken,
 			user: req.user,
+			newNotifs,
 		},
 	})
 

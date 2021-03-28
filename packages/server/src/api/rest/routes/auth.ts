@@ -8,6 +8,7 @@ import {
 	changePasswordSchema,
 } from '../../validateSchemas'
 import {
+	authData,
 	refreshToken,
 	signup,
 	signin,
@@ -20,6 +21,7 @@ import {
 
 const router = express.Router()
 
+router.post('/auth-data', authData)
 router.post('/refresh-token', refreshToken)
 router.post('/signup', validate(signupSchema), signup)
 router.post('/signin', validate(signinSchema), signin)

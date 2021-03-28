@@ -1,0 +1,21 @@
+type Notif {
+	id: String!
+	userSender: User!
+	userTarget: User!
+	book: Book
+	review: Review
+	follow: Follow
+	created: DateTime!
+	read: Boolean!
+}
+
+type NotifConnection {
+	edges: [NotifEdge!]!
+	nodes: [Notif!]!
+	pageInfo: PageInfo!
+}
+
+type NotifEdge {
+	node: Notif!
+	cursor: String!
+}

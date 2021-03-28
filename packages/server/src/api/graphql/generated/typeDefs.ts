@@ -24,8 +24,10 @@ type Mutation {
   createBook(title: String!, summary: String!, content: String!): Book @isAuthenticated
   createReview(book: ID!, content: String!, rating: Int!): Review @isAuthenticated
   deleteBook(id: ID!): ID @isAuthenticated
+  deleteNotif(id: ID!): Boolean! @isAuthenticated
   deleteReview(id: ID!): Review @isAuthenticated
   followUser(following: ID!): Follow @isAuthenticated
+  readNotifs: Boolean! @isAuthenticated
   signin(email: String!, password: String!): AuthData
   signup(name: String!, email: String!, password: String!): User
   unfollowUser(following: ID!): Follow @isAuthenticated
@@ -37,6 +39,7 @@ type Query {
   book(id: ID!): Book
   books(first: Int!, after: String, where: BooksWhereInput, orderBy: BooksOrder = created_DESC, byFollowings: Boolean = false): BookConnection!
   getFollows(first: Int!, after: String, where: FollowsWhereInput, orderBy: FollowOrder = created_DESC): FollowConnection!
+  getNotifs(first: Int!, after: String, where: NotifWhereInput, orderBy: NotifOrder = created_DESC): NotifConnection! @isAuthenticated
   me: User @isAuthenticated
   review(id: ID!): Review
   reviews(first: Int!, after: String, where: ReviewsWhereInput, orderBy: ReviewOrder = created_DESC): ReviewConnection!
@@ -94,6 +97,32 @@ enum FollowOrder {
 input FollowsWhereInput {
   follower: ID
   following: ID
+}
+type Notif {
+  id: String!
+  userSender: User!
+  userTarget: User!
+  book: Book
+  review: Review
+  follow: Follow
+  created: DateTime!
+  read: Boolean!
+}
+type NotifConnection {
+  edges: [NotifEdge!]!
+  nodes: [Notif!]!
+  pageInfo: PageInfo!
+}
+type NotifEdge {
+  node: Notif!
+  cursor: String!
+}
+enum NotifOrder {
+  created_ASC
+  created_DESC
+}
+input NotifWhereInput {
+  read: Boolean
 }
 type Review {
   id: ID!

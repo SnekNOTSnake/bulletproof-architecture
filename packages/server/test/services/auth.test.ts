@@ -2,14 +2,16 @@ import expect from 'expect'
 import bcrypt from 'bcrypt'
 import { createReadStream, existsSync, unlinkSync } from 'fs'
 import path from 'path'
+import { Types } from 'mongoose'
 
 import { modifyLastCharacter } from '../utils'
+import NotifModel from '../../src/models/Notif'
 import UserModel from '../../src/models/User'
 import AuthService from '../../src/services/Auth'
 
 const ASSETS_DIR = path.join(__dirname, '../assets')
 const UPLOAD_DIR = path.join(__dirname, '../../public/img')
-const authServiceInstance = new AuthService(UserModel)
+const authServiceInstance = new AuthService(UserModel, NotifModel)
 
 export const testUser = {
 	name: 'test',
@@ -81,12 +83,10 @@ describe('Auth Service', function () {
 	})
 
 	describe('refreshToken', () => {
-		it('Should return the new `accessToken`, `refreshToken` and the user', async () => {
+		it('Should return the new `accessToken` and `refreshToken`', async () => {
 			const result = await authServiceInstance.refreshToken(refreshToken)
 			expect(result).toHaveProperty('accessToken')
 			expect(result).toHaveProperty('refreshToken')
-			expect(result).toHaveProperty('user')
-			expect(result.user).toHaveProperty('id')
 		})
 
 		it('Should throws if the token is invalid or empty', async () => {
@@ -95,6 +95,28 @@ describe('Auth Service', function () {
 			await expect(
 				authServiceInstance.refreshToken(modifiedToken),
 			).rejects.toThrow()
+		})
+	})
+
+	describe('getAuthData', () => {
+		before(async () => {
+			// Create a test notification
+			await NotifModel.create({
+				userSender: String(Types.ObjectId()),
+				userTarget: loginUserID,
+				follow: String(Types.ObjectId()),
+			})
+		})
+
+		it('Should return user as well as total number of new notifications', async () => {
+			const user = await authServiceInstance.getUser(loginUserID)
+			if (!user) throw new Error('User is empty')
+			const result = await authServiceInstance.getAuthData(refreshToken)
+
+			expect(result.accessToken).toBeTruthy()
+			expect(result.refreshToken).toBeTruthy()
+			expect(result.newNotifs).toBe(1)
+			expect(result.user.id).toBe(loginUserID)
 		})
 	})
 

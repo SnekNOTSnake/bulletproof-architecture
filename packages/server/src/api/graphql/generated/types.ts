@@ -3,6 +3,7 @@ import { IUser } from '../../../models/User';
 import { IBook } from '../../../models/Book';
 import { IReview } from '../../../models/Review';
 import { IFollow } from '../../../models/Follow';
+import { INotif } from '../../../models/Notif';
 import { MyContext } from '../../../utils/context';
 export type Maybe<T> = T | null;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -49,8 +50,10 @@ export type Mutation = {
   createBook?: Maybe<Book>;
   createReview?: Maybe<Review>;
   deleteBook?: Maybe<Scalars['ID']>;
+  deleteNotif: Scalars['Boolean'];
   deleteReview?: Maybe<Review>;
   followUser?: Maybe<Follow>;
+  readNotifs: Scalars['Boolean'];
   signin?: Maybe<AuthData>;
   signup?: Maybe<User>;
   unfollowUser?: Maybe<Follow>;
@@ -75,6 +78,11 @@ export type MutationCreateReviewArgs = {
 
 
 export type MutationDeleteBookArgs = {
+  id: Scalars['ID'];
+};
+
+
+export type MutationDeleteNotifArgs = {
   id: Scalars['ID'];
 };
 
@@ -133,6 +141,7 @@ export type Query = {
   book?: Maybe<Book>;
   books: BookConnection;
   getFollows: FollowConnection;
+  getNotifs: NotifConnection;
   me?: Maybe<User>;
   review?: Maybe<Review>;
   reviews: ReviewConnection;
@@ -160,6 +169,14 @@ export type QueryGetFollowsArgs = {
   after?: Maybe<Scalars['String']>;
   where?: Maybe<FollowsWhereInput>;
   orderBy?: Maybe<FollowOrder>;
+};
+
+
+export type QueryGetNotifsArgs = {
+  first: Scalars['Int'];
+  after?: Maybe<Scalars['String']>;
+  where?: Maybe<NotifWhereInput>;
+  orderBy?: Maybe<NotifOrder>;
 };
 
 
@@ -251,6 +268,39 @@ export type FollowOrder =
 export type FollowsWhereInput = {
   follower?: Maybe<Scalars['ID']>;
   following?: Maybe<Scalars['ID']>;
+};
+
+export type Notif = {
+  __typename?: 'Notif';
+  id: Scalars['String'];
+  userSender: User;
+  userTarget: User;
+  book?: Maybe<Book>;
+  review?: Maybe<Review>;
+  follow?: Maybe<Follow>;
+  created: Scalars['DateTime'];
+  read: Scalars['Boolean'];
+};
+
+export type NotifConnection = {
+  __typename?: 'NotifConnection';
+  edges: Array<NotifEdge>;
+  nodes: Array<Notif>;
+  pageInfo: PageInfo;
+};
+
+export type NotifEdge = {
+  __typename?: 'NotifEdge';
+  node: Notif;
+  cursor: Scalars['String'];
+};
+
+export type NotifOrder =
+  | 'created_ASC'
+  | 'created_DESC';
+
+export type NotifWhereInput = {
+  read?: Maybe<Scalars['Boolean']>;
 };
 
 export type Review = {
@@ -404,6 +454,11 @@ export type ResolversTypes = {
   FollowEdge: ResolverTypeWrapper<Omit<FollowEdge, 'node'> & { node: ResolversTypes['Follow'] }>;
   FollowOrder: FollowOrder;
   FollowsWhereInput: FollowsWhereInput;
+  Notif: ResolverTypeWrapper<INotif>;
+  NotifConnection: ResolverTypeWrapper<Omit<NotifConnection, 'edges' | 'nodes'> & { edges: Array<ResolversTypes['NotifEdge']>, nodes: Array<ResolversTypes['Notif']> }>;
+  NotifEdge: ResolverTypeWrapper<Omit<NotifEdge, 'node'> & { node: ResolversTypes['Notif'] }>;
+  NotifOrder: NotifOrder;
+  NotifWhereInput: NotifWhereInput;
   Review: ResolverTypeWrapper<IReview>;
   ReviewConnection: ResolverTypeWrapper<Omit<ReviewConnection, 'edges' | 'nodes'> & { edges: Array<ResolversTypes['ReviewEdge']>, nodes: Array<ResolversTypes['Review']> }>;
   ReviewEdge: ResolverTypeWrapper<Omit<ReviewEdge, 'node'> & { node: ResolversTypes['Review'] }>;
@@ -436,6 +491,10 @@ export type ResolversParentTypes = {
   FollowConnection: Omit<FollowConnection, 'edges' | 'nodes'> & { edges: Array<ResolversParentTypes['FollowEdge']>, nodes: Array<ResolversParentTypes['Follow']> };
   FollowEdge: Omit<FollowEdge, 'node'> & { node: ResolversParentTypes['Follow'] };
   FollowsWhereInput: FollowsWhereInput;
+  Notif: INotif;
+  NotifConnection: Omit<NotifConnection, 'edges' | 'nodes'> & { edges: Array<ResolversParentTypes['NotifEdge']>, nodes: Array<ResolversParentTypes['Notif']> };
+  NotifEdge: Omit<NotifEdge, 'node'> & { node: ResolversParentTypes['Notif'] };
+  NotifWhereInput: NotifWhereInput;
   Review: IReview;
   ReviewConnection: Omit<ReviewConnection, 'edges' | 'nodes'> & { edges: Array<ResolversParentTypes['ReviewEdge']>, nodes: Array<ResolversParentTypes['Review']> };
   ReviewEdge: Omit<ReviewEdge, 'node'> & { node: ResolversParentTypes['Review'] };
@@ -476,8 +535,10 @@ export type MutationResolvers<ContextType = MyContext, ParentType extends Resolv
   createBook?: Resolver<Maybe<ResolversTypes['Book']>, ParentType, ContextType, RequireFields<MutationCreateBookArgs, 'title' | 'summary' | 'content'>>;
   createReview?: Resolver<Maybe<ResolversTypes['Review']>, ParentType, ContextType, RequireFields<MutationCreateReviewArgs, 'book' | 'content' | 'rating'>>;
   deleteBook?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType, RequireFields<MutationDeleteBookArgs, 'id'>>;
+  deleteNotif?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationDeleteNotifArgs, 'id'>>;
   deleteReview?: Resolver<Maybe<ResolversTypes['Review']>, ParentType, ContextType, RequireFields<MutationDeleteReviewArgs, 'id'>>;
   followUser?: Resolver<Maybe<ResolversTypes['Follow']>, ParentType, ContextType, RequireFields<MutationFollowUserArgs, 'following'>>;
+  readNotifs?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   signin?: Resolver<Maybe<ResolversTypes['AuthData']>, ParentType, ContextType, RequireFields<MutationSigninArgs, 'email' | 'password'>>;
   signup?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<MutationSignupArgs, 'name' | 'email' | 'password'>>;
   unfollowUser?: Resolver<Maybe<ResolversTypes['Follow']>, ParentType, ContextType, RequireFields<MutationUnfollowUserArgs, 'following'>>;
@@ -490,6 +551,7 @@ export type QueryResolvers<ContextType = MyContext, ParentType extends Resolvers
   book?: Resolver<Maybe<ResolversTypes['Book']>, ParentType, ContextType, RequireFields<QueryBookArgs, 'id'>>;
   books?: Resolver<ResolversTypes['BookConnection'], ParentType, ContextType, RequireFields<QueryBooksArgs, 'first' | 'orderBy' | 'byFollowings'>>;
   getFollows?: Resolver<ResolversTypes['FollowConnection'], ParentType, ContextType, RequireFields<QueryGetFollowsArgs, 'first' | 'orderBy'>>;
+  getNotifs?: Resolver<ResolversTypes['NotifConnection'], ParentType, ContextType, RequireFields<QueryGetNotifsArgs, 'first' | 'orderBy'>>;
   me?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
   review?: Resolver<Maybe<ResolversTypes['Review']>, ParentType, ContextType, RequireFields<QueryReviewArgs, 'id'>>;
   reviews?: Resolver<ResolversTypes['ReviewConnection'], ParentType, ContextType, RequireFields<QueryReviewsArgs, 'first' | 'orderBy'>>;
@@ -540,6 +602,31 @@ export type FollowConnectionResolvers<ContextType = MyContext, ParentType extend
 
 export type FollowEdgeResolvers<ContextType = MyContext, ParentType extends ResolversParentTypes['FollowEdge'] = ResolversParentTypes['FollowEdge']> = {
   node?: Resolver<ResolversTypes['Follow'], ParentType, ContextType>;
+  cursor?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type NotifResolvers<ContextType = MyContext, ParentType extends ResolversParentTypes['Notif'] = ResolversParentTypes['Notif']> = {
+  id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  userSender?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
+  userTarget?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
+  book?: Resolver<Maybe<ResolversTypes['Book']>, ParentType, ContextType>;
+  review?: Resolver<Maybe<ResolversTypes['Review']>, ParentType, ContextType>;
+  follow?: Resolver<Maybe<ResolversTypes['Follow']>, ParentType, ContextType>;
+  created?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  read?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type NotifConnectionResolvers<ContextType = MyContext, ParentType extends ResolversParentTypes['NotifConnection'] = ResolversParentTypes['NotifConnection']> = {
+  edges?: Resolver<Array<ResolversTypes['NotifEdge']>, ParentType, ContextType>;
+  nodes?: Resolver<Array<ResolversTypes['Notif']>, ParentType, ContextType>;
+  pageInfo?: Resolver<ResolversTypes['PageInfo'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type NotifEdgeResolvers<ContextType = MyContext, ParentType extends ResolversParentTypes['NotifEdge'] = ResolversParentTypes['NotifEdge']> = {
+  node?: Resolver<ResolversTypes['Notif'], ParentType, ContextType>;
   cursor?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
@@ -610,6 +697,9 @@ export type Resolvers<ContextType = MyContext> = {
   Follow?: FollowResolvers<ContextType>;
   FollowConnection?: FollowConnectionResolvers<ContextType>;
   FollowEdge?: FollowEdgeResolvers<ContextType>;
+  Notif?: NotifResolvers<ContextType>;
+  NotifConnection?: NotifConnectionResolvers<ContextType>;
+  NotifEdge?: NotifEdgeResolvers<ContextType>;
   Review?: ReviewResolvers<ContextType>;
   ReviewConnection?: ReviewConnectionResolvers<ContextType>;
   ReviewEdge?: ReviewEdgeResolvers<ContextType>;
