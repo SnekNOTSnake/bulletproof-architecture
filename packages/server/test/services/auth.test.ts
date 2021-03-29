@@ -104,7 +104,7 @@ describe('Auth Service', function () {
 			await NotifModel.create({
 				userSender: String(Types.ObjectId()),
 				userTarget: loginUserID,
-				follow: String(Types.ObjectId()),
+				type: 'FOLLOW',
 			})
 		})
 

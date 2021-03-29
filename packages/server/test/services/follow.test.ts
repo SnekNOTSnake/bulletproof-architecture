@@ -1,13 +1,14 @@
 import expect from 'expect'
 
-import UserModel, { IUser } from '../../src/models/User'
+import { clearDatabase } from '../utils'
+import UserModel from '../../src/models/User'
 import AuthService from '../../src/services/Auth'
 import FollowModel from '../../src/models/Follow'
 import NotifModel from '../../src/models/Notif'
 import FollowService from '../../src/services/Follow'
 
 const Auth = new AuthService(UserModel, NotifModel)
-const Follow = new FollowService(FollowModel, UserModel)
+const Follow = new FollowService(FollowModel, UserModel, NotifModel)
 
 let userID1 = ''
 let userID2 = ''
@@ -15,6 +16,8 @@ let followID1 = ''
 
 describe('FollowService', () => {
 	before(async () => {
+		await clearDatabase()
+
 		const user = await Auth.signup({
 			name: 'Follow test user',
 			email: 'follow@test.com',
@@ -28,6 +31,23 @@ describe('FollowService', () => {
 
 		userID1 = user.id
 		userID2 = user2.id
+	})
+
+	describe('_notifyFollowedUser', () => {
+		it('Should create a notif for the followed user', async () => {
+			await Follow._notifyFollowedUser(userID1, userID2)
+			const notifs = await NotifModel.find({
+				type: 'FOLLOW',
+				userTarget: userID2 as any,
+			})
+
+			expect(notifs).toHaveLength(1)
+		})
+
+		after(async () => {
+			await FollowModel.deleteMany({})
+			await NotifModel.deleteMany({})
+		})
 	})
 
 	describe('followUser', () => {
@@ -145,24 +165,33 @@ describe('FollowService', () => {
 	})
 
 	describe('unfollowUser', () => {
-		it('Should be able to delete a `follow` document', async () => {
+		it('Should be able to delete a `follow` document as well as modify the `following` and `followers` state', async () => {
 			await Follow.unfollowUser({ follower: userID1, following: userID2 })
 			const follow = await Follow.getFollow({
 				follower: userID1,
 				following: userID2,
 			})
 
-			expect(follow).toBeNull()
-		})
-
-		it('Should modify the `following` and `followers` state', async () => {
-			await Follow.unfollowUser({ follower: userID2, following: userID1 })
 			const user = await Auth.getUser(userID1)
 
 			if (!user) throw new Error('User is empty')
 
+			expect(follow).toBeNull()
 			expect(user.followings).toBe(0)
-			expect(user.followers).toBe(0)
+			expect(user.followers).toBe(1)
+		})
+
+		it('Should, at this state, has 1 notification left', async () => {
+			const notifs = await NotifModel.find({})
+
+			expect(notifs).toHaveLength(1)
+		})
+
+		it('Should delete the associated notifs', async () => {
+			await Follow.unfollowUser({ follower: userID2, following: userID1 })
+			const notifs = await NotifModel.find({})
+
+			expect(notifs).toHaveLength(0)
 		})
 
 		it('Should not be able to abuse `unfollow` user', async () => {

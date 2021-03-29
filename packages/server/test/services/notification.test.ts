@@ -1,6 +1,7 @@
 import expect from 'expect'
 import { Types } from 'mongoose'
 
+import { clearDatabase } from '../utils'
 import NotifModel from '../../src/models/Notif'
 import NotifService from '../../src/services/Notif'
 
@@ -15,13 +16,13 @@ let firstNotifID = ''
 describe('NotifService', () => {
 	before(async () => {
 		// Clear previous data
-		await NotifModel.deleteMany({})
+		await clearDatabase()
 
 		// Following event
 		const result = await NotifModel.create({
 			userSender: senderID1,
 			userTarget: receiverID1,
-			follow: String(Types.ObjectId()),
+			type: 'FOLLOW',
 		})
 
 		firstNotifID = result.id
@@ -31,6 +32,7 @@ describe('NotifService', () => {
 			userSender: senderID2,
 			userTarget: receiverID1,
 			review: String(Types.ObjectId()),
+			type: 'REVIEW',
 		})
 	})
 
@@ -54,7 +56,7 @@ describe('NotifService', () => {
 			const notif = await NotifModel.create({
 				userSender: senderID1,
 				userTarget: receiverID1,
-				follow: String(Types.ObjectId()),
+				type: 'FOLLOW',
 			})
 
 			const result = await Notif.getNotifs({
