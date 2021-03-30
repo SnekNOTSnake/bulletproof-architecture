@@ -72,14 +72,14 @@ describe('Book Service', async () => {
 
 	describe('_notifyFollowers', () => {
 		it('Should create notifications to each `following` users', async () => {
-			const book = await Book.createBook(createTestBook('Darny darn!'))
+			const book = await BookModel.create(createTestBook('Darny darn!'))
 			await Book._notifyFollowers(userID1, book)
 			const notifs = await NotifModel.find({ type: 'NEW_BOOK' })
 
 			expect(notifs).toHaveLength(2)
 			expect(notifs.some((n) => String(n.userTarget) === userID2)).toBe(true)
 			expect(notifs.some((n) => String(n.userTarget) === userID3)).toBe(true)
-			expect(notifs[0].userSender).toBe(userID1)
+			expect(String(notifs[0].userSender)).toBe(userID1)
 			expect(notifs[0].type).toBe('NEW_BOOK')
 			expect(String(notifs[0].book)).toBe(String(book.id))
 			expect(notifs[0].review).toBeFalsy()
@@ -307,15 +307,19 @@ describe('Book Service', async () => {
 
 	describe('deleteBook', () => {
 		it('Should be able to delete selected book as well as deleting associated notifs', async () => {
+			const notifs1 = await NotifModel.find({ type: 'NEW_BOOK' })
+
+			expect(notifs1).toHaveLength(10)
+
 			const deletedBookId = await Book.deleteBook({
 				id: bookID1,
 				userId: userID1,
 			})
 
-			const notifs = await NotifModel.find({ type: 'NEW_BOOK' })
+			const notifs2 = await NotifModel.find({ type: 'NEW_BOOK' })
 
 			expect(deletedBookId).toBe(bookID1)
-			expect(notifs).toHaveLength(0)
+			expect(notifs2).toHaveLength(8)
 		})
 
 		it('Should also delete the associated reviews', async () => {
