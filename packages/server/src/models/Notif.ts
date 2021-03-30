@@ -4,9 +4,9 @@ export interface INotif extends Document {
 	id: string
 	userSender: object
 	userTarget: object
+	type: 'REVIEW' | 'NEW_BOOK' | 'FOLLOW'
 	book?: object
 	review?: object
-	follow?: object
 	created: Date
 	read: boolean
 }
@@ -22,6 +22,11 @@ const notifSchema = new Schema<INotif>({
 		required: true,
 		ref: 'User',
 	},
+	type: {
+		type: String,
+		enum: ['REVIEW', 'NEW_BOOK', 'FOLLOW'],
+		required: true,
+	},
 	book: {
 		type: Types.ObjectId,
 		ref: 'Book',
@@ -29,10 +34,6 @@ const notifSchema = new Schema<INotif>({
 	review: {
 		type: Types.ObjectId,
 		ref: 'Review',
-	},
-	follow: {
-		type: Types.ObjectId,
-		ref: 'Follow',
 	},
 	read: {
 		type: Boolean,
@@ -45,6 +46,8 @@ const notifSchema = new Schema<INotif>({
 		default: Date.now,
 	},
 })
+
+notifSchema.index({ userSender: 1, userTarget: 1 })
 
 notifSchema.methods.toJSON = function (): any {
 	const object = this.toObject()

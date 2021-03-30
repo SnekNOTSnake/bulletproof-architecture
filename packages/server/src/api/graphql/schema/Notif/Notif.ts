@@ -37,13 +37,3 @@ export const review: NotifResolvers['review'] = async (
 	const review = await reviewByIds.load(String(parent.review))
 	return review
 }
-
-export const follow: NotifResolvers['follow'] = async (
-	parent,
-	args,
-	{ loaders: { followByIds } },
-) => {
-	if (!parent.follow) return null
-	const follow = await followByIds.load(String(parent.follow))
-	return follow
-}

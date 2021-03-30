@@ -17,8 +17,8 @@ const fileExtensions = [
 /** @type import('webpack').Configuration */
 module.exports = {
 	performance: {
-		maxAssetSize: 384000,
-		maxEntrypointSize: 384000,
+		maxAssetSize: 768000,
+		maxEntrypointSize: 768000,
 	},
 	entry: './src/index.tsx',
 	output: {

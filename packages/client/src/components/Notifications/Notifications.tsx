@@ -12,7 +12,7 @@ import {
 } from '@material-ui/core'
 
 import { useReadNotifsMutation, useGetNotifsQuery } from '../../generated/types'
-import { useUserDispatch } from '../../context/user'
+import { useUserState, useUserDispatch } from '../../context/user'
 import useStyles from './Notifications.style'
 
 type Props = { anchorEl: HTMLElement | null; onClose: any }
@@ -20,11 +20,28 @@ type Props = { anchorEl: HTMLElement | null; onClose: any }
 const Notification: React.FC<Props> = ({ anchorEl, onClose }) => {
 	const classes = useStyles()
 	const { enqueueSnackbar } = useSnackbar()
+	const state = useUserState()
+	const userDispatch = useUserDispatch()
 
 	const { data, loading } = useGetNotifsQuery({
-		variables: { first: 1, orderBy: 'created_DESC' },
+		variables: { first: 4, orderBy: 'created_DESC' },
 		onError: (err) => enqueueSnackbar(err.message, { variant: 'error' }),
 	})
+
+	const [read] = useReadNotifsMutation({
+		onCompleted: (data) => {
+			userDispatch({
+				type: 'SET_USER',
+				payload: { ...state.data!, newNotifs: 0 },
+			})
+		},
+		onError: (err) => enqueueSnackbar(err.message, { variant: 'error' }),
+	})
+
+	React.useEffect(() => {
+		// Also prevents unnecessary `readRequest` to server
+		if (anchorEl && state.data?.newNotifs) read()
+	}, [anchorEl])
 
 	const renderNotifs = data?.getNotifs.nodes.length ? (
 		data.getNotifs.nodes.map((notif, index) => {
@@ -33,20 +50,31 @@ const Notification: React.FC<Props> = ({ anchorEl, onClose }) => {
 			let body = ''
 			let link = ''
 
-			if (notif.follow) {
-				emoji = '👈️'
-				action = 'is following you'
-				link = `/user/${notif.userSender.id}`
-			} else if (notif.review) {
-				emoji = '📜️'
-				action = 'reviewed your book'
-				body = notif.review.content.substr(0, 100)
-				link = `/book/${notif.book!.id}`
-			} else if (notif.book) {
-				emoji = '📑️'
-				action = 'wrote a new book'
-				body = notif.book.title
-				link = `/book/${notif.book.id}`
+			switch (notif.type) {
+				case 'FOLLOW':
+					emoji = '👈️'
+					action = 'is following you'
+					link = `/user/${notif.userSender.id}`
+					break
+
+				case 'REVIEW':
+					emoji = '📜️'
+					action = 'reviewed your book'
+					body = notif.review
+						? notif.review.content.substr(0, 100)
+						: 'Review is deleted'
+					link = notif.book ? `/book/${notif.book.id}` : '/'
+					break
+
+				case 'NEW_BOOK':
+					emoji = '📑️'
+					action = 'wrote a new book'
+					body = notif.book ? notif.book.title : 'Book is deleted'
+					link = notif.book ? `/book/${notif.book.id}` : '/'
+					break
+
+				default:
+					break
 			}
 
 			return (
@@ -57,14 +85,20 @@ const Notification: React.FC<Props> = ({ anchorEl, onClose }) => {
 						component={Link}
 						to={link}
 					>
-						<Typography gutterBottom variant="h6">
+						<Typography gutterBottom variant="body1">
 							{emoji} {notif.userSender.name} {action}
 						</Typography>
 					</LinkComponent>
-					<Typography gutterBottom variant="subtitle1">
+					{body ? (
+						<Typography gutterBottom variant="body1">
+							{body}
+						</Typography>
+					) : (
+						''
+					)}
+					<Typography color="textSecondary" variant="body2">
 						{formatDistance(new Date(notif.created), new Date())} ago
 					</Typography>
-					{body ? <Typography variant="body2">{body}</Typography> : ''}
 
 					{index + 1 < data.getNotifs.nodes.length ? (
 						<Divider className={classes.divider} />

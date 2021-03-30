@@ -71,10 +71,10 @@ const Home: React.FC = () => {
 	}
 
 	if (loading) return <Typography variant="h5">Loading data...</Typography>
-	if (!data?.books.nodes.length)
-		return <Typography variant="h5">No data to display</Typography>
 
 	const onFetchMore = async () => {
+		if (!data) return
+
 		setLoadingMore(true)
 		await fetchMore({
 			variables: { first: 1, after: data.books.pageInfo.endCursor },
@@ -103,56 +103,62 @@ const Home: React.FC = () => {
 				</FormControl>
 			</Box>
 			<Grid container spacing={3}>
-				{data?.books.nodes.map((book) => (
-					<Grid
-						className={classes.cardGrid}
-						item
-						md={4}
-						sm={6}
-						xs={12}
-						key={book.id}
-					>
-						<Card variant="outlined">
-							<CardHeader
-								title={book.title}
-								avatar={
-									<Avatar
-										alt={book.author.avatar}
-										src={`http://localhost:4200/img/${book.author.avatar}`}
-									/>
-								}
-								subheader={<CardSubheader book={book} />}
-							/>
-							<CardContent>
-								<Typography className={classes.summary}>
-									{book.summary}
-								</Typography>
-								<Box className={classes.rating}>
-									<Rating
-										className={classes.stars}
-										readOnly
-										value={book.ratingsAverage}
-										precision={0.5}
-									/>
-									<Box>({book.ratingsQuantity})</Box>
-								</Box>
-								<Typography color="textSecondary">
-									Updated {formatDistance(new Date(book.created), new Date())}{' '}
-									ago
-								</Typography>
-							</CardContent>
-							<CardActions>
-								<LinkComponent
-									underline="none"
-									component={Link}
-									to={`/book/${book.id}`}
-								>
-									<Button color="inherit">Details</Button>
-								</LinkComponent>
-							</CardActions>
-						</Card>
+				{!data?.books.nodes.length ? (
+					<Grid className={classes.noBook} item xs={12}>
+						<Typography variant="h5">No data to display</Typography>
 					</Grid>
-				))}
+				) : (
+					data?.books.nodes.map((book) => (
+						<Grid
+							className={classes.cardGrid}
+							item
+							md={4}
+							sm={6}
+							xs={12}
+							key={book.id}
+						>
+							<Card variant="outlined">
+								<CardHeader
+									title={book.title}
+									avatar={
+										<Avatar
+											alt={book.author.avatar}
+											src={`http://localhost:4200/img/${book.author.avatar}`}
+										/>
+									}
+									subheader={<CardSubheader book={book} />}
+								/>
+								<CardContent>
+									<Typography className={classes.summary}>
+										{book.summary}
+									</Typography>
+									<Box className={classes.rating}>
+										<Rating
+											className={classes.stars}
+											readOnly
+											value={book.ratingsAverage}
+											precision={0.5}
+										/>
+										<Box>({book.ratingsQuantity})</Box>
+									</Box>
+									<Typography color="textSecondary">
+										Updated {formatDistance(new Date(book.created), new Date())}{' '}
+										ago
+									</Typography>
+								</CardContent>
+								<CardActions>
+									<LinkComponent
+										underline="none"
+										component={Link}
+										to={`/book/${book.id}`}
+									>
+										<Button color="inherit">Details</Button>
+									</LinkComponent>
+								</CardActions>
+							</Card>
+						</Grid>
+					))
+				)}
 			</Grid>
 
 			{data?.books.pageInfo.hasNextPage ? (

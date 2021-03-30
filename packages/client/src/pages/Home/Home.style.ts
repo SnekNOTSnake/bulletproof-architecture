@@ -26,4 +26,7 @@ export default makeStyles((theme) => ({
 		marginBottom: theme.spacing(2),
 		minWidth: 180,
 	},
+	noBook: {
+		marginBottom: theme.spacing(2),
+	},
 }))

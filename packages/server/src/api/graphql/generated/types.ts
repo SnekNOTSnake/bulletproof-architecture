@@ -275,9 +275,9 @@ export type Notif = {
   id: Scalars['String'];
   userSender: User;
   userTarget: User;
+  type: NotifTypes;
   book?: Maybe<Book>;
   review?: Maybe<Review>;
-  follow?: Maybe<Follow>;
   created: Scalars['DateTime'];
   read: Scalars['Boolean'];
 };
@@ -295,12 +295,22 @@ export type NotifEdge = {
   cursor: Scalars['String'];
 };
 
+export type NotifTypes =
+  | 'REVIEW'
+  | 'NEW_BOOK'
+  | 'FOLLOW';
+
 export type NotifOrder =
   | 'created_ASC'
   | 'created_DESC';
 
 export type NotifWhereInput = {
   read?: Maybe<Scalars['Boolean']>;
+};
+
+export type Test = {
+  __typename?: 'Test';
+  darn?: Maybe<Scalars['String']>;
 };
 
 export type Review = {
@@ -457,8 +467,10 @@ export type ResolversTypes = {
   Notif: ResolverTypeWrapper<INotif>;
   NotifConnection: ResolverTypeWrapper<Omit<NotifConnection, 'edges' | 'nodes'> & { edges: Array<ResolversTypes['NotifEdge']>, nodes: Array<ResolversTypes['Notif']> }>;
   NotifEdge: ResolverTypeWrapper<Omit<NotifEdge, 'node'> & { node: ResolversTypes['Notif'] }>;
+  NotifTypes: NotifTypes;
   NotifOrder: NotifOrder;
   NotifWhereInput: NotifWhereInput;
+  Test: ResolverTypeWrapper<Test>;
   Review: ResolverTypeWrapper<IReview>;
   ReviewConnection: ResolverTypeWrapper<Omit<ReviewConnection, 'edges' | 'nodes'> & { edges: Array<ResolversTypes['ReviewEdge']>, nodes: Array<ResolversTypes['Review']> }>;
   ReviewEdge: ResolverTypeWrapper<Omit<ReviewEdge, 'node'> & { node: ResolversTypes['Review'] }>;
@@ -495,6 +507,7 @@ export type ResolversParentTypes = {
   NotifConnection: Omit<NotifConnection, 'edges' | 'nodes'> & { edges: Array<ResolversParentTypes['NotifEdge']>, nodes: Array<ResolversParentTypes['Notif']> };
   NotifEdge: Omit<NotifEdge, 'node'> & { node: ResolversParentTypes['Notif'] };
   NotifWhereInput: NotifWhereInput;
+  Test: Test;
   Review: IReview;
   ReviewConnection: Omit<ReviewConnection, 'edges' | 'nodes'> & { edges: Array<ResolversParentTypes['ReviewEdge']>, nodes: Array<ResolversParentTypes['Review']> };
   ReviewEdge: Omit<ReviewEdge, 'node'> & { node: ResolversParentTypes['Review'] };
@@ -610,9 +623,9 @@ export type NotifResolvers<ContextType = MyContext, ParentType extends Resolvers
   id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   userSender?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
   userTarget?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
+  type?: Resolver<ResolversTypes['NotifTypes'], ParentType, ContextType>;
   book?: Resolver<Maybe<ResolversTypes['Book']>, ParentType, ContextType>;
   review?: Resolver<Maybe<ResolversTypes['Review']>, ParentType, ContextType>;
-  follow?: Resolver<Maybe<ResolversTypes['Follow']>, ParentType, ContextType>;
   created?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   read?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
@@ -628,6 +641,11 @@ export type NotifConnectionResolvers<ContextType = MyContext, ParentType extends
 export type NotifEdgeResolvers<ContextType = MyContext, ParentType extends ResolversParentTypes['NotifEdge'] = ResolversParentTypes['NotifEdge']> = {
   node?: Resolver<ResolversTypes['Notif'], ParentType, ContextType>;
   cursor?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type TestResolvers<ContextType = MyContext, ParentType extends ResolversParentTypes['Test'] = ResolversParentTypes['Test']> = {
+  darn?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -700,6 +718,7 @@ export type Resolvers<ContextType = MyContext> = {
   Notif?: NotifResolvers<ContextType>;
   NotifConnection?: NotifConnectionResolvers<ContextType>;
   NotifEdge?: NotifEdgeResolvers<ContextType>;
+  Test?: TestResolvers<ContextType>;
   Review?: ReviewResolvers<ContextType>;
   ReviewConnection?: ReviewConnectionResolvers<ContextType>;
   ReviewEdge?: ReviewEdgeResolvers<ContextType>;

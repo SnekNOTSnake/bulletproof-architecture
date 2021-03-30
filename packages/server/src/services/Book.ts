@@ -6,6 +6,8 @@ import xss from 'xss'
 import { trim, getFilterings, compactMap } from '../utils/helpers'
 import AppError from '../utils/AppError'
 import { IBook } from '../models/Book'
+import { INotif } from '../models/Notif'
+import { IFollow } from '../models/Follow'
 import { IReview } from '../models/Review'
 
 @Service()
@@ -13,7 +15,56 @@ class BookService {
 	constructor(
 		@Inject('booksModel') private BooksModel: Model<IBook>,
 		@Inject('reviewsModel') private ReviewsModel: Model<IReview>,
+		@Inject('followsModel') private FollowsModel: Model<IFollow>,
+		@Inject('notifsModel') private NotifsModel: Model<INotif>,
 	) {}
+
+	async _notifyFollowers(userSender: string, book: IBook) {
+		const followers = await this.FollowsModel.find({
+			following: userSender as any,
+		})
+
+		const batch = followers.map((follower) =>
+			this.NotifsModel.create({
+				userSender,
+				userTarget: follower.follower,
+				type: 'NEW_BOOK',
+				book: book.id,
+			}),
+		)
+
+		await Promise.all(batch)
+
+		/* await this.FollowsModel.aggregate([
+			{ $match: { following: new ObjectId(userSender) } },
+			{
+				$project: {
+					userSender: '$following',
+					userTarget: '$follower',
+					type: 'NEW_BOOK',
+					book: new ObjectId(book.id),
+					created: new Date(),
+				},
+			},
+			{
+				$addFields: {
+					_id: new ObjectId(),
+					read: false,
+				},
+			},
+			{
+				$merge: {
+					into: {
+						db: 'bulletproof-architecture',
+						coll: 'notifs',
+					},
+					on: '_id',
+					whenMatched: 'replace',
+					whenNotMatched: 'insert',
+				},
+			},
+		]) */
+	}
 
 	async createBook({
 		title,
@@ -32,6 +83,8 @@ class BookService {
 			content: xss(trim(content)),
 			author,
 		})
+
+		this._notifyFollowers(book.author as any, book)
 
 		return book
 	}
@@ -76,10 +129,13 @@ class BookService {
 				403,
 			)
 
-		await this.BooksModel.findByIdAndDelete(id)
+		const removeBook = this.BooksModel.findByIdAndDelete(id)
 
-		// Delete associated reviews
-		await this.ReviewsModel.deleteMany({ book: id })
+		// Delete associated reviews and notifs
+		const deleteReviews = this.ReviewsModel.deleteMany({ book: id })
+		const deleteNotifs = this.NotifsModel.deleteMany({ book: id })
+
+		await Promise.all([removeBook, deleteReviews, deleteNotifs])
 
 		return id
 	}

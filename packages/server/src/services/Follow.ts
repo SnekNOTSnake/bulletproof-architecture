@@ -5,6 +5,7 @@ import { ObjectId } from 'mongodb'
 import AppError from '../utils/AppError'
 import { IFollow } from '../models/Follow'
 import { IUser } from '../models/User'
+import { INotif } from '../models/Notif'
 import { compactMap, getFilterings } from '../utils/helpers'
 
 @Service()
@@ -12,7 +13,16 @@ class FollowService {
 	constructor(
 		@Inject('followsModel') private FollowsModel: Model<IFollow>,
 		@Inject('usersModel') private UsersModel: Model<IUser>,
+		@Inject('notifsModel') private NotifsModel: Model<INotif>,
 	) {}
+
+	async _notifyFollowedUser(userSender: string, userTarget: string) {
+		this.NotifsModel.create({
+			userSender,
+			userTarget,
+			type: 'FOLLOW',
+		})
+	}
 
 	async followUser({
 		follower,
@@ -41,6 +51,8 @@ class FollowService {
 				},
 			},
 		])
+
+		this._notifyFollowedUser(follower, following)
 
 		return follow
 	}
@@ -74,6 +86,13 @@ class FollowService {
 				},
 			},
 		])
+
+		// Delete associated notifs
+		await this.NotifsModel.deleteMany({
+			type: 'FOLLOW',
+			userSender: follower as any,
+			userTarget: following as any,
+		})
 
 		return follow
 	}

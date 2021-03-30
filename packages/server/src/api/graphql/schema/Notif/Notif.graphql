@@ -2,9 +2,9 @@ type Notif {
 	id: String!
 	userSender: User!
 	userTarget: User!
+	type: NotifTypes!
 	book: Book
 	review: Review
-	follow: Follow
 	created: DateTime!
 	read: Boolean!
 }
@@ -18,4 +18,10 @@ type NotifConnection {
 type NotifEdge {
 	node: Notif!
 	cursor: String!
+}
+
+enum NotifTypes {
+	REVIEW
+	NEW_BOOK
+	FOLLOW
 }

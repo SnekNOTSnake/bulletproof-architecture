@@ -268,9 +268,9 @@ export type Notif = {
   id: Scalars['String'];
   userSender: User;
   userTarget: User;
+  type: NotifTypes;
   book?: Maybe<Book>;
   review?: Maybe<Review>;
-  follow?: Maybe<Follow>;
   created: Scalars['DateTime'];
   read: Scalars['Boolean'];
 };
@@ -288,12 +288,22 @@ export type NotifEdge = {
   cursor: Scalars['String'];
 };
 
+export type NotifTypes =
+  | 'REVIEW'
+  | 'NEW_BOOK'
+  | 'FOLLOW';
+
 export type NotifOrder =
   | 'created_ASC'
   | 'created_DESC';
 
 export type NotifWhereInput = {
   read?: Maybe<Scalars['Boolean']>;
+};
+
+export type Test = {
+  __typename?: 'Test';
+  darn?: Maybe<Scalars['String']>;
 };
 
 export type Review = {
@@ -474,16 +484,13 @@ export type GetNotifsQuery = (
     { __typename?: 'NotifConnection' }
     & { nodes: Array<(
       { __typename?: 'Notif' }
-      & Pick<Notif, 'id' | 'created' | 'read'>
+      & Pick<Notif, 'id' | 'type' | 'created' | 'read'>
       & { userSender: (
         { __typename?: 'User' }
         & Pick<User, 'id' | 'name'>
       ), book?: Maybe<(
         { __typename?: 'Book' }
         & Pick<Book, 'id' | 'title'>
-      )>, follow?: Maybe<(
-        { __typename?: 'Follow' }
-        & Pick<Follow, 'id'>
       )>, review?: Maybe<(
         { __typename?: 'Review' }
         & Pick<Review, 'id' | 'rating' | 'content'>
@@ -916,12 +923,10 @@ export const GetNotifsDocument = gql`
         id
         name
       }
+      type
       book {
         id
         title
-      }
-      follow {
-        id
       }
       review {
         id

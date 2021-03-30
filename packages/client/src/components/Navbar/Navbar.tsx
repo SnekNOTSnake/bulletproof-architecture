@@ -1,11 +1,12 @@
 import React from 'react'
+import { useApolloClient } from '@apollo/client'
 import { Link, useHistory } from 'react-router-dom'
 
 import { Box, Badge, Link as LinkComponent, Button } from '@material-ui/core'
 import {
 	Search as SearchIcon,
 	NightsStay as NightStayIcon,
-	WbSunny as WbSunnyIcon,
+	Brightness7 as WbSunnyIcon,
 	Notifications as NotificationsIcon,
 } from '@material-ui/icons'
 
@@ -31,6 +32,7 @@ const Navbar: React.FC = () => {
 		setAnchorEl(e.currentTarget)
 	}
 
+	const apolloClient = useApolloClient()
 	const history = useHistory()
 
 	const { theme } = useThemeState()
@@ -42,6 +44,7 @@ const Navbar: React.FC = () => {
 
 	const logout = async () => {
 		await logoutUser(dispatchUser)
+		await apolloClient.clearStore()
 		history.push('/')
 	}
 

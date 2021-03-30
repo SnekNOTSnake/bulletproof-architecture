@@ -102,9 +102,9 @@ type Notif {
   id: String!
   userSender: User!
   userTarget: User!
+  type: NotifTypes!
   book: Book
   review: Review
-  follow: Follow
   created: DateTime!
   read: Boolean!
 }
@@ -117,12 +117,20 @@ type NotifEdge {
   node: Notif!
   cursor: String!
 }
+enum NotifTypes {
+  REVIEW
+  NEW_BOOK
+  FOLLOW
+}
 enum NotifOrder {
   created_ASC
   created_DESC
 }
 input NotifWhereInput {
   read: Boolean
+}
+type Test {
+  darn: String
 }
 type Review {
   id: ID!

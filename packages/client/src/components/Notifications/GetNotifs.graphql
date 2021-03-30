@@ -11,12 +11,10 @@ query GetNotifs(
 				id
 				name
 			}
+			type
 			book {
 				id
 				title
-			}
-			follow {
-				id
 			}
 			review {
 				id

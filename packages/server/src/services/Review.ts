@@ -5,6 +5,7 @@ import xss from 'xss'
 import { trim, compactMap, getFilterings } from '../utils/helpers'
 import AppError from '../utils/AppError'
 import { IBook } from '../models/Book'
+import { INotif } from '../models/Notif'
 import { IReview } from '../models/Review'
 
 @Service()
@@ -12,7 +13,25 @@ class ReviewService {
 	constructor(
 		@Inject('reviewsModel') private ReviewsModel: Model<IReview>,
 		@Inject('booksModel') private BooksModel: Model<IBook>,
+		@Inject('notifsModel') private NotifsModel: Model<INotif>,
 	) {}
+
+	async _notifyBookAuthor(
+		userSender: string,
+		bookId: string,
+		reviewId: string,
+	) {
+		const book = await this.BooksModel.findById(bookId)
+		if (!book) throw new AppError('Something went wrong', 500)
+
+		await this.NotifsModel.create({
+			userSender,
+			userTarget: book.author,
+			type: 'REVIEW',
+			book: bookId,
+			review: reviewId,
+		})
+	}
 
 	async createReview({
 		book,
@@ -33,6 +52,7 @@ class ReviewService {
 		})
 
 		await this._updateBook({ book })
+		this._notifyBookAuthor(author, book, review.id)
 
 		return review
 	}
@@ -106,6 +126,9 @@ class ReviewService {
 
 		await this.ReviewsModel.findByIdAndDelete(id)
 		await this._updateBook({ book: String(review.book) })
+
+		// Delete associated notifs
+		await this.NotifsModel.deleteMany({ review: id as any })
 
 		return review
 	}
