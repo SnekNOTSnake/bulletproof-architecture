@@ -44,6 +44,9 @@ class ReviewService {
 		content: string
 		rating: number
 	}) {
+		const bookDocument = await this.BooksModel.findById(book)
+		if (!bookDocument) throw new AppError('No book with that ID', 404)
+
 		const review = await this.ReviewsModel.create({
 			book,
 			author,

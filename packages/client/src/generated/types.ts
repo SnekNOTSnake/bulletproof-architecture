@@ -301,11 +301,6 @@ export type NotifWhereInput = {
   read?: Maybe<Scalars['Boolean']>;
 };
 
-export type Test = {
-  __typename?: 'Test';
-  darn?: Maybe<Scalars['String']>;
-};
-
 export type Review = {
   __typename?: 'Review';
   id: Scalars['ID'];

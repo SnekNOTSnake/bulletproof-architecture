@@ -129,9 +129,6 @@ enum NotifOrder {
 input NotifWhereInput {
   read: Boolean
 }
-type Test {
-  darn: String
-}
 type Review {
   id: ID!
   book: Book!

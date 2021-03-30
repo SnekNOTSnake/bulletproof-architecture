@@ -16,6 +16,7 @@ const Review = new ReviewService(ReviewModel, BookModel, NotifModel)
 const userID = String(Types.ObjectId())
 const userID2 = String(Types.ObjectId())
 
+const undefinedBookID = String(Types.ObjectId())
 let bookID1 = ''
 let bookID2 = ''
 let reviewID1 = ''
@@ -132,6 +133,17 @@ describe('ReviewService', () => {
 			expect(review.rating).toBe(3)
 			expect(book.ratingsAverage).toBe(3.5)
 			expect(book.ratingsQuantity).toBe(2)
+		})
+
+		it('Should throw when book with given ID is not defined', async () => {
+			await expect(
+				Review.createReview({
+					book: undefinedBookID,
+					author: userID,
+					content: 'Some random gibberish words',
+					rating: 3,
+				}),
+			).rejects.toThrow()
 		})
 	})
 

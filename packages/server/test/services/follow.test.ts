@@ -1,4 +1,5 @@
 import expect from 'expect'
+import { Types } from 'mongoose'
 
 import { clearDatabase } from '../utils'
 import UserModel from '../../src/models/User'
@@ -10,6 +11,7 @@ import FollowService from '../../src/services/Follow'
 const Auth = new AuthService(UserModel, NotifModel)
 const Follow = new FollowService(FollowModel, UserModel, NotifModel)
 
+const undefinedUserID = String(Types.ObjectId())
 let userID1 = ''
 let userID2 = ''
 let followID1 = ''
@@ -90,6 +92,12 @@ describe('FollowService', () => {
 		it('Should not be able to follow yourself', async () => {
 			await expect(
 				Follow.followUser({ follower: userID1, following: userID1 }),
+			).rejects.toThrow()
+		})
+
+		it('Should throw when following undefined user', async () => {
+			await expect(
+				Follow.followUser({ follower: userID1, following: undefinedUserID }),
 			).rejects.toThrow()
 		})
 	})

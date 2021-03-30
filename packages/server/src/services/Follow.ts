@@ -35,6 +35,9 @@ class FollowService {
 		if (String(follower) === String(following))
 			throw new AppError('You cannot follow yourself', 400)
 
+		const userToFollow = await this.UsersModel.findById(following)
+		if (!userToFollow) throw new AppError('No user with that ID', 404)
+
 		const follow = await this.FollowsModel.create({ follower, following })
 
 		await this.UsersModel.bulkWrite([
