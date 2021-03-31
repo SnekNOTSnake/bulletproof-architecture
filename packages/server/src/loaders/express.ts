@@ -5,13 +5,12 @@ import initializePassport from './passport'
 import path from 'path'
 import helmet from 'helmet'
 import rateLimit from 'express-rate-limit'
+import { Server } from 'http'
 
 import globalErrorHandler from '../api/rest/controllers/error'
 import { NODE_ENV } from '../config'
 import restRoutes from '../api/rest'
 import { apolloServer } from '../api/graphql'
-
-type Props = { app: express.Application }
 
 const appRootDirectory = path.dirname(
 	require.resolve('@bulletproof/client/package.json'),
@@ -24,7 +23,8 @@ const limiter = rateLimit({
 })
 const whitelist = ['http://localhost:8080']
 
-const loadExpress = async ({ app }: Props) => {
+type Props = { app: express.Application; server: Server }
+const loadExpress = async ({ app, server }: Props) => {
 	app.use(cors({ origin: whitelist, credentials: true }))
 	app.use(limiter)
 	app.use(
@@ -42,7 +42,7 @@ const loadExpress = async ({ app }: Props) => {
 	app.use('/api', restRoutes)
 
 	// GraphQL API
-	apolloServer(app)
+	apolloServer(app, server)
 
 	// Statics
 	app.use(express.static(path.resolve(__dirname, '../../public')))

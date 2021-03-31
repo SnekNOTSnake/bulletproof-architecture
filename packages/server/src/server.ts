@@ -5,16 +5,19 @@ process.on('uncaughtException', (err) => {
 
 import 'reflect-metadata' // We need this in order to use @Decorators
 import express from 'express'
+import http from 'http'
+
 import logger from './utils/logger'
 import { PORT } from './config'
 import loaders from './loaders'
 
 const startServer = async () => {
 	const app = express()
-	await loaders(app)
+	const server = http.createServer(app)
+	await loaders(app, server)
 
-	const server = app
-		.listen(PORT, () => logger.info(`Server available on port ${PORT}`))
+	server
+		.listen(PORT, () => logger.info(`🚀 Server http://localhost:${PORT}`))
 		.on('error', (err) => logger.error(err.stack))
 
 	process.on('unhandledRejection', (err: any) => {

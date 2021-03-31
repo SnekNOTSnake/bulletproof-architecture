@@ -308,6 +308,11 @@ export type NotifWhereInput = {
   read?: Maybe<Scalars['Boolean']>;
 };
 
+export type Subscription = {
+  __typename?: 'Subscription';
+  notifCreated?: Maybe<Notif>;
+};
+
 export type Review = {
   __typename?: 'Review';
   id: Scalars['ID'];
@@ -465,6 +470,7 @@ export type ResolversTypes = {
   NotifTypes: NotifTypes;
   NotifOrder: NotifOrder;
   NotifWhereInput: NotifWhereInput;
+  Subscription: ResolverTypeWrapper<{}>;
   Review: ResolverTypeWrapper<IReview>;
   ReviewConnection: ResolverTypeWrapper<Omit<ReviewConnection, 'edges' | 'nodes'> & { edges: Array<ResolversTypes['ReviewEdge']>, nodes: Array<ResolversTypes['Review']> }>;
   ReviewEdge: ResolverTypeWrapper<Omit<ReviewEdge, 'node'> & { node: ResolversTypes['Review'] }>;
@@ -501,6 +507,7 @@ export type ResolversParentTypes = {
   NotifConnection: Omit<NotifConnection, 'edges' | 'nodes'> & { edges: Array<ResolversParentTypes['NotifEdge']>, nodes: Array<ResolversParentTypes['Notif']> };
   NotifEdge: Omit<NotifEdge, 'node'> & { node: ResolversParentTypes['Notif'] };
   NotifWhereInput: NotifWhereInput;
+  Subscription: {};
   Review: IReview;
   ReviewConnection: Omit<ReviewConnection, 'edges' | 'nodes'> & { edges: Array<ResolversParentTypes['ReviewEdge']>, nodes: Array<ResolversParentTypes['Review']> };
   ReviewEdge: Omit<ReviewEdge, 'node'> & { node: ResolversParentTypes['Review'] };
@@ -637,6 +644,10 @@ export type NotifEdgeResolvers<ContextType = MyContext, ParentType extends Resol
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type SubscriptionResolvers<ContextType = MyContext, ParentType extends ResolversParentTypes['Subscription'] = ResolversParentTypes['Subscription']> = {
+  notifCreated?: SubscriptionResolver<Maybe<ResolversTypes['Notif']>, "notifCreated", ParentType, ContextType>;
+};
+
 export type ReviewResolvers<ContextType = MyContext, ParentType extends ResolversParentTypes['Review'] = ResolversParentTypes['Review']> = {
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   book?: Resolver<ResolversTypes['Book'], ParentType, ContextType>;
@@ -706,6 +717,7 @@ export type Resolvers<ContextType = MyContext> = {
   Notif?: NotifResolvers<ContextType>;
   NotifConnection?: NotifConnectionResolvers<ContextType>;
   NotifEdge?: NotifEdgeResolvers<ContextType>;
+  Subscription?: SubscriptionResolvers<ContextType>;
   Review?: ReviewResolvers<ContextType>;
   ReviewConnection?: ReviewConnectionResolvers<ContextType>;
   ReviewEdge?: ReviewEdgeResolvers<ContextType>;

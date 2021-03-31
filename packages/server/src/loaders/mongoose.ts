@@ -11,7 +11,7 @@ const loadMongoose = async () => {
 		useFindAndModify: false,
 	})
 
-	logger.info(`Connected to MongoDB ${MONGODB_URI} through mongoose `)
+	logger.info(`🛸️ Connected to MongoDB ${MONGODB_URI}`)
 
 	return connection
 }

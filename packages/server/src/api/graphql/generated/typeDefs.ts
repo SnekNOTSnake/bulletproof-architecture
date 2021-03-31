@@ -3,6 +3,7 @@ export default `
 schema {
   query: Query
   mutation: Mutation
+  subscription: Subscription
 }
 type AuthData {
   user: User!
@@ -128,6 +129,9 @@ enum NotifOrder {
 }
 input NotifWhereInput {
   read: Boolean
+}
+type Subscription {
+  notifCreated: Notif
 }
 type Review {
   id: ID!

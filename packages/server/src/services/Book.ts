@@ -4,6 +4,7 @@ import { Service, Inject } from 'typedi'
 import xss from 'xss'
 
 import { trim, getFilterings, compactMap } from '../utils/helpers'
+import myEmitter, { NOTIF_CREATED } from '../events/events'
 import AppError from '../utils/AppError'
 import { IBook } from '../models/Book'
 import { INotif } from '../models/Notif'
@@ -33,7 +34,12 @@ class BookService {
 			}),
 		)
 
-		await Promise.all(batch)
+		await Promise.all(batch).then((notifs) =>
+			// Send all created notifs to subscribed users
+			notifs.forEach((notif) => {
+				myEmitter.emit(NOTIF_CREATED, { notifCreated: notif })
+			}),
+		)
 
 		/* await this.FollowsModel.aggregate([
 			{ $match: { following: new ObjectId(userSender) } },

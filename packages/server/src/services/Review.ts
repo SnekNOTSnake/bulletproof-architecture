@@ -3,6 +3,7 @@ import { Service, Inject } from 'typedi'
 import xss from 'xss'
 
 import { trim, compactMap, getFilterings } from '../utils/helpers'
+import myEmitter, { NOTIF_CREATED } from '../events/events'
 import AppError from '../utils/AppError'
 import { IBook } from '../models/Book'
 import { INotif } from '../models/Notif'
@@ -24,13 +25,15 @@ class ReviewService {
 		const book = await this.BooksModel.findById(bookId)
 		if (!book) throw new AppError('Something went wrong', 500)
 
-		await this.NotifsModel.create({
+		const notif = await this.NotifsModel.create({
 			userSender,
 			userTarget: book.author,
 			type: 'REVIEW',
 			book: bookId,
 			review: reviewId,
 		})
+
+		myEmitter.emit(NOTIF_CREATED, { notifCreated: notif })
 	}
 
 	async createReview({

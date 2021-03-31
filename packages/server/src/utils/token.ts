@@ -35,7 +35,7 @@ export const decodeToken = (token: string) =>
 	})
 
 export const createAccessToken = (user: IUser) => {
-	const options = { expiresIn: JWT_ACCESS_TOKEN_EXPIRES }
+	const options = { expiresIn: /* JWT_ACCESS_TOKEN_EXPIRES */ '30m' }
 	const payload: ITokenPayload = { userId: user.id }
 	return jwt.sign(payload, JWT_SECRET, options)
 }

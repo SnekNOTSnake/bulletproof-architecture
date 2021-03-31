@@ -7,6 +7,7 @@ import { IFollow } from '../models/Follow'
 import { IUser } from '../models/User'
 import { INotif } from '../models/Notif'
 import { compactMap, getFilterings } from '../utils/helpers'
+import myEmitter, { NOTIF_CREATED } from '../events/events'
 
 @Service()
 class FollowService {
@@ -17,11 +18,13 @@ class FollowService {
 	) {}
 
 	async _notifyFollowedUser(userSender: string, userTarget: string) {
-		this.NotifsModel.create({
+		const notif = await this.NotifsModel.create({
 			userSender,
 			userTarget,
 			type: 'FOLLOW',
 		})
+
+		myEmitter.emit(NOTIF_CREATED, { notifCreated: notif })
 	}
 
 	async followUser({
