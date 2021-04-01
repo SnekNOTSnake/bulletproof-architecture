@@ -20,8 +20,6 @@ export const apolloServer = (app: Application, server: Server) => {
 		subscriptions: {
 			path: '/subscriptions',
 			onConnect: async (connectionParams: any, websocket, context) => {
-				console.log('user connect')
-
 				const token = connectionParams.authorization?.split(' ')[1]
 				const user = token ? await getUser(token) : null
 
@@ -33,7 +31,6 @@ export const apolloServer = (app: Application, server: Server) => {
 				return { loaders, user }
 			},
 			onDisconnect: async (websocket, context) => {
-				console.log('user disconnect')
 				// Tell the world that user is offline, also update the DB
 			},
 		},

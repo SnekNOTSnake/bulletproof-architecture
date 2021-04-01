@@ -12,7 +12,6 @@ export const getUser = async (token: string) => {
 		const user = await loaders.userByIds.load(decoded.userId)
 		return user
 	} catch (err) {
-		console.log(err)
 		return null
 	}
 }

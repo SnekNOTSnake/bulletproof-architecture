@@ -131,7 +131,7 @@ input NotifWhereInput {
   read: Boolean
 }
 type Subscription {
-  notifCreated: Notif
+  notifCreated: Notif @isAuthenticated
 }
 type Review {
   id: ID!
