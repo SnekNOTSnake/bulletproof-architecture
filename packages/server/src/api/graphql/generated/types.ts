@@ -4,7 +4,7 @@ import { IBook } from '../../../models/Book';
 import { IReview } from '../../../models/Review';
 import { IFollow } from '../../../models/Follow';
 import { INotif } from '../../../models/Notif';
-import { MyContext } from '../../../utils/context';
+import { MyContext } from '../apolloServer';
 export type Maybe<T> = T | null;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };

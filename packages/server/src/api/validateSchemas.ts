@@ -1,5 +1,5 @@
 import Joi from 'joi'
-import safeRegex from '../utils/safeRegex'
+import { safeRegex } from '../utils/helpers'
 
 const requiredMongoID = Joi.string().max(50).required()
 const mongoID = Joi.string().max(50)

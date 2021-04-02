@@ -1,9 +1,9 @@
 import DataLoader from 'dataloader'
 
-import UserModel, { IUser } from '../models/User'
-import BookModel, { IBook } from '../models/Book'
-import FollowModel, { IFollow } from '../models/Follow'
-import ReviewModel, { IReview } from '../models/Review'
+import UserModel, { IUser } from '../../models/User'
+import BookModel, { IBook } from '../../models/Book'
+import FollowModel, { IFollow } from '../../models/Follow'
+import ReviewModel, { IReview } from '../../models/Review'
 
 /**
  * A function to ensure Dataloader returns the same order as requested.

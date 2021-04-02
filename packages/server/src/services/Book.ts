@@ -37,7 +37,7 @@ class BookService {
 		await Promise.all(batch).then((notifs) =>
 			// Send all created notifs to subscribed users
 			notifs.forEach((notif) => {
-				myEmitter.emit(NOTIF_CREATED, { notifCreated: notif })
+				myEmitter.emit(NOTIF_CREATED, { notif })
 			}),
 		)
 

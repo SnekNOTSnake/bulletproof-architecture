@@ -2,7 +2,7 @@ import { Application } from 'express'
 import passport from 'passport'
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20'
 import { Strategy as GitHubStrategy } from 'passport-github2'
-import myEmitter, { userSignup } from '../events/events'
+import myEmitter, { USER_SIGNUP } from '../events/events'
 import {
 	GOOGLE_CLIENT_ID,
 	GOOGLE_CLIENT_SECRET,
@@ -39,7 +39,7 @@ export default function initializePassport(app: Application) {
 					})
 
 					await newUser.save()
-					myEmitter.emit(userSignup, { user: newUser })
+					myEmitter.emit(USER_SIGNUP, { user: newUser })
 
 					done(undefined, newUser)
 				} catch (err) {
@@ -75,7 +75,8 @@ export default function initializePassport(app: Application) {
 					await newUser.save()
 
 					// If user give their email on GitHub, say "Hello" to them
-					if (profile._json.email) myEmitter.emit(userSignup, { user: newUser })
+					if (profile._json.email)
+						myEmitter.emit(USER_SIGNUP, { user: newUser })
 
 					done(undefined, newUser)
 				} catch (err) {

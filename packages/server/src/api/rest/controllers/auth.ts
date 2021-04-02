@@ -1,11 +1,10 @@
 import { Container } from 'typedi'
 import { Response } from 'express'
 
-import myEmitter, { userSignup } from '../../../events/events'
 import AuthService from '../../../services/Auth'
 import AppError from '../../../utils/AppError'
 import catchAsync from '../../../utils/catchAsync'
-import envelope from '../../../utils/envelope'
+import { envelope } from '../../../utils/helpers'
 import {
 	createAccessToken,
 	createRefreshToken,
@@ -68,8 +67,6 @@ export const signup = catchAsync(async (req, res, next) => {
 
 	const authServiceInstance = Container.get(AuthService)
 	const user = await authServiceInstance.signup({ name, email, password })
-
-	myEmitter.emit(userSignup, { user })
 
 	envelope(res, { user })
 })

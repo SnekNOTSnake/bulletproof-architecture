@@ -37,7 +37,7 @@ generates:
         Review: ../../../models/Review#IReview
         Follow: ../../../models/Follow#IFollow
         Notif: ../../../models/Notif#INotif
-      contextType: ../../../utils/context#MyContext
+      contextType: ../apolloServer#MyContext
   ./packages/client/src/generated/types.ts:
     plugins:
       - typescript

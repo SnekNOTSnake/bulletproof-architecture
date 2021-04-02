@@ -33,7 +33,7 @@ class ReviewService {
 			review: reviewId,
 		})
 
-		myEmitter.emit(NOTIF_CREATED, { notifCreated: notif })
+		myEmitter.emit(NOTIF_CREATED, { notif })
 	}
 
 	async createReview({

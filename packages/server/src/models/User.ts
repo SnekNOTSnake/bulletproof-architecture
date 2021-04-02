@@ -1,5 +1,5 @@
 import { Document, Schema, model } from 'mongoose'
-import safeRegex from '../utils/safeRegex'
+import { safeRegex } from '../utils/helpers'
 
 export interface IUser extends Document {
 	id: string

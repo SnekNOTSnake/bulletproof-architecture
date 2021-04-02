@@ -10,7 +10,7 @@ import { Server } from 'http'
 import globalErrorHandler from '../api/rest/controllers/error'
 import { NODE_ENV } from '../config'
 import restRoutes from '../api/rest'
-import { apolloServer } from '../api/graphql'
+import { apolloServer } from '../api/graphql/apolloServer'
 
 const appRootDirectory = path.dirname(
 	require.resolve('@bulletproof/client/package.json'),

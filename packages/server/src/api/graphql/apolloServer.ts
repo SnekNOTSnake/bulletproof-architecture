@@ -5,9 +5,37 @@ import { Server } from 'http'
 
 import { PORT } from '../../config'
 import logger from '../../utils/logger'
-import loaders from '../../utils/dataloaders'
-import context, { getUser } from '../../utils/context'
+import loaders, { ILoaders } from './dataloaders'
 import { getSchema } from './schema'
+import { dangerouslyDecodeToken, decodeToken } from '../../utils/token'
+import { IUser } from '../../models/User'
+
+const getUser = async (token: string) => {
+	try {
+		const decoded = await decodeToken(token)
+		const user = await loaders.userByIds.load(decoded.userId)
+		return user
+	} catch (err) {
+		return null
+	}
+}
+
+// Context
+export interface MyContext {
+	user: IUser
+	loaders: ILoaders
+	getterId: string // Special ID ONLY for determining the `following` state
+}
+
+// Special User ID
+const getGetterId = (token: string) => {
+	try {
+		const decoded = dangerouslyDecodeToken(token)
+		return decoded.userId
+	} catch (err) {
+		return null
+	}
+}
 
 export const apolloServer = (app: Application, server: Server) => {
 	app.use(graphqlUploadExpress({ maxFiles: 1, maxFileSize: 2000000 }))
@@ -27,14 +55,22 @@ export const apolloServer = (app: Application, server: Server) => {
 				// Update to DB can be done in `getUserData` route
 
 				// Add user to socket's context
-
 				return { loaders, user }
 			},
 			onDisconnect: async (websocket, context) => {
 				// Tell the world that user is offline, also update the DB
 			},
 		},
-		context,
+		context: async ({ req, connection }) => {
+			// If request come from WebSocket subscription
+			if (connection) return connection.context
+
+			const token = req.headers['authorization']?.split(' ')[1] || null
+			const user = token ? await getUser(token) : null
+			const getterId = token ? getGetterId(token) : null
+
+			return { user, loaders, getterId }
+		},
 		schema: getSchema(),
 	})
 

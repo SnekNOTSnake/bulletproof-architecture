@@ -3,7 +3,7 @@ import EventEmitter from 'events'
 const myEmitter = new EventEmitter()
 
 // Event types
-export const userSignup = 'userSignup'
+export const USER_SIGNUP = 'USER_SIGNUP'
 export const NOTIF_CREATED = 'NOTIF_CREATED'
 
 export default myEmitter

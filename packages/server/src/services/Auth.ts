@@ -6,6 +6,7 @@ import { v4 as uuid } from 'uuid'
 import { createWriteStream, unlinkSync } from 'fs'
 import sharp from 'sharp'
 
+import myEmitter, { USER_SIGNUP } from '../events/events'
 import { trim } from '../utils/helpers'
 import AppError from '../utils/AppError'
 import {
@@ -107,6 +108,9 @@ class AuthService {
 			password: encrypted,
 		})
 		await user.save()
+
+		// Emit user signup event
+		myEmitter.emit(USER_SIGNUP, { user })
 
 		return user
 	}

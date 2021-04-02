@@ -24,7 +24,7 @@ class FollowService {
 			type: 'FOLLOW',
 		})
 
-		myEmitter.emit(NOTIF_CREATED, { notifCreated: notif })
+		myEmitter.emit(NOTIF_CREATED, { notif })
 	}
 
 	async followUser({
