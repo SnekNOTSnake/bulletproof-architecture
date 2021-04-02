@@ -1,10 +1,10 @@
-query GetNotifs(
+query Notifs(
 	$first: Int!
 	$after: String
 	$orderBy: NotifOrder
 	$where: NotifWhereInput
 ) {
-	getNotifs(first: $first, after: $after, orderBy: $orderBy, where: $where) {
+	notifs(first: $first, after: $after, orderBy: $orderBy, where: $where) {
 		nodes {
 			id
 			userSender {

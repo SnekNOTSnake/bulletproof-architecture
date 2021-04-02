@@ -32,7 +32,7 @@ const cache = new InMemoryCache({
 					},
 				},
 
-				getNotifs: {
+				notifs: {
 					keyArgs: false,
 					merge: (existing, incoming) => {
 						const nodes: Reference[] = []

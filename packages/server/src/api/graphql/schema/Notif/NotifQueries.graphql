@@ -1,5 +1,5 @@
 extend type Query {
-	getNotifs(
+	notifs(
 		first: Int!
 		after: String
 		where: NotifWhereInput

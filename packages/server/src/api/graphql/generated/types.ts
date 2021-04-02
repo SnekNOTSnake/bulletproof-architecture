@@ -141,8 +141,8 @@ export type Query = {
   book?: Maybe<Book>;
   books: BookConnection;
   getFollows: FollowConnection;
-  getNotifs: NotifConnection;
   me?: Maybe<User>;
+  notifs: NotifConnection;
   review?: Maybe<Review>;
   reviews: ReviewConnection;
   searchBooks: BookConnection;
@@ -172,7 +172,7 @@ export type QueryGetFollowsArgs = {
 };
 
 
-export type QueryGetNotifsArgs = {
+export type QueryNotifsArgs = {
   first: Scalars['Int'];
   after?: Maybe<Scalars['String']>;
   where?: Maybe<NotifWhereInput>;
@@ -564,8 +564,8 @@ export type QueryResolvers<ContextType = MyContext, ParentType extends Resolvers
   book?: Resolver<Maybe<ResolversTypes['Book']>, ParentType, ContextType, RequireFields<QueryBookArgs, 'id'>>;
   books?: Resolver<ResolversTypes['BookConnection'], ParentType, ContextType, RequireFields<QueryBooksArgs, 'first' | 'orderBy' | 'byFollowings'>>;
   getFollows?: Resolver<ResolversTypes['FollowConnection'], ParentType, ContextType, RequireFields<QueryGetFollowsArgs, 'first' | 'orderBy'>>;
-  getNotifs?: Resolver<ResolversTypes['NotifConnection'], ParentType, ContextType, RequireFields<QueryGetNotifsArgs, 'first' | 'orderBy'>>;
   me?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
+  notifs?: Resolver<ResolversTypes['NotifConnection'], ParentType, ContextType, RequireFields<QueryNotifsArgs, 'first' | 'orderBy'>>;
   review?: Resolver<Maybe<ResolversTypes['Review']>, ParentType, ContextType, RequireFields<QueryReviewArgs, 'id'>>;
   reviews?: Resolver<ResolversTypes['ReviewConnection'], ParentType, ContextType, RequireFields<QueryReviewsArgs, 'first' | 'orderBy'>>;
   searchBooks?: Resolver<ResolversTypes['BookConnection'], ParentType, ContextType, RequireFields<QuerySearchBooksArgs, 'first' | 'query'>>;

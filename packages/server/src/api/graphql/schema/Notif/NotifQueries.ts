@@ -4,7 +4,7 @@ import NotifService from '../../../../services/Notif'
 import { QueryResolvers } from '../../generated/types'
 import { connection } from '../../../../utils/graphql-connection'
 
-export const getNotifs: QueryResolvers['getNotifs'] = connection({
+export const notifs: QueryResolvers['notifs'] = connection({
 	cursorFromNode: (node) => node.created.toISOString(),
 	nodes: async (parent, { first, after, orderBy, where }, { user }) => {
 		const [orderField, orderType]: any = orderBy.split('_')

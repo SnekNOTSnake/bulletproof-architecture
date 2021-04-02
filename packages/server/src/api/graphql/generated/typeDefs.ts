@@ -40,8 +40,8 @@ type Query {
   book(id: ID!): Book
   books(first: Int!, after: String, where: BooksWhereInput, orderBy: BooksOrder = created_DESC, byFollowings: Boolean = false): BookConnection!
   getFollows(first: Int!, after: String, where: FollowsWhereInput, orderBy: FollowOrder = created_DESC): FollowConnection!
-  getNotifs(first: Int!, after: String, where: NotifWhereInput, orderBy: NotifOrder = created_DESC): NotifConnection! @isAuthenticated
   me: User @isAuthenticated
+  notifs(first: Int!, after: String, where: NotifWhereInput, orderBy: NotifOrder = created_DESC): NotifConnection! @isAuthenticated
   review(id: ID!): Review
   reviews(first: Int!, after: String, where: ReviewsWhereInput, orderBy: ReviewOrder = created_DESC): ReviewConnection!
   searchBooks(first: Int!, after: String, query: String!): BookConnection!

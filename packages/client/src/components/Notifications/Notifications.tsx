@@ -12,7 +12,7 @@ import {
 	Typography,
 } from '@material-ui/core'
 
-import { useReadNotifsMutation, useGetNotifsQuery } from '../../generated/types'
+import { useReadNotifsMutation, useNotifsQuery } from '../../generated/types'
 import { useUserState, useUserDispatch } from '../../context/user'
 import useStyles from './Notifications.style'
 
@@ -26,7 +26,7 @@ const Notification: React.FC<Props> = ({ anchorEl, onClose }) => {
 
 	const [loadingMore, setLoadingMore] = React.useState(false)
 
-	const { data, loading, fetchMore } = useGetNotifsQuery({
+	const { data, loading, fetchMore } = useNotifsQuery({
 		variables: { first: 1, orderBy: 'created_DESC' },
 		onError: (err) => enqueueSnackbar(err.message, { variant: 'error' }),
 	})
@@ -36,17 +36,15 @@ const Notification: React.FC<Props> = ({ anchorEl, onClose }) => {
 
 		setLoadingMore(true)
 		await fetchMore({
-			variables: { first: 1, after: data.getNotifs.pageInfo.endCursor },
+			variables: { first: 1, after: data.notifs.pageInfo.endCursor },
 		})
 		setLoadingMore(false)
 	}
 
 	const [read] = useReadNotifsMutation({
 		onCompleted: (data) => {
-			userDispatch({
-				type: 'SET_USER',
-				payload: { ...state.data!, newNotifs: 0 },
-			})
+			if (!data.readNotifs) return
+			userDispatch({ type: 'RESET_NOTIFS' })
 		},
 		onError: (err) => enqueueSnackbar(err.message, { variant: 'error' }),
 	})
@@ -56,8 +54,8 @@ const Notification: React.FC<Props> = ({ anchorEl, onClose }) => {
 		if (anchorEl && state.data?.newNotifs) read()
 	}, [anchorEl])
 
-	const renderNotifs = data?.getNotifs.nodes.length ? (
-		data.getNotifs.nodes.map((notif, index) => {
+	const renderNotifs = data?.notifs.nodes.length ? (
+		data.notifs.nodes.map((notif, index) => {
 			let emoji = ''
 			let action = ''
 			let body = ''
@@ -113,7 +111,7 @@ const Notification: React.FC<Props> = ({ anchorEl, onClose }) => {
 						{formatDistance(new Date(notif.created), new Date())} ago
 					</Typography>
 
-					{index + 1 < data.getNotifs.nodes.length ? (
+					{index + 1 < data.notifs.nodes.length ? (
 						<Divider className={classes.divider} />
 					) : (
 						''
@@ -137,7 +135,7 @@ const Notification: React.FC<Props> = ({ anchorEl, onClose }) => {
 			<Box className={classes.popover}>
 				{loading ? <Typography>Loading data...</Typography> : renderNotifs}
 
-				{data?.getNotifs.pageInfo.hasNextPage ? (
+				{data?.notifs.pageInfo.hasNextPage ? (
 					<Button
 						color="primary"
 						variant="contained"

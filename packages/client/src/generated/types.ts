@@ -134,8 +134,8 @@ export type Query = {
   book?: Maybe<Book>;
   books: BookConnection;
   getFollows: FollowConnection;
-  getNotifs: NotifConnection;
   me?: Maybe<User>;
+  notifs: NotifConnection;
   review?: Maybe<Review>;
   reviews: ReviewConnection;
   searchBooks: BookConnection;
@@ -165,7 +165,7 @@ export type QueryGetFollowsArgs = {
 };
 
 
-export type QueryGetNotifsArgs = {
+export type QueryNotifsArgs = {
   first: Scalars['Int'];
   after?: Maybe<Scalars['String']>;
   where?: Maybe<NotifWhereInput>;
@@ -491,7 +491,7 @@ export type NotifCreatedSubscription = (
   )> }
 );
 
-export type GetNotifsQueryVariables = Exact<{
+export type NotifsQueryVariables = Exact<{
   first: Scalars['Int'];
   after?: Maybe<Scalars['String']>;
   orderBy?: Maybe<NotifOrder>;
@@ -499,9 +499,9 @@ export type GetNotifsQueryVariables = Exact<{
 }>;
 
 
-export type GetNotifsQuery = (
+export type NotifsQuery = (
   { __typename?: 'Query' }
-  & { getNotifs: (
+  & { notifs: (
     { __typename?: 'NotifConnection' }
     & { nodes: Array<(
       { __typename?: 'Notif' }
@@ -979,9 +979,9 @@ export function useNotifCreatedSubscription(baseOptions?: Apollo.SubscriptionHoo
       }
 export type NotifCreatedSubscriptionHookResult = ReturnType<typeof useNotifCreatedSubscription>;
 export type NotifCreatedSubscriptionResult = Apollo.SubscriptionResult<NotifCreatedSubscription>;
-export const GetNotifsDocument = gql`
-    query GetNotifs($first: Int!, $after: String, $orderBy: NotifOrder, $where: NotifWhereInput) {
-  getNotifs(first: $first, after: $after, orderBy: $orderBy, where: $where) {
+export const NotifsDocument = gql`
+    query Notifs($first: Int!, $after: String, $orderBy: NotifOrder, $where: NotifWhereInput) {
+  notifs(first: $first, after: $after, orderBy: $orderBy, where: $where) {
     nodes {
       id
       userSender {
@@ -1010,16 +1010,16 @@ export const GetNotifsDocument = gql`
     `;
 
 /**
- * __useGetNotifsQuery__
+ * __useNotifsQuery__
  *
- * To run a query within a React component, call `useGetNotifsQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetNotifsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useNotifsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useNotifsQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useGetNotifsQuery({
+ * const { data, loading, error } = useNotifsQuery({
  *   variables: {
  *      first: // value for 'first'
  *      after: // value for 'after'
@@ -1028,15 +1028,15 @@ export const GetNotifsDocument = gql`
  *   },
  * });
  */
-export function useGetNotifsQuery(baseOptions: Apollo.QueryHookOptions<GetNotifsQuery, GetNotifsQueryVariables>) {
-        return Apollo.useQuery<GetNotifsQuery, GetNotifsQueryVariables>(GetNotifsDocument, baseOptions);
+export function useNotifsQuery(baseOptions: Apollo.QueryHookOptions<NotifsQuery, NotifsQueryVariables>) {
+        return Apollo.useQuery<NotifsQuery, NotifsQueryVariables>(NotifsDocument, baseOptions);
       }
-export function useGetNotifsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetNotifsQuery, GetNotifsQueryVariables>) {
-          return Apollo.useLazyQuery<GetNotifsQuery, GetNotifsQueryVariables>(GetNotifsDocument, baseOptions);
+export function useNotifsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<NotifsQuery, NotifsQueryVariables>) {
+          return Apollo.useLazyQuery<NotifsQuery, NotifsQueryVariables>(NotifsDocument, baseOptions);
         }
-export type GetNotifsQueryHookResult = ReturnType<typeof useGetNotifsQuery>;
-export type GetNotifsLazyQueryHookResult = ReturnType<typeof useGetNotifsLazyQuery>;
-export type GetNotifsQueryResult = Apollo.QueryResult<GetNotifsQuery, GetNotifsQueryVariables>;
+export type NotifsQueryHookResult = ReturnType<typeof useNotifsQuery>;
+export type NotifsLazyQueryHookResult = ReturnType<typeof useNotifsLazyQuery>;
+export type NotifsQueryResult = Apollo.QueryResult<NotifsQuery, NotifsQueryVariables>;
 export const ReadNotifsDocument = gql`
     mutation ReadNotifs {
   readNotifs

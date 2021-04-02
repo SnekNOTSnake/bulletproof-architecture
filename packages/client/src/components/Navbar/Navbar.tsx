@@ -52,7 +52,7 @@ const Navbar: React.FC = () => {
 			// Modify cache
 			client.cache.modify({
 				fields: {
-					getNotifs: (existing) => {
+					notifs: (existing) => {
 						const nodes: Reference[] = []
 						if (existing.nodes) nodes.push(...existing.nodes)
 

@@ -13,6 +13,7 @@ export type Action = {
 		| 'REMOVE_USER'
 		| 'SET_USER'
 		| 'INCREASE_NOTIFS'
+		| 'RESET_NOTIFS'
 	error?: any
 	payload?: { user: IUser; newNotifs: number }
 }
@@ -53,6 +54,7 @@ export const userReducer: React.Reducer<State, Action> = (
 				data: payload,
 			}
 
+		// Notifs
 		case 'INCREASE_NOTIFS':
 			if (!state.data) return state
 			return {
@@ -62,6 +64,16 @@ export const userReducer: React.Reducer<State, Action> = (
 					newNotifs: state.data.newNotifs + 1,
 				},
 			}
+		case 'RESET_NOTIFS':
+			if (!state.data) return state
+			return {
+				...state,
+				data: {
+					...state.data,
+					newNotifs: 0,
+				},
+			}
+			break
 
 		default:
 			throw new Error(`Unhandled action type: ${type}`)
