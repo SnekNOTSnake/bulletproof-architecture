@@ -301,6 +301,11 @@ export type NotifWhereInput = {
   read?: Maybe<Scalars['Boolean']>;
 };
 
+export type Subscription = {
+  __typename?: 'Subscription';
+  notifCreated?: Maybe<Notif>;
+};
+
 export type Review = {
   __typename?: 'Review';
   id: Scalars['ID'];
@@ -465,6 +470,27 @@ export type UnfollowUserMutation = (
   )> }
 );
 
+export type NotifCreatedSubscriptionVariables = Exact<{ [key: string]: never; }>;
+
+
+export type NotifCreatedSubscription = (
+  { __typename?: 'Subscription' }
+  & { notifCreated?: Maybe<(
+    { __typename?: 'Notif' }
+    & Pick<Notif, 'id' | 'type' | 'created' | 'read'>
+    & { userSender: (
+      { __typename?: 'User' }
+      & Pick<User, 'id' | 'name'>
+    ), book?: Maybe<(
+      { __typename?: 'Book' }
+      & Pick<Book, 'id' | 'title'>
+    )>, review?: Maybe<(
+      { __typename?: 'Review' }
+      & Pick<Review, 'id' | 'rating' | 'content'>
+    )> }
+  )> }
+);
+
 export type GetNotifsQueryVariables = Exact<{
   first: Scalars['Int'];
   after?: Maybe<Scalars['String']>;
@@ -492,7 +518,7 @@ export type GetNotifsQuery = (
       )> }
     )>, pageInfo: (
       { __typename?: 'PageInfo' }
-      & Pick<PageInfo, 'hasNextPage'>
+      & Pick<PageInfo, 'endCursor' | 'hasNextPage'>
     ) }
   ) }
 );
@@ -909,6 +935,50 @@ export function useUnfollowUserMutation(baseOptions?: Apollo.MutationHookOptions
 export type UnfollowUserMutationHookResult = ReturnType<typeof useUnfollowUserMutation>;
 export type UnfollowUserMutationResult = Apollo.MutationResult<UnfollowUserMutation>;
 export type UnfollowUserMutationOptions = Apollo.BaseMutationOptions<UnfollowUserMutation, UnfollowUserMutationVariables>;
+export const NotifCreatedDocument = gql`
+    subscription NotifCreated {
+  notifCreated {
+    id
+    userSender {
+      id
+      name
+    }
+    type
+    book {
+      id
+      title
+    }
+    review {
+      id
+      rating
+      content
+    }
+    created
+    read
+  }
+}
+    `;
+
+/**
+ * __useNotifCreatedSubscription__
+ *
+ * To run a query within a React component, call `useNotifCreatedSubscription` and pass it any options that fit your needs.
+ * When your component renders, `useNotifCreatedSubscription` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useNotifCreatedSubscription({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useNotifCreatedSubscription(baseOptions?: Apollo.SubscriptionHookOptions<NotifCreatedSubscription, NotifCreatedSubscriptionVariables>) {
+        return Apollo.useSubscription<NotifCreatedSubscription, NotifCreatedSubscriptionVariables>(NotifCreatedDocument, baseOptions);
+      }
+export type NotifCreatedSubscriptionHookResult = ReturnType<typeof useNotifCreatedSubscription>;
+export type NotifCreatedSubscriptionResult = Apollo.SubscriptionResult<NotifCreatedSubscription>;
 export const GetNotifsDocument = gql`
     query GetNotifs($first: Int!, $after: String, $orderBy: NotifOrder, $where: NotifWhereInput) {
   getNotifs(first: $first, after: $after, orderBy: $orderBy, where: $where) {
@@ -932,6 +1002,7 @@ export const GetNotifsDocument = gql`
       read
     }
     pageInfo {
+      endCursor
       hasNextPage
     }
   }

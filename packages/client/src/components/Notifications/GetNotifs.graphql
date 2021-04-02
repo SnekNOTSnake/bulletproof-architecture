@@ -25,6 +25,7 @@ query GetNotifs(
 			read
 		}
 		pageInfo {
+			endCursor
 			hasNextPage
 		}
 	}

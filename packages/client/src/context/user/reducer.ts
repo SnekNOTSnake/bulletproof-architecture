@@ -12,6 +12,7 @@ export type Action = {
 		| 'USER_SUCCESS'
 		| 'REMOVE_USER'
 		| 'SET_USER'
+		| 'INCREASE_NOTIFS'
 	error?: any
 	payload?: { user: IUser; newNotifs: number }
 }
@@ -50,6 +51,16 @@ export const userReducer: React.Reducer<State, Action> = (
 			return {
 				...state,
 				data: payload,
+			}
+
+		case 'INCREASE_NOTIFS':
+			if (!state.data) return state
+			return {
+				...state,
+				data: {
+					...state.data,
+					newNotifs: state.data.newNotifs + 1,
+				},
 			}
 
 		default:

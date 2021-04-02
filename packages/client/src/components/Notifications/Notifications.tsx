@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom'
 
 import {
 	Box,
+	Button,
 	Divider,
 	Link as LinkComponent,
 	Popover,
@@ -23,10 +24,22 @@ const Notification: React.FC<Props> = ({ anchorEl, onClose }) => {
 	const state = useUserState()
 	const userDispatch = useUserDispatch()
 
-	const { data, loading } = useGetNotifsQuery({
-		variables: { first: 4, orderBy: 'created_DESC' },
+	const [loadingMore, setLoadingMore] = React.useState(false)
+
+	const { data, loading, fetchMore } = useGetNotifsQuery({
+		variables: { first: 1, orderBy: 'created_DESC' },
 		onError: (err) => enqueueSnackbar(err.message, { variant: 'error' }),
 	})
+
+	const onFetchMore = async () => {
+		if (!data) return
+
+		setLoadingMore(true)
+		await fetchMore({
+			variables: { first: 1, after: data.getNotifs.pageInfo.endCursor },
+		})
+		setLoadingMore(false)
+	}
 
 	const [read] = useReadNotifsMutation({
 		onCompleted: (data) => {
@@ -78,7 +91,7 @@ const Notification: React.FC<Props> = ({ anchorEl, onClose }) => {
 			}
 
 			return (
-				<Box>
+				<Box key={notif.id}>
 					<LinkComponent
 						onClick={onClose}
 						underline="none"
@@ -123,6 +136,23 @@ const Notification: React.FC<Props> = ({ anchorEl, onClose }) => {
 		>
 			<Box className={classes.popover}>
 				{loading ? <Typography>Loading data...</Typography> : renderNotifs}
+
+				{data?.getNotifs.pageInfo.hasNextPage ? (
+					<Button
+						color="primary"
+						variant="contained"
+						disableElevation
+						type="button"
+						disabled={loadingMore}
+						onClick={onFetchMore}
+						size="small"
+						className={classes.moreButton}
+					>
+						More
+					</Button>
+				) : (
+					''
+				)}
 			</Box>
 		</Popover>
 	)

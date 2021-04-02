@@ -8,4 +8,7 @@ export default makeStyles((theme) => ({
 	divider: {
 		margin: theme.spacing(2, 0),
 	},
+	moreButton: {
+		marginTop: theme.spacing(2),
+	},
 }))

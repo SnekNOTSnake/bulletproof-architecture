@@ -1,5 +1,5 @@
 import React from 'react'
-import { useApolloClient } from '@apollo/client'
+import { useApolloClient, Reference, gql } from '@apollo/client'
 import { Link, useHistory } from 'react-router-dom'
 
 import { Box, Badge, Link as LinkComponent, Button } from '@material-ui/core'
@@ -10,6 +10,10 @@ import {
 	Notifications as NotificationsIcon,
 } from '@material-ui/icons'
 
+import {
+	useNotifCreatedSubscription,
+	useReadNotifsMutation,
+} from '../../generated/types'
 import Notifications from '../Notifications'
 import { useUserState, logoutUser, useUserDispatch } from '../../context/user'
 import { useThemeDispatch, useThemeState } from '../../context/theme'
@@ -39,6 +43,58 @@ const Navbar: React.FC = () => {
 	const dispatchTheme = useThemeDispatch()
 	const { data } = useUserState()
 	const dispatchUser = useUserDispatch()
+
+	const [readNotif] = useReadNotifsMutation()
+
+	useNotifCreatedSubscription({
+		skip: !data,
+		onSubscriptionData: ({ client, subscriptionData }) => {
+			// Modify cache
+			client.cache.modify({
+				fields: {
+					getNotifs: (existing) => {
+						const nodes: Reference[] = []
+						if (existing.nodes) nodes.push(...existing.nodes)
+
+						const newNotifRef = client.cache.writeFragment({
+							data: subscriptionData.data?.notifCreated,
+							fragment: gql`
+								fragment NewNotif on GetBook {
+									id
+									userSender {
+										id
+										name
+									}
+									type
+									book {
+										id
+										title
+									}
+									review {
+										id
+										rating
+										content
+									}
+									created
+									read
+								}
+							`,
+						})
+
+						nodes.unshift(newNotifRef!)
+
+						return { ...existing, nodes }
+					},
+				},
+			})
+
+			// If notifs popover is open, skip modifying `newNotifs`
+			if (anchorEl) return readNotif()
+
+			// Modify number of notifs badge
+			dispatchUser({ type: 'INCREASE_NOTIFS' })
+		},
+	})
 
 	const toggleTheme = () => dispatchTheme({ type: 'TOGGLE_THEME' })
 

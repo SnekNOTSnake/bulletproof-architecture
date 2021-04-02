@@ -1,0 +1,21 @@
+subscription NotifCreated {
+	notifCreated {
+		id
+		userSender {
+			id
+			name
+		}
+		type
+		book {
+			id
+			title
+		}
+		review {
+			id
+			rating
+			content
+		}
+		created
+		read
+	}
+}
