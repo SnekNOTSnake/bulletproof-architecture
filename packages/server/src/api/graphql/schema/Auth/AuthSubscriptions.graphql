@@ -1,0 +1,8 @@
+extend type Subscription {
+	isUserOnline(userId: ID!): IsUserOnlinePayload!
+}
+
+type IsUserOnlinePayload {
+	userId: ID!
+	isOnline: Boolean!
+}

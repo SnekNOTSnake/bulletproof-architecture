@@ -64,6 +64,8 @@ export const sendRefreshToken = (
 }
 
 export const removeRefreshToken = (req: Request, res: Response) => {
+	const refreshToken = req.cookies[AUTH_KEY]
+
 	const options: CookieOptions = {
 		httpOnly: true,
 		path: '/api/auth',
@@ -71,4 +73,8 @@ export const removeRefreshToken = (req: Request, res: Response) => {
 		sameSite: NODE_ENV === 'production',
 	}
 	res.clearCookie(AUTH_KEY, options)
+
+	const decoded: any = jwt.decode(refreshToken)
+	if (decoded) return decoded as ITokenPayload
+	return null
 }

@@ -1,4 +1,4 @@
-import { Auth, AuthMutations, AuthQueries } from './Auth'
+import { Auth, AuthMutations, AuthQueries, AuthSubscriptions } from './Auth'
 import { Book, BookQueries, BookMutations } from './Book'
 import { Review, ReviewQueries, ReviewMutations } from './Review'
 import { Follow, FollowQueries, FollowMutations } from './Follow'
@@ -34,6 +34,7 @@ const resolvers: Resolvers = {
 	},
 	Subscription: {
 		...NotifSubscriptions,
+		...AuthSubscriptions,
 	},
 	...scalars,
 }

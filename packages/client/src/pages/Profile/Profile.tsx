@@ -2,6 +2,7 @@ import React from 'react'
 import { formatDistance } from 'date-fns'
 import { RouteComponentProps } from 'react-router-dom'
 import { useSnackbar } from 'notistack'
+import { gql } from '@apollo/client'
 
 import {
 	Avatar,
@@ -17,6 +18,7 @@ import {
 	ListItem,
 	ListItemIcon,
 	ListItemText,
+	Badge,
 } from '@material-ui/core'
 import {
 	Email as EmailIcon,
@@ -28,7 +30,10 @@ import {
 } from '@material-ui/icons'
 
 import { useUserState } from '../../context/user'
-import { useUserQuery } from '../../generated/types'
+import {
+	useUserQuery,
+	useIsUserOnlineSubscription,
+} from '../../generated/types'
 import useStyles from './Profile.style'
 import EditProfile from '../../components/EditProfile'
 import FollowUser from '../../components/FollowUser'
@@ -59,10 +64,34 @@ const Profile: React.FC<Props> = ({ match }) => {
 	const state = useUserState()
 	const user = state.data?.user
 
+	const { data: subsData, loading: subsLoading } = useIsUserOnlineSubscription({
+		variables: { userId: match.params.id },
+		skip: String(user?.id) === match.params.id,
+		/* onSubscriptionData: ({ client, subscriptionData }) => {
+			client.writeFragment({
+				id: `User:${match.params.id}`,
+				fragment: gql`
+					fragment IsOnline on User {
+						isOnline
+					}
+				`,
+				data: { isOnline: subscriptionData.data?.isUserOnline.isOnline },
+			})
+		}, */
+	})
+
 	const { data, loading } = useUserQuery({
 		variables: { id: match.params.id },
 		onError: (err) => enqueueSnackbar(err.message, { variant: 'error' }),
+		fetchPolicy: 'no-cache',
 	})
+
+	let isOnline = data?.user?.isOnline
+	if (!subsLoading && subsData) {
+		isOnline = subsData.isUserOnline.isOnline
+	}
+
+	const classes = useStyles()
 
 	if (loading) return <Typography variant="h6">Loading data...</Typography>
 	if (!data?.user)
@@ -76,10 +105,20 @@ const Profile: React.FC<Props> = ({ match }) => {
 						<CardHeader
 							action={<FollowUser user={data.user} />}
 							avatar={
-								<Avatar
-									alt={data.user.name}
-									src={`http://localhost:4200/img/${data.user.avatar}`}
-								/>
+								<Badge
+									variant="dot"
+									overlap="circle"
+									anchorOrigin={{
+										vertical: 'bottom',
+										horizontal: 'right',
+									}}
+									className={isOnline ? classes.online : ''}
+								>
+									<Avatar
+										alt={data.user.name}
+										src={`http://localhost:4200/img/${data.user.avatar}`}
+									/>
+								</Badge>
 							}
 							title={data.user.name}
 							subheader={`Joined ${formatDistance(

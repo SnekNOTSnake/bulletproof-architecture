@@ -11,6 +11,7 @@ export interface IUser extends Document {
 	avatar: string
 	followers: number
 	followings: number
+	isOnline: boolean
 }
 
 const userSchema = new Schema<IUser>({
@@ -75,6 +76,11 @@ const userSchema = new Schema<IUser>({
 		type: String,
 		required: true,
 		default: 'default.jpg',
+	},
+	isOnline: {
+		type: Boolean,
+		required: true,
+		default: false,
 	},
 })
 

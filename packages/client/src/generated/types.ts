@@ -36,6 +36,7 @@ export type User = {
   followers: Scalars['Int'];
   followings: Scalars['Int'];
   isFollowing: Scalars['Boolean'];
+  isOnline: Scalars['Boolean'];
 };
 
 export type Mutation = {
@@ -197,6 +198,23 @@ export type QueryUserArgs = {
   id: Scalars['ID'];
 };
 
+export type Subscription = {
+  __typename?: 'Subscription';
+  isUserOnline: IsUserOnlinePayload;
+  notifCreated?: Maybe<Notif>;
+};
+
+
+export type SubscriptionIsUserOnlineArgs = {
+  userId: Scalars['ID'];
+};
+
+export type IsUserOnlinePayload = {
+  __typename?: 'IsUserOnlinePayload';
+  userId: Scalars['ID'];
+  isOnline: Scalars['Boolean'];
+};
+
 export type Book = {
   __typename?: 'Book';
   id: Scalars['ID'];
@@ -299,11 +317,6 @@ export type NotifOrder =
 
 export type NotifWhereInput = {
   read?: Maybe<Scalars['Boolean']>;
-};
-
-export type Subscription = {
-  __typename?: 'Subscription';
-  notifCreated?: Maybe<Notif>;
 };
 
 export type Review = {
@@ -647,6 +660,19 @@ export type BooksQuery = (
   ) }
 );
 
+export type IsUserOnlineSubscriptionVariables = Exact<{
+  userId: Scalars['ID'];
+}>;
+
+
+export type IsUserOnlineSubscription = (
+  { __typename?: 'Subscription' }
+  & { isUserOnline: (
+    { __typename?: 'IsUserOnlinePayload' }
+    & Pick<IsUserOnlinePayload, 'userId' | 'isOnline'>
+  ) }
+);
+
 export type UserQueryVariables = Exact<{
   id: Scalars['ID'];
 }>;
@@ -656,7 +682,7 @@ export type UserQuery = (
   { __typename?: 'Query' }
   & { user?: Maybe<(
     { __typename?: 'User' }
-    & Pick<User, 'id' | 'name' | 'email' | 'joined' | 'avatar' | 'bio' | 'followers' | 'followings' | 'isFollowing'>
+    & Pick<User, 'id' | 'name' | 'email' | 'joined' | 'avatar' | 'bio' | 'followers' | 'followings' | 'isFollowing' | 'isOnline'>
   )> }
 );
 
@@ -1332,6 +1358,36 @@ export function useBooksLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Book
 export type BooksQueryHookResult = ReturnType<typeof useBooksQuery>;
 export type BooksLazyQueryHookResult = ReturnType<typeof useBooksLazyQuery>;
 export type BooksQueryResult = Apollo.QueryResult<BooksQuery, BooksQueryVariables>;
+export const IsUserOnlineDocument = gql`
+    subscription IsUserOnline($userId: ID!) {
+  isUserOnline(userId: $userId) {
+    userId
+    isOnline
+  }
+}
+    `;
+
+/**
+ * __useIsUserOnlineSubscription__
+ *
+ * To run a query within a React component, call `useIsUserOnlineSubscription` and pass it any options that fit your needs.
+ * When your component renders, `useIsUserOnlineSubscription` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useIsUserOnlineSubscription({
+ *   variables: {
+ *      userId: // value for 'userId'
+ *   },
+ * });
+ */
+export function useIsUserOnlineSubscription(baseOptions: Apollo.SubscriptionHookOptions<IsUserOnlineSubscription, IsUserOnlineSubscriptionVariables>) {
+        return Apollo.useSubscription<IsUserOnlineSubscription, IsUserOnlineSubscriptionVariables>(IsUserOnlineDocument, baseOptions);
+      }
+export type IsUserOnlineSubscriptionHookResult = ReturnType<typeof useIsUserOnlineSubscription>;
+export type IsUserOnlineSubscriptionResult = Apollo.SubscriptionResult<IsUserOnlineSubscription>;
 export const UserDocument = gql`
     query User($id: ID!) {
   user(id: $id) {
@@ -1344,6 +1400,7 @@ export const UserDocument = gql`
     followers
     followings
     isFollowing
+    isOnline
   }
 }
     `;

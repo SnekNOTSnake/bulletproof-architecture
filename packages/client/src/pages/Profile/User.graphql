@@ -9,5 +9,6 @@ query User($id: ID!) {
 		followers
 		followings
 		isFollowing
+		isOnline
 	}
 }

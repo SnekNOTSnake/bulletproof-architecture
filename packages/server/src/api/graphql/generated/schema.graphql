@@ -19,6 +19,7 @@ type User {
   followers: Int!
   followings: Int!
   isFollowing: Boolean!
+  isOnline: Boolean!
 }
 type Mutation {
   createBook(title: String!, summary: String!, content: String!): Book @isAuthenticated
@@ -45,6 +46,14 @@ type Query {
   reviews(first: Int!, after: String, where: ReviewsWhereInput, orderBy: ReviewOrder = created_DESC): ReviewConnection!
   searchBooks(first: Int!, after: String, query: String!): BookConnection!
   user(id: ID!): User
+}
+type Subscription {
+  isUserOnline(userId: ID!): IsUserOnlinePayload!
+  notifCreated: Notif @isAuthenticated
+}
+type IsUserOnlinePayload {
+  userId: ID!
+  isOnline: Boolean!
 }
 type Book {
   id: ID!
@@ -128,9 +137,6 @@ enum NotifOrder {
 }
 input NotifWhereInput {
   read: Boolean
-}
-type Subscription {
-  notifCreated: Notif @isAuthenticated
 }
 type Review {
   id: ID!

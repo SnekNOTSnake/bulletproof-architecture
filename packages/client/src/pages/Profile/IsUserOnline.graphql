@@ -1,0 +1,6 @@
+subscription IsUserOnline($userId: ID!) {
+	isUserOnline(userId: $userId) {
+		userId
+		isOnline
+	}
+}

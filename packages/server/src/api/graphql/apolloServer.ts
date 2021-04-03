@@ -9,6 +9,7 @@ import loaders, { ILoaders } from './dataloaders'
 import { getSchema } from './schema'
 import { dangerouslyDecodeToken, decodeToken } from '../../utils/token'
 import { IUser } from '../../models/User'
+import myEmitter, { IS_USER_ONLINE } from '../../events/events'
 
 const getUser = async (token: string) => {
 	try {
@@ -51,14 +52,19 @@ export const apolloServer = (app: Application, server: Server) => {
 				const token = connectionParams.authorization?.split(' ')[1]
 				const user = token ? await getUser(token) : null
 
-				// Tell the world that user is online
-				// Update to DB can be done in `getUserData` route
+				if (user) {
+					myEmitter.emit(IS_USER_ONLINE, { userId: user.id, isOnline: true })
+				}
 
 				// Add user to socket's context
 				return { loaders, user }
 			},
 			onDisconnect: async (websocket, context) => {
-				// Tell the world that user is offline, also update the DB
+				const ctx = await context.initPromise
+				if (ctx && ctx.user) {
+					const user: IUser = ctx.user
+					myEmitter.emit(IS_USER_ONLINE, { userId: user.id, isOnline: false })
+				}
 			},
 		},
 		context: async ({ req, connection }) => {

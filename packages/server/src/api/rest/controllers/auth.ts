@@ -1,6 +1,7 @@
 import { Container } from 'typedi'
 import { Response } from 'express'
 
+import myEmitter, { IS_USER_ONLINE } from '../../../events/events'
 import AuthService from '../../../services/Auth'
 import AppError from '../../../utils/AppError'
 import catchAsync from '../../../utils/catchAsync'
@@ -77,6 +78,9 @@ export const signin = catchAsync(async (req, res, next) => {
 	const authServiceInstance = Container.get(AuthService)
 	const result = await authServiceInstance.signin({ email, password })
 
+	// Tell the world that you're online
+	myEmitter.emit(IS_USER_ONLINE, { userId: result.user.id, isOnline: true })
+
 	sendRefreshToken(req, res, result.refreshToken)
 	envelope(res, {
 		accessToken: result.accessToken,
@@ -86,7 +90,8 @@ export const signin = catchAsync(async (req, res, next) => {
 })
 
 export const logout = catchAsync(async (req, res, next) => {
-	removeRefreshToken(req, res)
+	const p = removeRefreshToken(req, res)
+	if (p) myEmitter.emit(IS_USER_ONLINE, { userId: p.userId, isOnline: false })
 	envelope(res, {})
 })
 
@@ -113,6 +118,7 @@ export const googleCallback = catchAsync(async (req, res, next) => {
 		},
 	})
 
+	myEmitter.emit(IS_USER_ONLINE, { userId: req.user.id, isOnline: true })
 	sendOAuthResponse(res, authData)
 })
 
@@ -139,6 +145,7 @@ export const gitHubCallback = catchAsync(async (req, res, next) => {
 		},
 	})
 
+	myEmitter.emit(IS_USER_ONLINE, { userId: req.user.id, isOnline: true })
 	sendOAuthResponse(res, authData)
 })
 
