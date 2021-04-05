@@ -13,9 +13,9 @@ import {
 	useUnfollowUserMutation,
 } from '../../generated/types'
 
-type Props = { user: UserQuery['user'] }
+type Props = { user: UserQuery['user']; [other: string]: any }
 
-const FollowUser: React.FC<Props> = ({ user }) => {
+const FollowUser: React.FC<Props> = ({ user, ...other }) => {
 	const { enqueueSnackbar } = useSnackbar()
 
 	const [doFollow, { loading: followLoading }] = useFollowUserMutation({
@@ -38,7 +38,11 @@ const FollowUser: React.FC<Props> = ({ user }) => {
 	}
 
 	return (
-		<IconButton onClick={onClick} disabled={followLoading || unfollowLoading}>
+		<IconButton
+			{...other}
+			onClick={onClick}
+			disabled={followLoading || unfollowLoading}
+		>
 			{user?.isFollowing ? <PersonAddDisabledIcon /> : <PersonAddIcon />}
 		</IconButton>
 	)

@@ -59,6 +59,18 @@ const Layout: React.FC = ({ children }) => {
 					contrastText: '#fff',
 				},
 			},
+			overrides: {
+				MuiButton: {
+					containedPrimary: {
+						backgroundColor: '#1976d2',
+					},
+				},
+				MuiAppBar: {
+					colorPrimary: {
+						backgroundColor: '#1976d2',
+					},
+				},
+			},
 		})
 	}, [theme])
 

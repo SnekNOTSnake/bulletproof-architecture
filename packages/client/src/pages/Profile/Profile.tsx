@@ -5,25 +5,23 @@ import { useSnackbar } from 'notistack'
 import { gql } from '@apollo/client'
 
 import {
-	Avatar,
+	AppBar,
+	Badge,
 	Box,
 	Button,
 	Card,
-	CardHeader,
 	CardContent,
 	CardActions,
 	Typography,
-	List,
-	ListItem,
-	ListItemIcon,
-	ListItemText,
-	Badge,
+	Paper,
+	Tabs,
+	Tab,
 } from '@material-ui/core'
 import {
 	Email as EmailIcon,
-	PermIdentity as IdentityIcon,
-	Fingerprint as FingerprintIcon,
+	EventNote as EventNoteIcon,
 	SvgIconComponent,
+	Collections as CollectionsIcon,
 	Group as GroupIcon,
 	AccessibleForward as AccessibleForwardIcon,
 } from '@material-ui/icons'
@@ -37,27 +35,16 @@ import useStyles from './Profile.style'
 import EditProfile from '../../components/EditProfile'
 import FollowUser from '../../components/FollowUser'
 
-type MyListProps = { icon: SvgIconComponent; text: string | Date }
-
-const MyList: React.FC<MyListProps> = ({ icon: Icon, text }) => {
-	const classes = useStyles()
-
-	return (
-		<ListItem>
-			<ListItemIcon>
-				<Icon />
-			</ListItemIcon>
-			<ListItemText className={classes.listItem}>{text}</ListItemText>
-		</ListItem>
-	)
-}
-
 type Props = RouteComponentProps<{ id: string }>
 
 const Profile: React.FC<Props> = ({ match }) => {
 	const [isEditing, setIsEditing] = React.useState<boolean>(false)
+	const [tab, setTab] = React.useState(0)
 
 	const toggleEditting = () => setIsEditing((initVal) => !initVal)
+	const onTabChange = (e: any, value: number) => {
+		setTab(value)
+	}
 
 	const { enqueueSnackbar } = useSnackbar()
 	const state = useUserState()
@@ -97,56 +84,47 @@ const Profile: React.FC<Props> = ({ match }) => {
 
 	return (
 		<Box>
-			<Card variant="outlined">
-				<CardHeader
-					action={<FollowUser user={data.user} />}
-					avatar={
-						<Badge
-							variant="dot"
-							overlap="circle"
-							anchorOrigin={{
-								vertical: 'bottom',
-								horizontal: 'right',
-							}}
-							className={isOnline ? classes.online : ''}
-						>
-							<Avatar
-								alt={data.user.name}
-								src={`http://localhost:4200/img/${data.user.avatar}`}
-							/>
-						</Badge>
-					}
-					title={data.user.name}
-					subheader={`Joined ${formatDistance(
-						new Date(data.user.joined),
-						new Date(),
-					)} ago`}
-				/>
+			<Card className={classes.profile} variant="outlined">
 				<CardContent>
-					<List>
-						<MyList icon={FingerprintIcon} text={data.user.id} />
-						{data.user.email ? (
-							<MyList icon={EmailIcon} text={data.user.email} />
-						) : (
-							''
+					<Box>
+						<Box className={classes.avatar}>
+							<Badge
+								variant="dot"
+								overlap="circle"
+								anchorOrigin={{
+									vertical: 'bottom',
+									horizontal: 'right',
+								}}
+								className={isOnline ? classes.online : ''}
+							>
+								<img
+									className={classes.avatarImage}
+									src={`http://localhost:4200/img/${data.user.avatar}`}
+									alt="something"
+								/>
+							</Badge>
+							<FollowUser className={classes.followIcon} user={data.user} />
+						</Box>
+						<Typography variant="h4" className={classes.name}>
+							{data.user.name}
+						</Typography>
+					</Box>
+
+					<Typography
+						className={classes.info}
+						variant="body2"
+						color="textSecondary"
+					>
+						<EventNoteIcon className={classes.infoIcon} /> Joined{' '}
+						{formatDistance(new Date(data.user.joined), new Date())} ago
+						<span className={classes.divider} />
+						{data.user.email && (
+							<React.Fragment>
+								<EmailIcon className={classes.infoIcon} />
+								{data.user.email}
+							</React.Fragment>
 						)}
-						<MyList
-							icon={IdentityIcon}
-							text={
-								data.user.bio
-									? data.user.bio
-									: 'This person has no bio of himself. Spooky!'
-							}
-						/>
-						<MyList
-							icon={GroupIcon}
-							text={`${data.user.followers} followers`}
-						/>
-						<MyList
-							icon={AccessibleForwardIcon}
-							text={`${data.user.followings} followings`}
-						/>
-					</List>
+					</Typography>
 				</CardContent>
 
 				{user?.id === match.params.id ? (
@@ -161,6 +139,45 @@ const Profile: React.FC<Props> = ({ match }) => {
 			</Card>
 
 			{isEditing && user?.id === match.params.id ? <EditProfile /> : ''}
+
+			<Paper className={classes.menu} variant="outlined">
+				<AppBar position="static">
+					<Tabs
+						className={classes.tabs}
+						value={tab}
+						onChange={onTabChange}
+						variant="fullWidth"
+					>
+						<Tab icon={<CollectionsIcon />} label="Books" />
+						<Tab
+							icon={<GroupIcon />}
+							label={`Followers (${data.user.followers})`}
+						/>
+						<Tab
+							icon={<AccessibleForwardIcon />}
+							label={`Followings (${data.user.followings})`}
+						/>
+					</Tabs>
+				</AppBar>
+
+				<Box>
+					{tab === 0 && (
+						<Box p={3}>
+							<Typography>One</Typography>
+						</Box>
+					)}
+					{tab === 1 && (
+						<Box p={3}>
+							<Typography>Two</Typography>
+						</Box>
+					)}
+					{tab === 2 && (
+						<Box p={3}>
+							<Typography>Three</Typography>
+						</Box>
+					)}
+				</Box>
+			</Paper>
 		</Box>
 	)
 }
