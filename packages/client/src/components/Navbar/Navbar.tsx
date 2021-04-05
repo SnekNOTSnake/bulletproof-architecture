@@ -2,12 +2,22 @@ import React from 'react'
 import { useApolloClient, Reference, gql } from '@apollo/client'
 import { Link, useHistory } from 'react-router-dom'
 
-import { Box, Badge, Link as LinkComponent, Button } from '@material-ui/core'
+import {
+	Box,
+	Badge,
+	Link as LinkComponent,
+	Button,
+	ButtonProps,
+	IconButton,
+	Menu,
+	MenuItem,
+} from '@material-ui/core'
 import {
 	Search as SearchIcon,
 	NightsStay as NightStayIcon,
 	Brightness7 as WbSunnyIcon,
 	Notifications as NotificationsIcon,
+	RestaurantMenu as RestaurantMenuIcon,
 } from '@material-ui/icons'
 
 import {
@@ -21,6 +31,7 @@ import useStyles from './Navbar.style'
 
 type ClickEvent = React.MouseEvent<HTMLButtonElement, MouseEvent>
 type LinkButtonProps = { to: string; text: string }
+type Props = { isDesktop: boolean; openSidebar: ButtonProps['onClick'] }
 
 const LinkButton: React.FC<LinkButtonProps> = ({ to, text }) => (
 	<LinkComponent underline="none" component={Link} to={to}>
@@ -28,12 +39,17 @@ const LinkButton: React.FC<LinkButtonProps> = ({ to, text }) => (
 	</LinkComponent>
 )
 
-const Navbar: React.FC = () => {
+const Navbar: React.FC<Props> = ({ isDesktop, openSidebar }) => {
 	const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)
-
 	const close = () => setAnchorEl(null)
 	const open = (e: ClickEvent) => {
 		setAnchorEl(e.currentTarget)
+	}
+
+	const [userAnchor, setUserAnchor] = React.useState<null | HTMLElement>(null)
+	const closeUser = () => setUserAnchor(null)
+	const openUser = (e: ClickEvent) => {
+		setUserAnchor(e.currentTarget)
 	}
 
 	const apolloClient = useApolloClient()
@@ -99,27 +115,13 @@ const Navbar: React.FC = () => {
 	const toggleTheme = () => dispatchTheme({ type: 'TOGGLE_THEME' })
 
 	const logout = async () => {
+		closeUser()
 		await logoutUser(dispatchUser)
 		await apolloClient.clearStore()
 		history.push('/')
 	}
 
 	const classes = useStyles()
-
-	const renderUser = data ? (
-		<React.Fragment>
-			<LinkButton to={`/user/${data.user.id}`} text={data.user.name} />
-			<LinkButton to="/create-book" text="Create Book" />
-			<Button color="inherit" type="button" onClick={logout}>
-				Logout
-			</Button>
-		</React.Fragment>
-	) : (
-		<React.Fragment>
-			<LinkButton to="/login" text="Login" />
-			<LinkButton to="/signup" text="Sign up" />
-		</React.Fragment>
-	)
 
 	return (
 		<Box className={classes.root}>
@@ -129,27 +131,63 @@ const Navbar: React.FC = () => {
 				''
 			)}
 
-			<LinkButton to="/" text="Home" />
-			{renderUser}
-			<Button color="inherit" type="button" onClick={toggleTheme}>
-				{theme === 'light' ? <WbSunnyIcon /> : <NightStayIcon />}
-			</Button>
-			<Box className={classes.grow} />
+			<Menu
+				id="simple-menu"
+				anchorEl={userAnchor}
+				keepMounted
+				open={Boolean(userAnchor)}
+				onClose={closeUser}
+				classes={{ paper: classes.menu }}
+			>
+				<MenuItem
+					component={Link}
+					to={`/user/${data?.user.id}`}
+					onClick={closeUser}
+				>
+					Profile
+				</MenuItem>
+				<MenuItem onClick={logout}>Logout</MenuItem>
+			</Menu>
 
-			{data ? (
-				<Button onClick={open}>
-					<Badge badgeContent={data.newNotifs} color="secondary">
-						<NotificationsIcon />
-					</Badge>
-				</Button>
+			{!isDesktop ? (
+				<IconButton onClick={openSidebar} type="button" color="inherit">
+					<RestaurantMenuIcon />
+				</IconButton>
 			) : (
 				''
 			)}
-			<LinkComponent underline="none" component={Link} to="/search">
-				<Button type="button" color="inherit">
-					<SearchIcon className={classes.searchIcon} />
-					Search
+
+			{data ? (
+				<Button color="inherit" type="button" onClick={openUser}>
+					{data.user.name}
 				</Button>
+			) : (
+				<React.Fragment>
+					<LinkButton to="/login" text="Login" />
+					<LinkButton to="/signup" text="Sign up" />
+				</React.Fragment>
+			)}
+
+			<Box className={classes.grow} />
+
+			<IconButton color="inherit" type="button" onClick={toggleTheme}>
+				{theme === 'light' ? <WbSunnyIcon /> : <NightStayIcon />}
+			</IconButton>
+
+			{data ? (
+				<IconButton color="inherit" onClick={open}>
+					<Badge badgeContent={data.newNotifs} color="secondary">
+						<NotificationsIcon />
+					</Badge>
+				</IconButton>
+			) : (
+				''
+			)}
+
+			<LinkComponent underline="none" component={Link} to="/search">
+				<IconButton type="button" color="inherit">
+					<SearchIcon />
+				</IconButton>
 			</LinkComponent>
 		</Box>
 	)

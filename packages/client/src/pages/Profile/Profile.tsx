@@ -12,7 +12,6 @@ import {
 	CardHeader,
 	CardContent,
 	CardActions,
-	Grid,
 	Typography,
 	List,
 	ListItem,
@@ -67,7 +66,7 @@ const Profile: React.FC<Props> = ({ match }) => {
 	const { data: subsData, loading: subsLoading } = useIsUserOnlineSubscription({
 		variables: { userId: match.params.id },
 		skip: String(user?.id) === match.params.id,
-		/* onSubscriptionData: ({ client, subscriptionData }) => {
+		onSubscriptionData: ({ client, subscriptionData }) => {
 			client.writeFragment({
 				id: `User:${match.params.id}`,
 				fragment: gql`
@@ -77,13 +76,12 @@ const Profile: React.FC<Props> = ({ match }) => {
 				`,
 				data: { isOnline: subscriptionData.data?.isUserOnline.isOnline },
 			})
-		}, */
+		},
 	})
 
 	const { data, loading } = useUserQuery({
 		variables: { id: match.params.id },
 		onError: (err) => enqueueSnackbar(err.message, { variant: 'error' }),
-		fetchPolicy: 'no-cache',
 	})
 
 	let isOnline = data?.user?.isOnline
@@ -99,78 +97,70 @@ const Profile: React.FC<Props> = ({ match }) => {
 
 	return (
 		<Box>
-			<Grid container>
-				<Grid item md={6} xs={12}>
-					<Card variant="outlined">
-						<CardHeader
-							action={<FollowUser user={data.user} />}
-							avatar={
-								<Badge
-									variant="dot"
-									overlap="circle"
-									anchorOrigin={{
-										vertical: 'bottom',
-										horizontal: 'right',
-									}}
-									className={isOnline ? classes.online : ''}
-								>
-									<Avatar
-										alt={data.user.name}
-										src={`http://localhost:4200/img/${data.user.avatar}`}
-									/>
-								</Badge>
-							}
-							title={data.user.name}
-							subheader={`Joined ${formatDistance(
-								new Date(data.user.joined),
-								new Date(),
-							)} ago`}
-						/>
-						<CardContent>
-							<List>
-								<MyList icon={FingerprintIcon} text={data.user.id} />
-								{data.user.email ? (
-									<MyList icon={EmailIcon} text={data.user.email} />
-								) : (
-									''
-								)}
-								<MyList
-									icon={IdentityIcon}
-									text={
-										data.user.bio
-											? data.user.bio
-											: 'This person has no bio of himself. Spooky!'
-									}
-								/>
-								<MyList
-									icon={GroupIcon}
-									text={`${data.user.followers} followers`}
-								/>
-								<MyList
-									icon={AccessibleForwardIcon}
-									text={`${data.user.followings} followings`}
-								/>
-							</List>
-						</CardContent>
-
-						{user?.id === match.params.id ? (
-							<CardActions>
-								<Button
-									onClick={toggleEditting}
-									color="primary"
-									component="label"
-								>
-									{isEditing ? 'Close Edit' : 'Edit Profile'}
-								</Button>
-							</CardActions>
+			<Card variant="outlined">
+				<CardHeader
+					action={<FollowUser user={data.user} />}
+					avatar={
+						<Badge
+							variant="dot"
+							overlap="circle"
+							anchorOrigin={{
+								vertical: 'bottom',
+								horizontal: 'right',
+							}}
+							className={isOnline ? classes.online : ''}
+						>
+							<Avatar
+								alt={data.user.name}
+								src={`http://localhost:4200/img/${data.user.avatar}`}
+							/>
+						</Badge>
+					}
+					title={data.user.name}
+					subheader={`Joined ${formatDistance(
+						new Date(data.user.joined),
+						new Date(),
+					)} ago`}
+				/>
+				<CardContent>
+					<List>
+						<MyList icon={FingerprintIcon} text={data.user.id} />
+						{data.user.email ? (
+							<MyList icon={EmailIcon} text={data.user.email} />
 						) : (
 							''
 						)}
-					</Card>
+						<MyList
+							icon={IdentityIcon}
+							text={
+								data.user.bio
+									? data.user.bio
+									: 'This person has no bio of himself. Spooky!'
+							}
+						/>
+						<MyList
+							icon={GroupIcon}
+							text={`${data.user.followers} followers`}
+						/>
+						<MyList
+							icon={AccessibleForwardIcon}
+							text={`${data.user.followings} followings`}
+						/>
+					</List>
+				</CardContent>
 
-					{isEditing && user?.id === match.params.id ? <EditProfile /> : ''}
-				</Grid>
-			</Grid>
+				{user?.id === match.params.id ? (
+					<CardActions>
+						<Button onClick={toggleEditting} color="primary" component="label">
+							{isEditing ? 'Close Edit' : 'Edit Profile'}
+						</Button>
+					</CardActions>
+				) : (
+					''
+				)}
+			</Card>
+
+			{isEditing && user?.id === match.params.id ? <EditProfile /> : ''}
 		</Box>
 	)
 }

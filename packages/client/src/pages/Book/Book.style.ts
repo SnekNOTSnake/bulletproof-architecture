@@ -21,4 +21,8 @@ export default makeStyles((theme) => ({
 	stars: {
 		marginRight: theme.spacing(1),
 	},
+	cardMedia: {
+		height: 0,
+		paddingBottom: '56.25%', // 16:9
+	},
 }))

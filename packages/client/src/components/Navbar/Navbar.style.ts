@@ -14,4 +14,7 @@ export default makeStyles((theme) => ({
 	searchIcon: {
 		marginRight: theme.spacing(0.5),
 	},
+	menu: {
+		minWidth: 150,
+	},
 }))

@@ -9,7 +9,6 @@ import {
 	CardHeader,
 	CardContent,
 	CardActions,
-	Grid,
 	Link as LinkComponent,
 	TextField,
 	Typography,
@@ -71,59 +70,55 @@ const Signup: React.FC = () => {
 
 	return (
 		<Box>
-			<Grid container>
-				<Grid item md={6} xs={12}>
-					<Card variant="outlined">
-						<form onSubmit={onSubmit}>
-							<CardHeader title="Sign up" />
-							<CardContent>
-								<TextField
-									className={classes.input}
-									fullWidth
-									variant="outlined"
-									label="Name"
-									value={name}
-									onChange={onNameChange}
-								/>
-								<TextField
-									className={classes.input}
-									fullWidth
-									variant="outlined"
-									label="Email"
-									value={email}
-									onChange={onEmailChange}
-								/>
-								<TextField
-									fullWidth
-									variant="outlined"
-									label="Password"
-									type="password"
-									value={password}
-									onChange={onPasswordChange}
-								/>
-							</CardContent>
-							<CardActions>
-								<Button
-									disabled={loading}
-									disableElevation
-									variant="contained"
-									color="primary"
-									type="submit"
-								>
-									Submit
-								</Button>
-								<Typography variant="body2">
-									Already have an account?{' '}
-									<LinkComponent component={Link} to="/login">
-										Sign in
-									</LinkComponent>
-									!
-								</Typography>
-							</CardActions>
-						</form>
-					</Card>
-				</Grid>
-			</Grid>
+			<Card variant="outlined">
+				<form onSubmit={onSubmit}>
+					<CardHeader title="Sign up" />
+					<CardContent>
+						<TextField
+							className={classes.input}
+							fullWidth
+							variant="outlined"
+							label="Name"
+							value={name}
+							onChange={onNameChange}
+						/>
+						<TextField
+							className={classes.input}
+							fullWidth
+							variant="outlined"
+							label="Email"
+							value={email}
+							onChange={onEmailChange}
+						/>
+						<TextField
+							fullWidth
+							variant="outlined"
+							label="Password"
+							type="password"
+							value={password}
+							onChange={onPasswordChange}
+						/>
+					</CardContent>
+					<CardActions>
+						<Button
+							disabled={loading}
+							disableElevation
+							variant="contained"
+							color="primary"
+							type="submit"
+						>
+							Submit
+						</Button>
+						<Typography variant="body2">
+							Already have an account?{' '}
+							<LinkComponent component={Link} to="/login">
+								Sign in
+							</LinkComponent>
+							!
+						</Typography>
+					</CardActions>
+				</form>
+			</Card>
 		</Box>
 	)
 }

@@ -7,10 +7,10 @@ import { useSnackbar } from 'notistack'
 import {
 	Box,
 	Button,
-	Grid,
 	Card,
 	CardHeader,
 	CardContent,
+	CardMedia,
 	CardActions,
 	Link as LinkComponent,
 	Typography,
@@ -81,67 +81,68 @@ const Book: React.FC<Props> = ({ match, history }) => {
 
 	return (
 		<Box>
-			<Grid container>
-				<Grid item md={6} xs={12}>
-					<Card variant="outlined">
-						<CardHeader title={data.book.title} subheader={cardSubheader} />
+			<Card variant="outlined">
+				<CardHeader title={data.book.title} subheader={cardSubheader} />
+				<CardMedia
+					className={classes.cardMedia}
+					image="https://picsum.photos/800/450"
+					title="Placeholder image"
+				/>
 
-						<CardContent>
-							<Typography variant="body1" className={classes.summary}>
-								{data.book.summary}
-							</Typography>
-							<Typography className={classes.content}>
-								{data.book.content}
-							</Typography>
+				<CardContent>
+					<Typography variant="body1" className={classes.summary}>
+						{data.book.summary}
+					</Typography>
+					<Typography className={classes.content}>
+						{data.book.content}
+					</Typography>
 
-							<Box>
-								<Box className={classes.rating}>
-									<Rating
-										className={classes.stars}
-										readOnly
-										value={data.book.ratingsAverage}
-										precision={0.5}
-									/>
-									<Box>({data.book.ratingsQuantity})</Box>
-								</Box>
-								<Typography color="textSecondary">
-									Updated{' '}
-									{formatDistance(new Date(data.book.created), new Date())} ago
-								</Typography>
-							</Box>
-						</CardContent>
+					<Box>
+						<Box className={classes.rating}>
+							<Rating
+								className={classes.stars}
+								readOnly
+								value={data.book.ratingsAverage}
+								precision={0.5}
+							/>
+							<Box>({data.book.ratingsQuantity})</Box>
+						</Box>
+						<Typography color="textSecondary">
+							Updated {formatDistance(new Date(data.book.created), new Date())}{' '}
+							ago
+						</Typography>
+					</Box>
+				</CardContent>
 
-						<CardActions>
-							<Button
-								disabled={deleteLoading}
-								onClick={() => deleteBook({ variables: { id } })}
-								type="button"
-								color="primary"
-							>
-								Delete
-							</Button>
-							<Button onClick={toggleEditing} type="button" color="primary">
-								{isEditing ? 'Close edit' : 'Edit'}
-							</Button>
-							{showReviews ? (
-								''
-							) : (
-								<Button
-									onClick={() => setShowReviews(true)}
-									type="button"
-									color="primary"
-								>
-									Show Reviews
-								</Button>
-							)}
-						</CardActions>
-					</Card>
+				<CardActions>
+					<Button
+						disabled={deleteLoading}
+						onClick={() => deleteBook({ variables: { id } })}
+						type="button"
+						color="primary"
+					>
+						Delete
+					</Button>
+					<Button onClick={toggleEditing} type="button" color="primary">
+						{isEditing ? 'Close edit' : 'Edit'}
+					</Button>
+					{showReviews ? (
+						''
+					) : (
+						<Button
+							onClick={() => setShowReviews(true)}
+							type="button"
+							color="primary"
+						>
+							Show Reviews
+						</Button>
+					)}
+				</CardActions>
+			</Card>
 
-					{isEditing ? <EditBook id={data.book.id} book={data.book} /> : ''}
+			{isEditing ? <EditBook id={data.book.id} book={data.book} /> : ''}
 
-					{showReviews ? <Reviews bookId={data.book.id} /> : ''}
-				</Grid>
-			</Grid>
+			{showReviews ? <Reviews bookId={data.book.id} /> : ''}
 		</Box>
 	)
 }

@@ -5,7 +5,6 @@ import { useSnackbar } from 'notistack'
 import {
 	Box,
 	Button,
-	Grid,
 	Card,
 	CardHeader,
 	CardContent,
@@ -94,53 +93,49 @@ const CreateBook: React.FC = () => {
 
 	return (
 		<Box>
-			<Grid container>
-				<Grid item md={6} xs={12}>
-					<form onSubmit={onSubmit}>
-						<Card variant="outlined">
-							<CardHeader title="Create a book" />
-							<CardContent>
-								<TextField
-									fullWidth
-									variant="outlined"
-									label="Title"
-									value={title}
-									onChange={onTitleChange}
-									className={classes.input}
-								/>
-								<TextField
-									multiline
-									fullWidth
-									variant="outlined"
-									label="Summary"
-									value={summary}
-									onChange={onSummaryChange}
-									className={classes.input}
-								/>
-								<TextField
-									multiline
-									fullWidth
-									variant="outlined"
-									label="Content"
-									value={content}
-									onChange={onContentChange}
-								/>
-							</CardContent>
-							<CardActions>
-								<Button
-									variant="contained"
-									disableElevation
-									color="primary"
-									disabled={loading}
-									type="submit"
-								>
-									Submit
-								</Button>
-							</CardActions>
-						</Card>
-					</form>
-				</Grid>
-			</Grid>
+			<form onSubmit={onSubmit}>
+				<Card variant="outlined">
+					<CardHeader title="Create a book" />
+					<CardContent>
+						<TextField
+							fullWidth
+							variant="outlined"
+							label="Title"
+							value={title}
+							onChange={onTitleChange}
+							className={classes.input}
+						/>
+						<TextField
+							multiline
+							fullWidth
+							variant="outlined"
+							label="Summary"
+							value={summary}
+							onChange={onSummaryChange}
+							className={classes.input}
+						/>
+						<TextField
+							multiline
+							fullWidth
+							variant="outlined"
+							label="Content"
+							value={content}
+							onChange={onContentChange}
+						/>
+					</CardContent>
+					<CardActions>
+						<Button
+							variant="contained"
+							disableElevation
+							color="primary"
+							disabled={loading}
+							type="submit"
+						>
+							Submit
+						</Button>
+					</CardActions>
+				</Card>
+			</form>
 		</Box>
 	)
 }

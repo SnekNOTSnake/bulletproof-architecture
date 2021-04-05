@@ -2,7 +2,7 @@ import { makeStyles } from '@material-ui/core/styles'
 
 export default makeStyles((theme) => ({
 	cardGrid: {
-		marginBottom: theme.spacing(3),
+		marginBottom: theme.spacing(2),
 	},
 	subtitle: {
 		fontSize: 14,
@@ -28,5 +28,9 @@ export default makeStyles((theme) => ({
 	},
 	noBook: {
 		marginBottom: theme.spacing(2),
+	},
+	cardMedia: {
+		height: 0,
+		paddingBottom: '50%', // 2:1
 	},
 }))

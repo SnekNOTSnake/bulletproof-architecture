@@ -12,8 +12,8 @@ export default makeStyles((theme) => ({
 		},
 	},
 	container: {
-		paddingTop: theme.spacing(8),
+		paddingTop: theme.spacing(5),
 		minHeight: '100vh',
-		paddingBottom: theme.spacing(8),
+		paddingBottom: theme.spacing(5),
 	},
 }))

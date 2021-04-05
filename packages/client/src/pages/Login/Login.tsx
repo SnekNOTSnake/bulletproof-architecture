@@ -9,7 +9,6 @@ import {
 	CardHeader,
 	CardContent,
 	CardActions,
-	Grid,
 	Link as LinkComponent,
 	TextField,
 	Typography,
@@ -71,79 +70,75 @@ const Login: React.FC<Props> = ({ history }) => {
 
 	return (
 		<Box>
-			<Grid container>
-				<Grid item md={6} xs={12}>
-					<Card variant="outlined">
-						<form onSubmit={onSubmit}>
-							<CardHeader title="Login" />
-							<CardContent>
-								<Box className={classes.oAuthBox}>
-									<Button
-										disabled={loading}
-										disableElevation
-										onClick={() => onOAuthLogin('google')}
-										className={classes.oAuthButton}
-										color="primary"
-										variant="contained"
-										startIcon={
-											<img className={classes.icon} src={GoogleIcon} alt="G" />
-										}
-									>
-										Google
-									</Button>
-									<Button
-										disabled={loading}
-										disableElevation
-										onClick={() => onOAuthLogin('github')}
-										className={classes.oAuthButton}
-										color="primary"
-										variant="contained"
-										startIcon={
-											<img className={classes.icon} src={GitHubIcon} alt="G" />
-										}
-									>
-										GitHub
-									</Button>
-								</Box>
-								<TextField
-									className={classes.input}
-									fullWidth
-									variant="outlined"
-									label="Email"
-									value={email}
-									onChange={onEmailChange}
-								/>
-								<TextField
-									fullWidth
-									type="password"
-									variant="outlined"
-									label="Password"
-									value={pass}
-									onChange={onPassChange}
-								/>
-							</CardContent>
-							<CardActions>
-								<Button
-									disabled={loading}
-									disableElevation
-									variant="contained"
-									color="primary"
-									type="submit"
-								>
-									Submit
-								</Button>
-								<Typography>
-									Don't have an account?{' '}
-									<LinkComponent component={Link} to="/signup">
-										Sign up
-									</LinkComponent>
-									!
-								</Typography>
-							</CardActions>
-						</form>
-					</Card>
-				</Grid>
-			</Grid>
+			<Card variant="outlined">
+				<form onSubmit={onSubmit}>
+					<CardHeader title="Login" />
+					<CardContent>
+						<Box className={classes.oAuthBox}>
+							<Button
+								disabled={loading}
+								disableElevation
+								onClick={() => onOAuthLogin('google')}
+								className={classes.oAuthButton}
+								color="primary"
+								variant="contained"
+								startIcon={
+									<img className={classes.icon} src={GoogleIcon} alt="G" />
+								}
+							>
+								Google
+							</Button>
+							<Button
+								disabled={loading}
+								disableElevation
+								onClick={() => onOAuthLogin('github')}
+								className={classes.oAuthButton}
+								color="primary"
+								variant="contained"
+								startIcon={
+									<img className={classes.icon} src={GitHubIcon} alt="G" />
+								}
+							>
+								GitHub
+							</Button>
+						</Box>
+						<TextField
+							className={classes.input}
+							fullWidth
+							variant="outlined"
+							label="Email"
+							value={email}
+							onChange={onEmailChange}
+						/>
+						<TextField
+							fullWidth
+							type="password"
+							variant="outlined"
+							label="Password"
+							value={pass}
+							onChange={onPassChange}
+						/>
+					</CardContent>
+					<CardActions>
+						<Button
+							disabled={loading}
+							disableElevation
+							variant="contained"
+							color="primary"
+							type="submit"
+						>
+							Submit
+						</Button>
+						<Typography>
+							Don't have an account?{' '}
+							<LinkComponent component={Link} to="/signup">
+								Sign up
+							</LinkComponent>
+							!
+						</Typography>
+					</CardActions>
+				</form>
+			</Card>
 		</Box>
 	)
 }

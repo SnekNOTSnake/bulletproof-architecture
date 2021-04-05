@@ -10,7 +10,6 @@ import {
 	CardHeader,
 	CardContent,
 	CardActions,
-	Grid,
 	Link as LinkComponent,
 	Typography,
 	TextField,
@@ -63,76 +62,64 @@ const Search: React.FC = () => {
 
 	return (
 		<Box>
-			<Grid container>
-				<Grid item md={6} xs={12}>
-					<Card variant="outlined">
-						<CardContent>
-							<TextField
-								size="medium"
-								value={query}
-								onChange={onChange}
-								variant="outlined"
-								label="Search..."
-								fullWidth
-							/>
+			<Card variant="outlined">
+				<CardContent>
+					<TextField
+						size="medium"
+						value={query}
+						onChange={onChange}
+						variant="outlined"
+						label="Search..."
+						fullWidth
+					/>
 
-							<Box className={classes.results}>
-								{data?.searchBooks.nodes.map((book) => (
-									<Card
-										key={book.id}
-										className={classes.result}
-										variant="outlined"
-									>
-										<CardHeader
-											title={book.title}
-											subheader={`By ${book.author.name}, ${formatDistance(
-												new Date(book.created),
-												new Date(),
-											)} ago`}
-										/>
-										<CardContent>
-											<Typography>{book.summary}</Typography>
-										</CardContent>
-										<CardActions>
-											<LinkComponent component={Link} to={`/book/${book.id}`}>
-												<Button
-													variant="outlined"
-													type="button"
-													color="primary"
-												>
-													Read
-												</Button>
-											</LinkComponent>
-										</CardActions>
-									</Card>
-								))}
-							</Box>
+					<Box className={classes.results}>
+						{data?.searchBooks.nodes.map((book) => (
+							<Card key={book.id} className={classes.result} variant="outlined">
+								<CardHeader
+									title={book.title}
+									subheader={`By ${book.author.name}, ${formatDistance(
+										new Date(book.created),
+										new Date(),
+									)} ago`}
+								/>
+								<CardContent>
+									<Typography>{book.summary}</Typography>
+								</CardContent>
+								<CardActions>
+									<LinkComponent component={Link} to={`/book/${book.id}`}>
+										<Button variant="outlined" type="button" color="primary">
+											Read
+										</Button>
+									</LinkComponent>
+								</CardActions>
+							</Card>
+						))}
+					</Box>
 
-							{data?.searchBooks.pageInfo.hasNextPage ? (
-								<Button
-									className={classes.more}
-									color="primary"
-									variant="contained"
-									disableElevation
-									onClick={() =>
-										doSearch({
-											variables: {
-												first: 2,
-												query,
-												after: data.searchBooks.pageInfo.endCursor,
-											},
-										})
-									}
-								>
-									More
-								</Button>
-							) : (
-								''
-							)}
-						</CardContent>
-					</Card>
-				</Grid>
-			</Grid>
+					{data?.searchBooks.pageInfo.hasNextPage ? (
+						<Button
+							className={classes.more}
+							color="primary"
+							variant="contained"
+							disableElevation
+							onClick={() =>
+								doSearch({
+									variables: {
+										first: 2,
+										query,
+										after: data.searchBooks.pageInfo.endCursor,
+									},
+								})
+							}
+						>
+							More
+						</Button>
+					) : (
+						''
+					)}
+				</CardContent>
+			</Card>
 		</Box>
 	)
 }
