@@ -37,8 +37,8 @@ export const changePasswordSchema = Joi.object({
 
 // Book
 const title = Joi.string().max(50).required()
-const summary = Joi.string().max(200).required()
-const content = Joi.string().min(100).max(2000).required()
+const summary = Joi.string().max(500).required()
+const content = Joi.string().min(100).max(5000).required()
 
 export const createBookSchema = Joi.object({
 	title,
@@ -49,6 +49,8 @@ export const createBookSchema = Joi.object({
 export const updateBookSchema = Joi.object({
 	id: requiredMongoID,
 	title,
+	summary,
+	content,
 })
 
 export const deleteBookSchema = Joi.object({
@@ -100,6 +102,21 @@ export const getReviewSchema = Joi.object({
 	id: requiredMongoID,
 })
 
+export const getReviewsSchema = Joi.object({
+	first: paginationLength.required(),
+	after: opaqueCursor,
+	where: Joi.object({
+		book: mongoID,
+		author: mongoID,
+	}),
+	orderBy: Joi.string().valid(
+		'created_ASC',
+		'created_DESC',
+		'rating_ASC',
+		'rating_DESC',
+	),
+})
+
 // Follow
 export const followUserSchema = Joi.object({
 	following: requiredMongoID,
@@ -117,19 +134,4 @@ export const getFollowsSchema = Joi.object({
 		following: mongoID,
 	}),
 	orderBy: Joi.string().valid('created_ASC', 'created_DESC'),
-})
-
-export const getReviewsSchema = Joi.object({
-	first: paginationLength.required(),
-	after: opaqueCursor,
-	where: Joi.object({
-		book: mongoID,
-		author: mongoID,
-	}),
-	orderBy: Joi.string().valid(
-		'created_ASC',
-		'created_DESC',
-		'rating_ASC',
-		'rating_DESC',
-	),
 })

@@ -31,7 +31,7 @@ export const updateBook: MutationResolvers['updateBook'] = async (
 	{ id, title, summary, content },
 	{ user, loaders: { bookByIds } },
 ) => {
-	await validate(updateBookSchema, { id, title })
+	await validate(updateBookSchema, { id, title, summary, content })
 
 	const bookServiceInstance = Container.get(BookService)
 	const book = await bookServiceInstance.updateBook({

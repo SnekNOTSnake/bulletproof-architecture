@@ -143,7 +143,7 @@ describe('Book Service', async () => {
 					...updatedBookForm,
 					id: bookID1,
 					userId: userID1,
-					content: 'c'.repeat(2001),
+					content: 'c'.repeat(5001),
 				}),
 			).rejects.toThrow()
 
@@ -152,7 +152,7 @@ describe('Book Service', async () => {
 					...updatedBookForm,
 					id: bookID1,
 					userId: userID1,
-					summary: 's'.repeat(201),
+					summary: 's'.repeat(501),
 				}),
 			).rejects.toThrow()
 

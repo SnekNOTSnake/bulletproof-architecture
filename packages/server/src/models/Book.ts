@@ -26,13 +26,13 @@ const bookSchema: Schema<IBook> = new Schema<IBook>({
 	summary: {
 		type: String,
 		required: true,
-		maxlength: 200,
+		maxlength: 500,
 	},
 	content: {
 		type: String,
 		required: true,
 		minlength: 100,
-		maxlength: 2000,
+		maxlength: 5000,
 	},
 	ratingsAverage: {
 		type: Number,
