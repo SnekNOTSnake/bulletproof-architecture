@@ -3,23 +3,17 @@ import { useSnackbar } from 'notistack'
 
 import { Box, Button, Grid, Typography } from '@material-ui/core'
 
-import { useGetFollowersQuery } from '../../../generated/types'
-import useStyles from './FollowersTab.style'
-import SimplePerson from '../../../components/SimplePerson'
+import { useUsersQuery } from '../../generated/types'
+import SimplePerson from '../../components/SimplePerson'
+import useStyles from './People.style'
 
-type Props = { userId: string }
-
-const FollowersTab: React.FC<Props> = ({ userId }) => {
+const People: React.FC = () => {
 	const [loadingMore, setLoadingMore] = React.useState(false)
 
 	const { enqueueSnackbar } = useSnackbar()
 
-	const { data, loading, fetchMore } = useGetFollowersQuery({
-		variables: {
-			first: 1,
-			orderBy: 'created_DESC',
-			where: { following: userId },
-		},
+	const { data, loading, fetchMore } = useUsersQuery({
+		variables: { first: 2, orderBy: 'created_DESC' },
 		onError: (err) => enqueueSnackbar(err.message, { variant: 'error' }),
 	})
 
@@ -31,7 +25,7 @@ const FollowersTab: React.FC<Props> = ({ userId }) => {
 
 			setLoadingMore(true)
 			await fetchMore({
-				variables: { first: 1, after: data.getFollows.pageInfo.endCursor },
+				variables: { first: 2, after: data.users.pageInfo.endCursor },
 			})
 			setLoadingMore(false)
 		} catch (err) {
@@ -47,16 +41,16 @@ const FollowersTab: React.FC<Props> = ({ userId }) => {
 		)
 
 	return (
-		<Box p={3}>
+		<Box>
 			<Grid container spacing={2}>
-				{data?.getFollows.nodes.map((follow) => (
-					<Grid key={follow.id} item xs={12} md={6}>
-						<SimplePerson person={follow.follower} />
+				{data?.users.nodes.map((user) => (
+					<Grid xs={12} md={6} item key={user.id}>
+						<SimplePerson person={user} />
 					</Grid>
 				))}
 			</Grid>
 
-			{data?.getFollows.pageInfo.hasNextPage ? (
+			{data?.users.pageInfo.hasNextPage ? (
 				<Button
 					color="primary"
 					variant="contained"
@@ -74,4 +68,4 @@ const FollowersTab: React.FC<Props> = ({ userId }) => {
 	)
 }
 
-export default FollowersTab
+export default People

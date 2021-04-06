@@ -14,6 +14,7 @@ const Profile = React.lazy(() => import('../Profile'))
 const CreateBook = React.lazy(() => import('../CreateBook'))
 const Signup = React.lazy(() => import('../Signup'))
 const Search = React.lazy(() => import('../Search'))
+const People = React.lazy(() => import('../People'))
 
 const App: React.FC = () => {
 	return (
@@ -43,6 +44,7 @@ const App: React.FC = () => {
 							<Route exact path="/create-book" render={() => <CreateBook />} />
 							<Route exact path="/signup" render={() => <Signup />} />
 							<Route exact path="/search" render={() => <Search />} />
+							<Route exact path="/people" render={() => <People />} />
 						</Switch>
 					</React.Suspense>
 				</Layout>

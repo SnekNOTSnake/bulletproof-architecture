@@ -10,6 +10,8 @@ import SimplePerson from '../../../components/SimplePerson'
 type Props = { userId: string }
 
 const FollowingsTab: React.FC<Props> = ({ userId }) => {
+	const [loadingMore, setLoadingMore] = React.useState(false)
+
 	const { enqueueSnackbar } = useSnackbar()
 
 	const { data, loading, fetchMore } = useGetFollowingsQuery({
@@ -23,6 +25,20 @@ const FollowingsTab: React.FC<Props> = ({ userId }) => {
 
 	const classes = useStyles()
 
+	const onFetchMore = async () => {
+		try {
+			if (!data) return
+
+			setLoadingMore(true)
+			await fetchMore({
+				variables: { first: 1, after: data.getFollows.pageInfo.endCursor },
+			})
+			setLoadingMore(false)
+		} catch (err) {
+			enqueueSnackbar(err.message, { variant: 'error' })
+		}
+	}
+
 	if (loading)
 		return (
 			<Box p={3}>
@@ -34,7 +50,7 @@ const FollowingsTab: React.FC<Props> = ({ userId }) => {
 		<Box p={3}>
 			<Grid container spacing={2}>
 				{data?.getFollows.nodes.map((follow) => (
-					<Grid item xs={12} md={6}>
+					<Grid key={follow.id} item xs={12} md={6}>
 						<SimplePerson person={follow.following} />
 					</Grid>
 				))}
@@ -45,18 +61,9 @@ const FollowingsTab: React.FC<Props> = ({ userId }) => {
 					color="primary"
 					variant="contained"
 					disableElevation
+					disabled={loadingMore}
 					className={classes.moreButton}
-					onClick={() =>
-						fetchMore({
-							variables: {
-								first: 1,
-								after: data?.getFollows.pageInfo.endCursor,
-								where: { follower: userId },
-							},
-						}).catch((err) =>
-							enqueueSnackbar(err.message, { variant: 'error' }),
-						)
-					}
+					onClick={onFetchMore}
 				>
 					More
 				</Button>

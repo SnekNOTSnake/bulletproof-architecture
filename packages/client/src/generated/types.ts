@@ -685,6 +685,27 @@ export type BooksQuery = (
   ) }
 );
 
+export type UsersQueryVariables = Exact<{
+  first: Scalars['Int'];
+  after?: Maybe<Scalars['String']>;
+  orderBy?: Maybe<UserOrder>;
+}>;
+
+
+export type UsersQuery = (
+  { __typename?: 'Query' }
+  & { users: (
+    { __typename?: 'UserConnection' }
+    & { nodes: Array<(
+      { __typename?: 'User' }
+      & Pick<User, 'id' | 'name' | 'avatar' | 'email'>
+    )>, pageInfo: (
+      { __typename?: 'PageInfo' }
+      & Pick<PageInfo, 'endCursor' | 'hasNextPage'>
+    ) }
+  ) }
+);
+
 export type GetFollowersQueryVariables = Exact<{
   first: Scalars['Int'];
   where?: Maybe<FollowsWhereInput>;
@@ -1435,6 +1456,50 @@ export function useBooksLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Book
 export type BooksQueryHookResult = ReturnType<typeof useBooksQuery>;
 export type BooksLazyQueryHookResult = ReturnType<typeof useBooksLazyQuery>;
 export type BooksQueryResult = Apollo.QueryResult<BooksQuery, BooksQueryVariables>;
+export const UsersDocument = gql`
+    query Users($first: Int!, $after: String, $orderBy: UserOrder) {
+  users(first: $first, after: $after, orderBy: $orderBy) {
+    nodes {
+      id
+      name
+      avatar
+      email
+    }
+    pageInfo {
+      endCursor
+      hasNextPage
+    }
+  }
+}
+    `;
+
+/**
+ * __useUsersQuery__
+ *
+ * To run a query within a React component, call `useUsersQuery` and pass it any options that fit your needs.
+ * When your component renders, `useUsersQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useUsersQuery({
+ *   variables: {
+ *      first: // value for 'first'
+ *      after: // value for 'after'
+ *      orderBy: // value for 'orderBy'
+ *   },
+ * });
+ */
+export function useUsersQuery(baseOptions: Apollo.QueryHookOptions<UsersQuery, UsersQueryVariables>) {
+        return Apollo.useQuery<UsersQuery, UsersQueryVariables>(UsersDocument, baseOptions);
+      }
+export function useUsersLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<UsersQuery, UsersQueryVariables>) {
+          return Apollo.useLazyQuery<UsersQuery, UsersQueryVariables>(UsersDocument, baseOptions);
+        }
+export type UsersQueryHookResult = ReturnType<typeof useUsersQuery>;
+export type UsersLazyQueryHookResult = ReturnType<typeof useUsersLazyQuery>;
+export type UsersQueryResult = Apollo.QueryResult<UsersQuery, UsersQueryVariables>;
 export const GetFollowersDocument = gql`
     query GetFollowers($first: Int!, $where: FollowsWhereInput, $after: String, $orderBy: FollowOrder) {
   getFollows(first: $first, where: $where, after: $after, orderBy: $orderBy) {

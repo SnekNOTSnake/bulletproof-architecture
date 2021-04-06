@@ -1,0 +1,19 @@
+query Users($first: Int!, $after: String, $orderBy: UserOrder) {
+	users(first: $first, after: $after, orderBy: $orderBy) {
+		nodes {
+			id
+			name
+			avatar
+			email
+		}
+		pageInfo {
+			endCursor
+			hasNextPage
+		}
+	}
+}
+
+enum UserOrder {
+	created_ASC
+	created_DESC
+}
