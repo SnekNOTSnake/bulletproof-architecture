@@ -1,0 +1,33 @@
+query GetFollowings(
+	$first: Int!
+	$where: FollowsWhereInput
+	$after: String
+	$orderBy: FollowOrder
+) {
+	getFollows(first: $first, where: $where, after: $after, orderBy: $orderBy) {
+		nodes {
+			id
+			created
+			following {
+				id
+				name
+				email
+				avatar
+			}
+		}
+		pageInfo {
+			hasNextPage
+			endCursor
+		}
+	}
+}
+
+enum FollowOrder {
+	created_ASC
+	created_DESC
+}
+
+input FollowsWhereInput {
+	follower: ID
+	following: ID
+}

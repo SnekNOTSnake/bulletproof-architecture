@@ -660,6 +660,58 @@ export type BooksQuery = (
   ) }
 );
 
+export type GetFollowersQueryVariables = Exact<{
+  first: Scalars['Int'];
+  where?: Maybe<FollowsWhereInput>;
+  after?: Maybe<Scalars['String']>;
+  orderBy?: Maybe<FollowOrder>;
+}>;
+
+
+export type GetFollowersQuery = (
+  { __typename?: 'Query' }
+  & { getFollows: (
+    { __typename?: 'FollowConnection' }
+    & { nodes: Array<(
+      { __typename?: 'Follow' }
+      & Pick<Follow, 'id' | 'created'>
+      & { follower: (
+        { __typename?: 'User' }
+        & Pick<User, 'id' | 'name' | 'email' | 'avatar'>
+      ) }
+    )>, pageInfo: (
+      { __typename?: 'PageInfo' }
+      & Pick<PageInfo, 'hasNextPage' | 'endCursor'>
+    ) }
+  ) }
+);
+
+export type GetFollowingsQueryVariables = Exact<{
+  first: Scalars['Int'];
+  where?: Maybe<FollowsWhereInput>;
+  after?: Maybe<Scalars['String']>;
+  orderBy?: Maybe<FollowOrder>;
+}>;
+
+
+export type GetFollowingsQuery = (
+  { __typename?: 'Query' }
+  & { getFollows: (
+    { __typename?: 'FollowConnection' }
+    & { nodes: Array<(
+      { __typename?: 'Follow' }
+      & Pick<Follow, 'id' | 'created'>
+      & { following: (
+        { __typename?: 'User' }
+        & Pick<User, 'id' | 'name' | 'email' | 'avatar'>
+      ) }
+    )>, pageInfo: (
+      { __typename?: 'PageInfo' }
+      & Pick<PageInfo, 'hasNextPage' | 'endCursor'>
+    ) }
+  ) }
+);
+
 export type IsUserOnlineSubscriptionVariables = Exact<{
   userId: Scalars['ID'];
 }>;
@@ -1358,6 +1410,104 @@ export function useBooksLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Book
 export type BooksQueryHookResult = ReturnType<typeof useBooksQuery>;
 export type BooksLazyQueryHookResult = ReturnType<typeof useBooksLazyQuery>;
 export type BooksQueryResult = Apollo.QueryResult<BooksQuery, BooksQueryVariables>;
+export const GetFollowersDocument = gql`
+    query GetFollowers($first: Int!, $where: FollowsWhereInput, $after: String, $orderBy: FollowOrder) {
+  getFollows(first: $first, where: $where, after: $after, orderBy: $orderBy) {
+    nodes {
+      id
+      created
+      follower {
+        id
+        name
+        email
+        avatar
+      }
+    }
+    pageInfo {
+      hasNextPage
+      endCursor
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetFollowersQuery__
+ *
+ * To run a query within a React component, call `useGetFollowersQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetFollowersQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetFollowersQuery({
+ *   variables: {
+ *      first: // value for 'first'
+ *      where: // value for 'where'
+ *      after: // value for 'after'
+ *      orderBy: // value for 'orderBy'
+ *   },
+ * });
+ */
+export function useGetFollowersQuery(baseOptions: Apollo.QueryHookOptions<GetFollowersQuery, GetFollowersQueryVariables>) {
+        return Apollo.useQuery<GetFollowersQuery, GetFollowersQueryVariables>(GetFollowersDocument, baseOptions);
+      }
+export function useGetFollowersLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetFollowersQuery, GetFollowersQueryVariables>) {
+          return Apollo.useLazyQuery<GetFollowersQuery, GetFollowersQueryVariables>(GetFollowersDocument, baseOptions);
+        }
+export type GetFollowersQueryHookResult = ReturnType<typeof useGetFollowersQuery>;
+export type GetFollowersLazyQueryHookResult = ReturnType<typeof useGetFollowersLazyQuery>;
+export type GetFollowersQueryResult = Apollo.QueryResult<GetFollowersQuery, GetFollowersQueryVariables>;
+export const GetFollowingsDocument = gql`
+    query GetFollowings($first: Int!, $where: FollowsWhereInput, $after: String, $orderBy: FollowOrder) {
+  getFollows(first: $first, where: $where, after: $after, orderBy: $orderBy) {
+    nodes {
+      id
+      created
+      following {
+        id
+        name
+        email
+        avatar
+      }
+    }
+    pageInfo {
+      hasNextPage
+      endCursor
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetFollowingsQuery__
+ *
+ * To run a query within a React component, call `useGetFollowingsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetFollowingsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetFollowingsQuery({
+ *   variables: {
+ *      first: // value for 'first'
+ *      where: // value for 'where'
+ *      after: // value for 'after'
+ *      orderBy: // value for 'orderBy'
+ *   },
+ * });
+ */
+export function useGetFollowingsQuery(baseOptions: Apollo.QueryHookOptions<GetFollowingsQuery, GetFollowingsQueryVariables>) {
+        return Apollo.useQuery<GetFollowingsQuery, GetFollowingsQueryVariables>(GetFollowingsDocument, baseOptions);
+      }
+export function useGetFollowingsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetFollowingsQuery, GetFollowingsQueryVariables>) {
+          return Apollo.useLazyQuery<GetFollowingsQuery, GetFollowingsQueryVariables>(GetFollowingsDocument, baseOptions);
+        }
+export type GetFollowingsQueryHookResult = ReturnType<typeof useGetFollowingsQuery>;
+export type GetFollowingsLazyQueryHookResult = ReturnType<typeof useGetFollowingsLazyQuery>;
+export type GetFollowingsQueryResult = Apollo.QueryResult<GetFollowingsQuery, GetFollowingsQueryVariables>;
 export const IsUserOnlineDocument = gql`
     subscription IsUserOnline($userId: ID!) {
   isUserOnline(userId: $userId) {

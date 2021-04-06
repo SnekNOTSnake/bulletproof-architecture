@@ -34,6 +34,8 @@ import useStyles from './Profile.style'
 import EditProfile from '../../components/EditProfile'
 import FollowUser from '../../components/FollowUser'
 import BooksTab from './BooksTab'
+import FollowersTab from './FollowersTab'
+import FollowingsTab from './FollowingsTab'
 
 type Props = RouteComponentProps<{ id: string }>
 
@@ -162,16 +164,8 @@ const Profile: React.FC<Props> = ({ match }) => {
 
 				<Box>
 					{tab === 0 && <BooksTab userId={data.user.id} />}
-					{tab === 1 && (
-						<Box p={3}>
-							<Typography>Two</Typography>
-						</Box>
-					)}
-					{tab === 2 && (
-						<Box p={3}>
-							<Typography>Three</Typography>
-						</Box>
-					)}
+					{tab === 1 && <FollowersTab userId={data.user.id} />}
+					{tab === 2 && <FollowingsTab userId={data.user.id} />}
 				</Box>
 			</Paper>
 		</Box>
