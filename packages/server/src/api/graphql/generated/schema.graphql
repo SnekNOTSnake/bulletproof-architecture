@@ -13,13 +13,22 @@ type User {
   id: ID!
   name: String!
   email: String
-  joined: DateTime!
+  created: DateTime!
   avatar: String!
   bio: String
   followers: Int!
   followings: Int!
   isFollowing: Boolean!
   isOnline: Boolean!
+}
+type UserConnection {
+  edges: [UserEdge!]!
+  nodes: [User!]!
+  pageInfo: PageInfo!
+}
+type UserEdge {
+  node: User!
+  cursor: String!
 }
 type Mutation {
   createBook(title: String!, summary: String!, content: String!): Book @isAuthenticated
@@ -46,6 +55,11 @@ type Query {
   reviews(first: Int!, after: String, where: ReviewsWhereInput, orderBy: ReviewOrder = created_DESC): ReviewConnection!
   searchBooks(first: Int!, after: String, query: String!): BookConnection!
   user(id: ID!): User
+  users(first: Int!, after: String, orderBy: UserOrder = created_DESC): UserConnection!
+}
+enum UserOrder {
+  created_ASC
+  created_DESC
 }
 type Subscription {
   isUserOnline(userId: ID!): IsUserOnlinePayload!

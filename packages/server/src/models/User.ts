@@ -5,7 +5,7 @@ export interface IUser extends Document {
 	id: string
 	name: string
 	email?: string
-	joined: Date
+	created: Date
 	password?: string
 	bio?: string
 	avatar: string
@@ -52,7 +52,7 @@ const userSchema = new Schema<IUser>({
 		required: true,
 		default: 0,
 	},
-	joined: {
+	created: {
 		type: Date,
 		required: true,
 		default: Date.now,

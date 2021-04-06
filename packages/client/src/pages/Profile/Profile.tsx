@@ -118,7 +118,7 @@ const Profile: React.FC<Props> = ({ match }) => {
 						color="textSecondary"
 					>
 						<EventNoteIcon className={classes.infoIcon} /> Joined{' '}
-						{formatDistance(new Date(data.user.joined), new Date())} ago
+						{formatDistance(new Date(data.user.created), new Date())} ago
 						<span className={classes.divider} />
 						{data.user.email && (
 							<React.Fragment>

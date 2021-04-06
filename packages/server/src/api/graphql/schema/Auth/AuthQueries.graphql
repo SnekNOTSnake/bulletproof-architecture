@@ -1,4 +1,14 @@
 extend type Query {
 	me: User @isAuthenticated
 	user(id: ID!): User
+	users(
+		first: Int!
+		after: String
+		orderBy: UserOrder = created_DESC
+	): UserConnection!
+}
+
+enum UserOrder {
+	created_ASC
+	created_DESC
 }

@@ -7,7 +7,7 @@ import { createWriteStream, unlinkSync } from 'fs'
 import sharp from 'sharp'
 
 import myEmitter, { USER_SIGNUP } from '../events/events'
-import { trim } from '../utils/helpers'
+import { trim, getFilterings } from '../utils/helpers'
 import AppError from '../utils/AppError'
 import {
 	createAccessToken,
@@ -234,6 +234,34 @@ class AuthService {
 		await user.save()
 
 		return user
+	}
+
+	async getUsers({
+		first,
+		after,
+		orderBy = 'created',
+		orderType = 'DESC',
+	}: {
+		first: number
+		after?: string | Date | null
+		orderBy?: 'created'
+		orderType?: 'ASC' | 'DESC'
+	}) {
+		const { limit, sort, filter } = await getFilterings(this.UsersModel, {
+			first,
+			after,
+			orderBy,
+			orderType,
+		})
+
+		const users = await this.UsersModel.find({
+			...(filter || {}),
+		})
+			.sort(sort)
+			.limit(limit)
+			.exec()
+
+		return users
 	}
 }
 

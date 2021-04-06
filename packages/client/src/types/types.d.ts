@@ -4,7 +4,7 @@ interface IUser {
 	id: string
 	name: string
 	email?: string | null
-	joined: Date
+	created: Date
 	avatar: string
 	bio?: string | null
 }

@@ -35,6 +35,12 @@ export const changePasswordSchema = Joi.object({
 	newPassword: password,
 })
 
+export const usersSchema = Joi.object({
+	first: paginationLength.required(),
+	after: opaqueCursor,
+	orderBy: Joi.string().valid('created_ASC', 'created_DESC'),
+})
+
 // Book
 const title = Joi.string().max(50).required()
 const summary = Joi.string().max(500).required()

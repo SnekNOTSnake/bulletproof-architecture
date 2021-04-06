@@ -11,7 +11,7 @@ import AuthService from '../../src/services/Auth'
 
 const ASSETS_DIR = path.join(__dirname, '../assets')
 const UPLOAD_DIR = path.join(__dirname, '../../public/img')
-const authServiceInstance = new AuthService(UserModel, NotifModel)
+const User = new AuthService(UserModel, NotifModel)
 
 export const testUser = {
 	name: 'test',
@@ -27,7 +27,7 @@ describe('Auth Service', function () {
 
 	describe('signup', () => {
 		it('Should return the same user, with an additional ID field, and encrypted password', async () => {
-			const user = await authServiceInstance.signup(testUser)
+			const user = await User.signup(testUser)
 
 			expect(user).toBeTruthy()
 			expect(user.id).toBeTruthy()
@@ -37,7 +37,7 @@ describe('Auth Service', function () {
 		})
 
 		it('Should throw when there is existing user with the same email', async () => {
-			await expect(authServiceInstance.signup(testUser)).rejects.toThrow()
+			await expect(User.signup(testUser)).rejects.toThrow()
 		})
 	})
 
@@ -46,7 +46,7 @@ describe('Auth Service', function () {
 	 */
 	describe('signin', () => {
 		it('Should return the user as well as the refreshToken and accessToken', async () => {
-			const result = await authServiceInstance.signin(testUser)
+			const result = await User.signin(testUser)
 
 			refreshToken = result.refreshToken
 			accessToken = result.accessToken
@@ -66,7 +66,7 @@ describe('Auth Service', function () {
 
 	describe('protect', () => {
 		it('Should return logged in user if token is valid', async () => {
-			const user = await authServiceInstance.protect(accessToken)
+			const user = await User.protect(accessToken)
 
 			expect(user).toBeTruthy()
 			expect(user.id).toBeTruthy()
@@ -77,24 +77,22 @@ describe('Auth Service', function () {
 		it('Should throw if token is invalid or empty', async () => {
 			const modifiedToken = modifyLastCharacter(accessToken)
 
-			await expect(authServiceInstance.protect('')).rejects.toThrow()
-			await expect(authServiceInstance.protect(modifiedToken)).rejects.toThrow()
+			await expect(User.protect('')).rejects.toThrow()
+			await expect(User.protect(modifiedToken)).rejects.toThrow()
 		})
 	})
 
 	describe('refreshToken', () => {
 		it('Should return the new `accessToken` and `refreshToken`', async () => {
-			const result = await authServiceInstance.refreshToken(refreshToken)
+			const result = await User.refreshToken(refreshToken)
 			expect(result).toHaveProperty('accessToken')
 			expect(result).toHaveProperty('refreshToken')
 		})
 
 		it('Should throws if the token is invalid or empty', async () => {
 			const modifiedToken = modifyLastCharacter(refreshToken)
-			await expect(authServiceInstance.protect('')).rejects.toThrow()
-			await expect(
-				authServiceInstance.refreshToken(modifiedToken),
-			).rejects.toThrow()
+			await expect(User.protect('')).rejects.toThrow()
+			await expect(User.refreshToken(modifiedToken)).rejects.toThrow()
 		})
 	})
 
@@ -109,9 +107,9 @@ describe('Auth Service', function () {
 		})
 
 		it('Should return user as well as total number of new notifications', async () => {
-			const user = await authServiceInstance.getUser(loginUserID)
+			const user = await User.getUser(loginUserID)
 			if (!user) throw new Error('User is empty')
-			const result = await authServiceInstance.getAuthData(refreshToken)
+			const result = await User.getAuthData(refreshToken)
 
 			expect(result.accessToken).toBeTruthy()
 			expect(result.refreshToken).toBeTruthy()
@@ -122,7 +120,7 @@ describe('Auth Service', function () {
 
 	describe('getUser', () => {
 		it('Should return the right user', async () => {
-			const user: any = await authServiceInstance.getUser(loginUserID)
+			const user: any = await User.getUser(loginUserID)
 
 			expect(user).toBeTruthy()
 			expect(user.id).toBeTruthy()
@@ -133,7 +131,7 @@ describe('Auth Service', function () {
 		it('Should return null if user is not found', async () => {
 			const modifiedID = modifyLastCharacter(loginUserID)
 
-			const user = await authServiceInstance.getUser(modifiedID)
+			const user = await User.getUser(modifiedID)
 
 			expect(user).toBeNull()
 		})
@@ -217,14 +215,14 @@ describe('Auth Service', function () {
 
 	describe('updateMe', () => {
 		it('Should be able to update name without updating PFP', async () => {
-			const user = await authServiceInstance.getUser(loginUserID)
+			const user = await User.getUser(loginUserID)
 			const newBio = 'bio '.repeat(15)
 			const newName = 'Glass'
 
 			if (!user) throw new Error('User is undefined')
 
 			const oldAvatar = user.avatar
-			const result = await authServiceInstance.updateMe({
+			const result = await User.updateMe({
 				newName,
 				user,
 				bio: newBio,
@@ -236,14 +234,14 @@ describe('Auth Service', function () {
 		})
 
 		it('Should be able to update name as well as updating PFP', async () => {
-			const user = await authServiceInstance.getUser(loginUserID)
+			const user = await User.getUser(loginUserID)
 			const newName = 'Glass2'
 			const filename = 'pixiv.jpg'
 			const filePath = path.resolve(ASSETS_DIR, filename)
 
 			if (!user) throw new Error('User is undefined')
 
-			const result = await authServiceInstance.updateMe({
+			const result = await User.updateMe({
 				newName,
 				file: new Promise((resolve, reject) => {
 					resolve({
@@ -265,12 +263,12 @@ describe('Auth Service', function () {
 
 	describe('changePassword', () => {
 		it("Should be able to change user's password", async () => {
-			const user = await authServiceInstance.getUser(loginUserID)
+			const user = await User.getUser(loginUserID)
 			const newPassword = 'somethingcooler'
 
 			if (!user) throw new Error('User is undefined')
 
-			const result = await authServiceInstance.changePassword({
+			const result = await User.changePassword({
 				user,
 				password: testUser.password,
 				newPassword,
@@ -282,13 +280,13 @@ describe('Auth Service', function () {
 		})
 
 		it('Should throw when password is incorrect', async () => {
-			const user = await authServiceInstance.getUser(loginUserID)
+			const user = await User.getUser(loginUserID)
 			const newPassword = 'somethingcooler'
 
 			if (!user) throw new Error('User is undefined')
 
 			await expect(
-				authServiceInstance.changePassword({
+				User.changePassword({
 					user,
 					password: 'random-password',
 					newPassword,
@@ -297,7 +295,7 @@ describe('Auth Service', function () {
 		})
 
 		it("Should throw when user don't have password (Not using password authentication)", async () => {
-			const user = await authServiceInstance.getUser(loginUserID)
+			const user = await User.getUser(loginUserID)
 			const newPassword = 'somethingcooler'
 
 			if (!user) throw new Error('User is undefined')
@@ -305,12 +303,61 @@ describe('Auth Service', function () {
 			user.password = undefined
 
 			await expect(
-				authServiceInstance.changePassword({
+				User.changePassword({
 					user,
 					password: testUser.password,
 					newPassword,
 				}),
 			).rejects.toThrow()
+		})
+	})
+
+	describe('getUsers', () => {
+		it('Should be able to get reviews in a correct `created` order', async () => {
+			const newUser = await User.signup({
+				email: 'test2@test.com',
+				name: 'test user 2',
+				password: 'somethingcool',
+			})
+
+			const result = await User.getUsers({
+				first: 2,
+				orderBy: 'created',
+				orderType: 'ASC',
+			})
+			const result2 = await User.getUsers({
+				first: 2,
+				orderBy: 'created',
+				orderType: 'DESC',
+			})
+
+			expect(String(result[0].id)).toBe(loginUserID)
+			expect(String(result2[0].id)).toBe(String(newUser.id))
+		})
+
+		it('Should be able to get the correct number of reviews', async () => {
+			const result = await User.getUsers({ first: 1 })
+			const result2 = await User.getUsers({ first: 5 })
+
+			expect(result[0]).toBeTruthy()
+			expect(result).toHaveLength(1)
+			expect(result2).toHaveLength(2)
+		})
+
+		it('Should be able to paginate reviews with cursor', async () => {
+			const result = await User.getUsers({ first: 1 })
+			const result2 = await User.getUsers({
+				first: 1,
+				after: result[0].created,
+			})
+			const result3 = await User.getUsers({
+				first: 1,
+				after: result2[0].created,
+			})
+
+			expect(result).toHaveLength(1)
+			expect(result2).toHaveLength(1)
+			expect(result3).toHaveLength(0)
 		})
 	})
 })

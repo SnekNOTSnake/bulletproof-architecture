@@ -30,13 +30,26 @@ export type User = {
   id: Scalars['ID'];
   name: Scalars['String'];
   email?: Maybe<Scalars['String']>;
-  joined: Scalars['DateTime'];
+  created: Scalars['DateTime'];
   avatar: Scalars['String'];
   bio?: Maybe<Scalars['String']>;
   followers: Scalars['Int'];
   followings: Scalars['Int'];
   isFollowing: Scalars['Boolean'];
   isOnline: Scalars['Boolean'];
+};
+
+export type UserConnection = {
+  __typename?: 'UserConnection';
+  edges: Array<UserEdge>;
+  nodes: Array<User>;
+  pageInfo: PageInfo;
+};
+
+export type UserEdge = {
+  __typename?: 'UserEdge';
+  node: User;
+  cursor: Scalars['String'];
 };
 
 export type Mutation = {
@@ -141,6 +154,7 @@ export type Query = {
   reviews: ReviewConnection;
   searchBooks: BookConnection;
   user?: Maybe<User>;
+  users: UserConnection;
 };
 
 
@@ -197,6 +211,17 @@ export type QuerySearchBooksArgs = {
 export type QueryUserArgs = {
   id: Scalars['ID'];
 };
+
+
+export type QueryUsersArgs = {
+  first: Scalars['Int'];
+  after?: Maybe<Scalars['String']>;
+  orderBy?: Maybe<UserOrder>;
+};
+
+export type UserOrder =
+  | 'created_ASC'
+  | 'created_DESC';
 
 export type Subscription = {
   __typename?: 'Subscription';
@@ -734,7 +759,7 @@ export type UserQuery = (
   { __typename?: 'Query' }
   & { user?: Maybe<(
     { __typename?: 'User' }
-    & Pick<User, 'id' | 'name' | 'email' | 'joined' | 'avatar' | 'bio' | 'followers' | 'followings' | 'isFollowing' | 'isOnline'>
+    & Pick<User, 'id' | 'name' | 'email' | 'created' | 'avatar' | 'bio' | 'followers' | 'followings' | 'isFollowing' | 'isOnline'>
   )> }
 );
 
@@ -1544,7 +1569,7 @@ export const UserDocument = gql`
     id
     name
     email
-    joined
+    created
     avatar
     bio
     followers

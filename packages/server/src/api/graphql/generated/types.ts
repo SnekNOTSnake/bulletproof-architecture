@@ -37,13 +37,26 @@ export type User = {
   id: Scalars['ID'];
   name: Scalars['String'];
   email?: Maybe<Scalars['String']>;
-  joined: Scalars['DateTime'];
+  created: Scalars['DateTime'];
   avatar: Scalars['String'];
   bio?: Maybe<Scalars['String']>;
   followers: Scalars['Int'];
   followings: Scalars['Int'];
   isFollowing: Scalars['Boolean'];
   isOnline: Scalars['Boolean'];
+};
+
+export type UserConnection = {
+  __typename?: 'UserConnection';
+  edges: Array<UserEdge>;
+  nodes: Array<User>;
+  pageInfo: PageInfo;
+};
+
+export type UserEdge = {
+  __typename?: 'UserEdge';
+  node: User;
+  cursor: Scalars['String'];
 };
 
 export type Mutation = {
@@ -148,6 +161,7 @@ export type Query = {
   reviews: ReviewConnection;
   searchBooks: BookConnection;
   user?: Maybe<User>;
+  users: UserConnection;
 };
 
 
@@ -204,6 +218,17 @@ export type QuerySearchBooksArgs = {
 export type QueryUserArgs = {
   id: Scalars['ID'];
 };
+
+
+export type QueryUsersArgs = {
+  first: Scalars['Int'];
+  after?: Maybe<Scalars['String']>;
+  orderBy?: Maybe<UserOrder>;
+};
+
+export type UserOrder =
+  | 'created_ASC'
+  | 'created_DESC';
 
 export type Subscription = {
   __typename?: 'Subscription';
@@ -464,8 +489,11 @@ export type ResolversTypes = {
   ID: ResolverTypeWrapper<Scalars['ID']>;
   Int: ResolverTypeWrapper<Scalars['Int']>;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
+  UserConnection: ResolverTypeWrapper<Omit<UserConnection, 'edges' | 'nodes'> & { edges: Array<ResolversTypes['UserEdge']>, nodes: Array<ResolversTypes['User']> }>;
+  UserEdge: ResolverTypeWrapper<Omit<UserEdge, 'node'> & { node: ResolversTypes['User'] }>;
   Mutation: ResolverTypeWrapper<{}>;
   Query: ResolverTypeWrapper<{}>;
+  UserOrder: UserOrder;
   Subscription: ResolverTypeWrapper<{}>;
   IsUserOnlinePayload: ResolverTypeWrapper<IsUserOnlinePayload>;
   Book: ResolverTypeWrapper<IBook>;
@@ -506,6 +534,8 @@ export type ResolversParentTypes = {
   ID: Scalars['ID'];
   Int: Scalars['Int'];
   Boolean: Scalars['Boolean'];
+  UserConnection: Omit<UserConnection, 'edges' | 'nodes'> & { edges: Array<ResolversParentTypes['UserEdge']>, nodes: Array<ResolversParentTypes['User']> };
+  UserEdge: Omit<UserEdge, 'node'> & { node: ResolversParentTypes['User'] };
   Mutation: {};
   Query: {};
   Subscription: {};
@@ -550,13 +580,26 @@ export type UserResolvers<ContextType = MyContext, ParentType extends ResolversP
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   email?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  joined?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  created?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   avatar?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   bio?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   followers?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   followings?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   isFollowing?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   isOnline?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type UserConnectionResolvers<ContextType = MyContext, ParentType extends ResolversParentTypes['UserConnection'] = ResolversParentTypes['UserConnection']> = {
+  edges?: Resolver<Array<ResolversTypes['UserEdge']>, ParentType, ContextType>;
+  nodes?: Resolver<Array<ResolversTypes['User']>, ParentType, ContextType>;
+  pageInfo?: Resolver<ResolversTypes['PageInfo'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type UserEdgeResolvers<ContextType = MyContext, ParentType extends ResolversParentTypes['UserEdge'] = ResolversParentTypes['UserEdge']> = {
+  node?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
+  cursor?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -586,6 +629,7 @@ export type QueryResolvers<ContextType = MyContext, ParentType extends Resolvers
   reviews?: Resolver<ResolversTypes['ReviewConnection'], ParentType, ContextType, RequireFields<QueryReviewsArgs, 'first' | 'orderBy'>>;
   searchBooks?: Resolver<ResolversTypes['BookConnection'], ParentType, ContextType, RequireFields<QuerySearchBooksArgs, 'first' | 'query'>>;
   user?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<QueryUserArgs, 'id'>>;
+  users?: Resolver<ResolversTypes['UserConnection'], ParentType, ContextType, RequireFields<QueryUsersArgs, 'first' | 'orderBy'>>;
 };
 
 export type SubscriptionResolvers<ContextType = MyContext, ParentType extends ResolversParentTypes['Subscription'] = ResolversParentTypes['Subscription']> = {
@@ -729,6 +773,8 @@ export type FileResolvers<ContextType = MyContext, ParentType extends ResolversP
 export type Resolvers<ContextType = MyContext> = {
   AuthData?: AuthDataResolvers<ContextType>;
   User?: UserResolvers<ContextType>;
+  UserConnection?: UserConnectionResolvers<ContextType>;
+  UserEdge?: UserEdgeResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
   Subscription?: SubscriptionResolvers<ContextType>;

@@ -8,11 +8,22 @@ type User {
 	id: ID!
 	name: String!
 	email: String
-	joined: DateTime!
+	created: DateTime!
 	avatar: String!
 	bio: String
 	followers: Int!
 	followings: Int!
 	isFollowing: Boolean!
 	isOnline: Boolean!
+}
+
+type UserConnection {
+	edges: [UserEdge!]!
+	nodes: [User!]!
+	pageInfo: PageInfo!
+}
+
+type UserEdge {
+	node: User!
+	cursor: String!
 }
