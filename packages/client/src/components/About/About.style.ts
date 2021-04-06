@@ -10,7 +10,7 @@ export default makeStyles((theme) => ({
 	},
 	source: {
 		padding: theme.spacing(3),
-		borderRadius: 4,
+		borderRadius: 100,
 		color: 'inherit',
 		transition: theme.transitions.create(['box-shadow', 'background-color'], {
 			easing: 'ease-out',

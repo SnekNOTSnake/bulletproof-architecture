@@ -1,42 +1,21 @@
 import React from 'react'
-import { Link } from 'react-router-dom'
-import { formatDistance } from 'date-fns'
 import { useSnackbar } from 'notistack'
 import { useApolloClient } from '@apollo/client'
 
 import {
-	Avatar,
 	Box,
 	Button,
-	Card,
-	CardHeader,
-	CardMedia,
-	CardContent,
-	CardActions,
 	FormControl,
 	Grid,
 	InputLabel,
-	Link as LinkComponent,
 	MenuItem,
 	Select,
 	Typography,
 } from '@material-ui/core'
-import { Rating } from '@material-ui/lab'
 
 import useStyles from './Home.style'
-import { useBooksQuery, BooksQuery } from '../../generated/types'
-
-type CardSubheaderProps = { book: ArrayElement<BooksQuery['books']['nodes']> }
-
-const CardSubheader: React.FC<CardSubheaderProps> = ({ book }) => (
-	<Typography variant="body2" color="textSecondary">
-		By{' '}
-		<LinkComponent component={Link} to={`/user/${book.author.id}`}>
-			{book.author.name}
-		</LinkComponent>
-		, {formatDistance(new Date(book.created), new Date())} ago
-	</Typography>
-)
+import { useBooksQuery } from '../../generated/types'
+import SimpleBook from '../../components/SimpleBook'
 
 type InputChange = React.ChangeEvent<any>
 type FetchMode = 'by-anyone' | 'by-followed-users'
@@ -110,52 +89,7 @@ const Home: React.FC = () => {
 				</Grid>
 			) : (
 				data?.books.nodes.map((book) => (
-					<Card key={book.id} className={classes.cardGrid} variant="outlined">
-						<CardHeader
-							title={book.title}
-							avatar={
-								<Avatar
-									alt={book.author.avatar}
-									src={`http://localhost:4200/img/${book.author.avatar}`}
-								/>
-							}
-							subheader={<CardSubheader book={book} />}
-						/>
-
-						<CardMedia
-							className={classes.cardMedia}
-							image={`https://picsum.photos/800/400?random&t=${book.id}`}
-							title="Placeholder image"
-						/>
-
-						<CardContent>
-							<Typography className={classes.summary}>
-								{book.summary}
-							</Typography>
-							<Box className={classes.rating}>
-								<Rating
-									className={classes.stars}
-									readOnly
-									value={book.ratingsAverage}
-									precision={0.5}
-								/>
-								<Box>({book.ratingsQuantity})</Box>
-							</Box>
-							<Typography color="textSecondary">
-								Updated {formatDistance(new Date(book.created), new Date())} ago
-							</Typography>
-						</CardContent>
-
-						<CardActions>
-							<LinkComponent
-								underline="none"
-								component={Link}
-								to={`/book/${book.id}`}
-							>
-								<Button color="inherit">Details</Button>
-							</LinkComponent>
-						</CardActions>
-					</Card>
+					<SimpleBook key={book.id} book={book} />
 				))
 			)}
 

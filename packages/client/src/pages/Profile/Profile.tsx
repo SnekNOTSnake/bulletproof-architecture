@@ -20,7 +20,6 @@ import {
 import {
 	Email as EmailIcon,
 	EventNote as EventNoteIcon,
-	SvgIconComponent,
 	Collections as CollectionsIcon,
 	Group as GroupIcon,
 	AccessibleForward as AccessibleForwardIcon,
@@ -34,6 +33,7 @@ import {
 import useStyles from './Profile.style'
 import EditProfile from '../../components/EditProfile'
 import FollowUser from '../../components/FollowUser'
+import BooksTab from './BooksTab'
 
 type Props = RouteComponentProps<{ id: string }>
 
@@ -161,11 +161,7 @@ const Profile: React.FC<Props> = ({ match }) => {
 				</AppBar>
 
 				<Box>
-					{tab === 0 && (
-						<Box p={3}>
-							<Typography>One</Typography>
-						</Box>
-					)}
+					{tab === 0 && <BooksTab userId={data.user.id} />}
 					{tab === 1 && (
 						<Box p={3}>
 							<Typography>Two</Typography>

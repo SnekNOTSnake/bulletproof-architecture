@@ -5,7 +5,7 @@ const cache = new InMemoryCache({
 		Query: {
 			fields: {
 				books: {
-					keyArgs: false,
+					keyArgs: ['where'],
 					merge: (existing, incoming) => {
 						const nodes: Reference[] = []
 						if (existing && existing.nodes) nodes.push(...existing.nodes)

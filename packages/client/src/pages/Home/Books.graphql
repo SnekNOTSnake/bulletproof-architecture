@@ -42,5 +42,5 @@ enum BooksOrder {
 }
 
 input BooksWhereInput {
-	_id: String
+	author: ID
 }
