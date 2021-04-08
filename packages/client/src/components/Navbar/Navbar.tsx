@@ -117,8 +117,7 @@ const Navbar: React.FC<Props> = ({ isDesktop, openSidebar }) => {
 	const logout = async () => {
 		closeUser()
 		await logoutUser(dispatchUser)
-		await apolloClient.clearStore()
-		history.push('/')
+		// window.location.href = '/'
 	}
 
 	const classes = useStyles()
